@@ -4,11 +4,15 @@ from flask import request, redirect, url_for, flash, render_template, session, j
 from flask_login import login_required, current_user, login_user, logout_user
 from config import app, db
 from models import PremiumPlan, Order, User
-from payos_config import PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_API_URL, PAYOS_RETURN_URL, PAYOS_CANCEL_URL, PAYOS_WEBHOOK_URL
-from payos_helper import PayOS
+from payos_config import PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_RETURN_URL, PAYOS_CANCEL_URL
+from payos import PayOS, PaymentData, ItemData
 
-# Khởi tạo PayOS
-payos = PayOS(PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_API_URL)
+# Khởi tạo PayOS với thư viện chính thức
+payos = PayOS(
+    client_id=PAYOS_CLIENT_ID,
+    api_key=PAYOS_API_KEY,
+    checksum_key=PAYOS_CHECKSUM_KEY
+)
 
 
 @app.route("/payos/cancel")
@@ -84,30 +88,37 @@ def payment(plan_id):
             db.session.add(order)
             db.session.commit()
             
-            # Tạo payment link PayOS
-            description = f"Thanh toan goi Premium: {plan.name}"
-            
-            result = payos.create_payment_link(
-                order_code=order.id,
-                amount=int(plan.price),
-                description=description,
-                return_url=PAYOS_RETURN_URL,
-                cancel_url=PAYOS_CANCEL_URL,
-                buyer_name=current_user.username,
-                buyer_email=current_user.email if current_user.email else None
-            )
-            
-            if "error" in result:
+            # Tạo payment link PayOS với thư viện chính thức
+            try:
+                # Tạo item data
+                item = ItemData(
+                    name=plan.name,
+                    quantity=1,
+                    price=int(plan.price)
+                )
+                
+                # Tạo payment data
+                payment_data = PaymentData(
+                    orderCode=order.id,
+                    amount=int(plan.price),
+                    description=f"Thanh toan goi Premium: {plan.name}",
+                    items=[item],
+                    returnUrl=PAYOS_RETURN_URL,
+                    cancelUrl=PAYOS_CANCEL_URL,
+                    buyerName=current_user.username if current_user.username else None,
+                    buyerEmail=current_user.email if current_user.email else None
+                )
+                
+                # Tạo payment link
+                payment_link_response = payos.createPaymentLink(payment_data)
+                
+                # Redirect đến checkout URL
+                return redirect(payment_link_response.checkoutUrl)
+                
+            except Exception as e:
+                print(f">>> PayOS Error: {e}")
                 flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
                 return redirect(url_for("premium_manage"))
-            
-            # Lấy checkout URL
-            payment_url = result.get("data", {}).get("checkoutUrl")
-            if not payment_url:
-                flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
-                return redirect(url_for("premium_manage"))
-            
-            return redirect(payment_url)
         else:
             # Xử lý thanh toán mock khác
             # Calculate new expiration date
