@@ -61,7 +61,9 @@ def google_login():
         flash("Google Login chưa được cấu hình. Vui lòng liên hệ admin.", "warning")
         return redirect(url_for("login"))
     
-    redirect_uri = url_for("google_callback", _external=True)
+    # Force HTTPS scheme cho production (Railway)
+    redirect_uri = url_for("google_callback", _external=True, _scheme='https')
+    print(f">>> Google OAuth Redirect URI: {redirect_uri}")
     return google.authorize_redirect(redirect_uri, prompt='select_account')
 
 
