@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from authlib.integrations.flask_client import OAuth
 
-load_dotenv()
+# QUAN TRỌNG: override=False để KHÔNG đè biến từ Railway
+load_dotenv(override=False)
 
 # Khởi tạo Flask app
 app = Flask(__name__)
@@ -21,8 +22,12 @@ for key in os.environ:
         val = os.environ[key]
         print(f">>>   {key} = {val[:80] if val else '(empty)'}...", file=sys.stderr)
 
-# Thử đọc từ nhiều biến có thể: DATABASE_URL, MYSQL_URL, hoặc build từ parts
-db_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+# Thử đọc từ nhiều biến có thể: DATABASE_URL, MYSQL_URL, MYSQL_PUBLIC_URL
+db_url = (
+    os.getenv("DATABASE_URL")
+    or os.getenv("MYSQL_URL")
+    or os.getenv("MYSQL_PUBLIC_URL")  # Railway có thể dùng tên này
+)
 
 # Nếu vẫn không có, thử build từ individual variables
 if not db_url:
