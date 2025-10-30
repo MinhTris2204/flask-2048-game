@@ -19,6 +19,15 @@ import routes.game
 import routes.premium
 import routes.api
 
+# Tạo tables ngay sau khi import models (cho Gunicorn)
+# Chỉ chạy khi không phải local dev server
+with app.app_context():
+    try:
+        db.create_all()
+        print(">>> Tables created successfully")
+    except Exception as e:
+        print(f">>> Error creating tables: {e}")
+
 
 @app.cli.command("init-db")
 def init_db():

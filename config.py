@@ -95,10 +95,5 @@ google = oauth.register(
 safe_url = db_url.split("@")[-1] if "@" in db_url else db_url
 print(">>> Using DB:", ("mysql+pymysql://***@" + safe_url) if "mysql" in db_url else db_url)
 
-# Tạo bảng lần đầu (an toàn)
-with app.app_context():
-    try:
-        db.create_all()
-        print(">>> DB create_all done")
-    except Exception as e:
-        print(">>> DB init warning:", e)
+# KHÔNG tạo bảng ở đây! Models chưa được import
+# db.create_all() sẽ được gọi trong app.py sau khi import models
