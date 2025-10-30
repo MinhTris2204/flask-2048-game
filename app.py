@@ -18,6 +18,7 @@ import routes.auth
 import routes.game
 import routes.premium
 import routes.api
+import routes.admin
 
 # Tạo tables ngay sau khi import models (cho Gunicorn)
 # Chỉ chạy khi không phải local dev server
