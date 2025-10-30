@@ -1,14 +1,29 @@
 import uuid
 from datetime import datetime, timedelta
-from flask import request, redirect, url_for, flash, render_template, session
+from flask import request, redirect, url_for, flash, render_template, session, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
 from config import app, db
 from models import PremiumPlan, Order, User
-from vnpay_config import VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_URL, VNPAY_RETURN_URL
-from vnpay_helper import VNPay
+from payos_config import PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_API_URL, PAYOS_RETURN_URL, PAYOS_CANCEL_URL, PAYOS_WEBHOOK_URL
+from payos_helper import PayOS
 
-# Khởi tạo VNPAY
-vnpay = VNPay(VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_URL)
+# Khởi tạo PayOS
+payos = PayOS(PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_API_URL)
+
+
+@app.route("/payos/cancel")
+def payos_cancel():
+    """PayOS Cancel URL - Người dùng hủy thanh toán"""
+    order_code = request.args.get('orderCode')
+    
+    if order_code:
+        order = Order.query.get(int(order_code))
+        if order and order.status == 'pending':
+            order.status = 'cancelled'
+            db.session.commit()
+    
+    flash("Bạn đã hủy thanh toán!", "warning")
+    return redirect(url_for("premium_manage"))
 
 
 @app.route("/premium")
@@ -50,9 +65,9 @@ def payment(plan_id):
     plan_price = float(plan.price)
     
     if request.method == "POST":
-        payment_method = request.form.get("payment_method", "vnpay")
+        payment_method = request.form.get("payment_method", "payos")
         
-        if payment_method == "vnpay":
+        if payment_method == "payos":
             # Set session permanent trước khi redirect để giữ session
             session.permanent = True
             app.permanent_session_lifetime = timedelta(days=7)
@@ -63,31 +78,36 @@ def payment(plan_id):
                 plan_id=plan.id,
                 amount=plan.price,
                 status="pending",
-                payment_method="vnpay",
+                payment_method="payos",
                 transaction_id=str(uuid.uuid4())
             )
             db.session.add(order)
             db.session.commit()
             
-            # Tạo URL thanh toán VNPay
-            ip_addr = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-            order_info = f"Thanh toan goi Premium: {plan.name}"
+            # Tạo payment link PayOS
+            description = f"Thanh toan goi Premium: {plan.name}"
             
-            # Thời gian hết hạn (15 phút)
-            expire_date = (datetime.now() + timedelta(minutes=15)).strftime('%Y%m%d%H%M%S')
-            
-            vnpay_url = vnpay.create_payment_url(
-                amount=float(plan.price),
-                order_id=order.id,
-                order_info=order_info,
-                return_url=VNPAY_RETURN_URL,
-                ip_addr=ip_addr,
-                locale="vn",
-                order_type="other",
-                expire_date=expire_date
+            result = payos.create_payment_link(
+                order_code=order.id,
+                amount=int(plan.price),
+                description=description,
+                return_url=PAYOS_RETURN_URL,
+                cancel_url=PAYOS_CANCEL_URL,
+                buyer_name=current_user.username,
+                buyer_email=current_user.email if current_user.email else None
             )
             
-            return redirect(vnpay_url)
+            if "error" in result:
+                flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                return redirect(url_for("premium_manage"))
+            
+            # Lấy checkout URL
+            payment_url = result.get("data", {}).get("checkoutUrl")
+            if not payment_url:
+                flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                return redirect(url_for("premium_manage"))
+            
+            return redirect(payment_url)
         else:
             # Xử lý thanh toán mock khác
             # Calculate new expiration date
@@ -117,28 +137,23 @@ def payment(plan_id):
     return render_template("payment.html", plan=plan, plan_price=plan_price)
 
 
-@app.route("/vnpay_return")
-def vnpay_return():
-    """VNPay Return URL - Hiển thị kết quả thanh toán cho khách hàng"""
-    # Lấy tất cả params từ VNPay
-    vnp_params = {}
-    for key, value in request.args.items():
-        if key.startswith('vnp_'):
-            vnp_params[key] = value
+@app.route("/payos/return")
+def payos_return():
+    """PayOS Return URL - Hiển thị kết quả thanh toán cho khách hàng"""
+    # Lấy params từ PayOS
+    code = request.args.get('code')
+    order_code = request.args.get('orderCode')
+    cancel = request.args.get('cancel', 'false').lower() == 'true'
+    status = request.args.get('status', 'PENDING')
     
-    # Kiểm tra checksum
-    if not vnpay.verify_return(vnp_params.copy()):
-        flash("Chữ ký không hợp lệ!", "danger")
+    if not order_code:
+        flash("Không tìm thấy thông tin đơn hàng!", "danger")
         return redirect(url_for("game"))
     
-    # Parse response
-    result = vnpay.parse_response(vnp_params)
-    
     # Kiểm tra kết quả thanh toán
-    if result['response_code'] == '00' and result['transaction_status'] == '00':
+    if code == '00' and status == 'PAID' and not cancel:
         # Thanh toán thành công
-        order_id = result['txn_ref']
-        order = Order.query.get(order_id)
+        order = Order.query.get(int(order_code))
         
         if order and order.status == 'pending':
             plan = PremiumPlan.query.get(order.plan_id)
@@ -159,7 +174,7 @@ def vnpay_return():
             # Update order
             order.status = 'completed'
             order.completed_at = datetime.now()
-            order.transaction_id = result['transaction_no']
+            # transaction_id đã được set khi tạo order
             
             # Activate premium
             user.is_premium = True
@@ -180,90 +195,85 @@ def vnpay_return():
             return render_template("payment_success.html", 
                                  plan_name=plan.name,
                                  duration=duration_text,
-                                 amount=result['amount'],
-                                 transaction_no=result['transaction_no'])
+                                 amount=float(order.amount),
+                                 transaction_no=order.transaction_id)
         else:
             flash("Đơn hàng không hợp lệ hoặc đã được xử lý!", "warning")
             return redirect(url_for("game"))
     else:
-        # Thanh toán thất bại
-        # Lấy thông tin order để đăng nhập lại user
-        order_id = result.get('txn_ref')
-        if order_id:
-            order = Order.query.get(order_id)
-            if order:
-                user = User.query.get(order.user_id)
-                if user:
-                    # Đăng nhập lại user để giữ session
-                    if not current_user.is_authenticated:
-                        login_user(user, remember=True)
-                        session.permanent = True
-                    elif current_user.id != user.id:
-                        logout_user()
-                        login_user(user, remember=True)
-                        session.permanent = True
-                    
-                    # Update order status
+        # Thanh toán thất bại hoặc bị hủy
+        order = Order.query.get(int(order_code))
+        if order:
+            user = User.query.get(order.user_id)
+            if user:
+                # Đăng nhập lại user để giữ session
+                if not current_user.is_authenticated:
+                    login_user(user, remember=True)
+                    session.permanent = True
+                elif current_user.id != user.id:
+                    logout_user()
+                    login_user(user, remember=True)
+                    session.permanent = True
+                
+                # Update order status
+                if cancel:
+                    order.status = 'cancelled'
+                else:
                     order.status = 'failed'
-                    db.session.commit()
+                db.session.commit()
         
-        error_messages = {
-            '07': 'Giao dịch bị nghi ngờ gian lận',
-            '09': 'Thẻ/Tài khoản chưa đăng ký InternetBanking',
-            '10': 'Xác thực thông tin sai quá 3 lần',
-            '11': 'Đã hết hạn chờ thanh toán',
-            '12': 'Thẻ/Tài khoản bị khóa',
-            '13': 'Sai mật khẩu OTP',
-            '24': 'Khách hàng hủy giao dịch',
-            '51': 'Tài khoản không đủ số dư',
-            '65': 'Vượt quá hạn mức giao dịch trong ngày',
-            '75': 'Ngân hàng đang bảo trì',
-            '79': 'Sai mật khẩu quá số lần quy định',
-            '99': 'Lỗi khác'
-        }
-        
-        error_message = error_messages.get(result['response_code'], f"Mã lỗi: {result['response_code']}")
+        if cancel:
+            error_message = "Bạn đã hủy thanh toán"
+        elif status == 'CANCELLED':
+            error_message = "Giao dịch đã bị hủy"
+        elif status == 'PENDING':
+            error_message = "Giao dịch đang chờ xử lý"
+        else:
+            error_message = f"Thanh toán thất bại - Trạng thái: {status}"
         
         return render_template("payment_error.html", 
                              error_message=error_message,
-                             error_code=result['response_code'])
+                             error_code=code or status)
 
 
-@app.route("/vnpay_ipn")
-def vnpay_ipn():
-    """VNPay IPN URL - Xử lý kết quả thanh toán từ VNPay (server-side)"""
-    from flask import jsonify
+@app.route("/payos/webhook", methods=["POST"])
+def payos_webhook():
+    """PayOS Webhook - Xử lý kết quả thanh toán từ PayOS (server-side)"""
+    # Lấy webhook data từ PayOS
+    webhook_data = request.get_json()
     
-    # Lấy tất cả params từ VNPay
-    vnp_params = {}
-    for key, value in request.args.items():
-        if key.startswith('vnp_'):
-            vnp_params[key] = value
+    if not webhook_data:
+        return jsonify({"error": "No data"}), 400
     
-    # Kiểm tra checksum
-    if not vnpay.verify_return(vnp_params.copy()):
-        return jsonify({'RspCode': '97', 'Message': 'Invalid signature'}), 200
+    # Verify signature
+    if not payos.verify_webhook_signature(webhook_data):
+        print(">>> PayOS Webhook: Invalid signature")
+        return jsonify({"error": "Invalid signature"}), 400
     
-    # Parse response
-    result = vnpay.parse_response(vnp_params)
+    # Parse webhook data
+    code = webhook_data.get('code')
+    data = webhook_data.get('data', {})
+    order_code = data.get('orderCode')
+    
+    if not order_code:
+        return jsonify({"error": "Missing orderCode"}), 400
     
     # Tìm order
-    order_id = result['txn_ref']
-    order = Order.query.get(order_id)
+    order = Order.query.get(order_code)
     
     if not order:
-        return jsonify({'RspCode': '01', 'Message': 'Order not found'}), 200
+        return jsonify({"error": "Order not found"}), 404
     
     # Kiểm tra số tiền
-    if float(order.amount) != result['amount']:
-        return jsonify({'RspCode': '04', 'Message': 'Invalid amount'}), 200
+    if int(order.amount) != data.get('amount'):
+        return jsonify({"error": "Invalid amount"}), 400
     
     # Kiểm tra trạng thái
     if order.status != 'pending':
-        return jsonify({'RspCode': '02', 'Message': 'Order already confirmed'}), 200
+        return jsonify({"success": True, "message": "Order already processed"}), 200
     
     # Xử lý kết quả
-    if result['response_code'] == '00' and result['transaction_status'] == '00':
+    if code == '00' and data.get('code') == '00':
         # Thanh toán thành công
         plan = PremiumPlan.query.get(order.plan_id)
         user = User.query.get(order.user_id)
@@ -278,7 +288,7 @@ def vnpay_ipn():
             # Update order
             order.status = 'completed'
             order.completed_at = datetime.now()
-            order.transaction_id = result['transaction_no']
+            order.transaction_id = data.get('reference', order.transaction_id)
             
             # Activate premium
             user.is_premium = True
@@ -286,10 +296,12 @@ def vnpay_ipn():
             
             db.session.commit()
             
-            return jsonify({'RspCode': '00', 'Message': 'Success'}), 200
+            print(f">>> PayOS Webhook: Order {order_code} completed successfully")
+            return jsonify({"success": True, "message": "Payment completed"}), 200
     
     # Thanh toán thất bại
     order.status = 'failed'
     db.session.commit()
     
-    return jsonify({'RspCode': '00', 'Message': 'Confirmed'}), 200
+    print(f">>> PayOS Webhook: Order {order_code} failed")
+    return jsonify({"success": True, "message": "Payment failed"}), 200
