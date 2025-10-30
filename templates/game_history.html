@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+{% block title %}Lịch sử chơi - 2048{% endblock %}
+{% block content %}
+
+<div class="history-page">
+  <!-- Header -->
+  <div class="history-header">
+    <h1 class="history-title">
+      <span class="history-icon">📊</span>
+      Lịch sử chơi game
+    </h1>
+    <p class="history-subtitle">Xem lại tất cả ván chơi của bạn</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">🎮</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.total_games }}</div>
+        <div class="stat-label">Tổng số ván</div>
+      </div>
+    </div>
+
+    <div class="stat-card highlight">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ "{:,}".format(stats.best_score) }}</div>
+        <div class="stat-label">Điểm cao nhất</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.best_tile }}</div>
+        <div class="stat-label">Ô lớn nhất</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ "{:,}".format(stats.avg_score) }}</div>
+        <div class="stat-label">Điểm trung bình</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🎲</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ "{:,}".format(stats.total_moves) }}</div>
+        <div class="stat-label">Tổng số nước đi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Table -->
+  {% if scores %}
+  <div class="history-table-wrapper">
+    <h2 class="section-title">📜 Chi tiết lịch sử</h2>
+    
+    <div class="history-table-container">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ngày giờ</th>
+            <th>Điểm số</th>
+            <th>Ô lớn nhất</th>
+            <th>Số nước đi</th>
+            <th>Trung bình/nước</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for score in scores %}
+          <tr class="{% if score.max_tile >= 2048 %}row-achievement{% endif %}">
+            <td class="col-number">{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+            <td class="col-date">
+              <div class="date-time">
+                <span class="date">{{ score.created_at.strftime('%d/%m/%Y') }}</span>
+                <span class="time">{{ score.created_at.strftime('%H:%M') }}</span>
+              </div>
+            </td>
+            <td class="col-score">
+              <span class="score-value">{{ "{:,}".format(score.score) }}</span>
+            </td>
+            <td class="col-tile">
+              <span class="tile-badge tile-{{ score.max_tile }}">{{ score.max_tile }}</span>
+            </td>
+            <td class="col-moves">{{ "{:,}".format(score.moves) }}</td>
+            <td class="col-avg">
+              {% if score.moves > 0 %}
+                {{ "{:,.1f}".format(score.score / score.moves) }}
+              {% else %}
+                0
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 1 %}
+    <div class="pagination">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('game_history', page=pagination.prev_num) }}" class="page-btn">
+          ← Trước
+        </a>
+      {% endif %}
+
+      <span class="page-info">
+        Trang {{ pagination.page }} / {{ pagination.pages }}
+      </span>
+
+      {% if pagination.has_next %}
+        <a href="{{ url_for('game_history', page=pagination.next_num) }}" class="page-btn">
+          Sau →
+        </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🎮</div>
+    <h3>Chưa có lịch sử chơi</h3>
+    <p>Hãy bắt đầu chơi để ghi lại lịch sử!</p>
+    <a href="{{ url_for('game') }}" class="btn-primary">🎮 Chơi ngay</a>
+  </div>
+  {% endif %}
+
+  <!-- Back Button -->
+  <div class="back-to-game">
+    <a href="{{ url_for('game') }}" class="btn-back">
+      ← Quay lại chơi game
+    </a>
+  </div>
+</div>
+
+<style>
+.history-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.history-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px 0;
+}
+
+.history-icon {
+  font-size: 36px;
+  margin-right: 12px;
+}
+
+.history-subtitle {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px var(--tile-shadow);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card.highlight {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: white;
+}
+
+.stat-icon {
+  font-size: 32px;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* History Table */
+.history-table-wrapper {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--tile-shadow);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: var(--text);
+}
+
+.history-table-container {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table thead th {
+  background: var(--surface);
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--outline);
+}
+
+.history-table tbody tr {
+  border-bottom: 1px solid var(--outline);
+  transition: background 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+  background: var(--surface);
+}
+
+.history-table tbody tr.row-achievement {
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, transparent 100%);
+}
+
+.history-table tbody td {
+  padding: 12px;
+  font-size: 14px;
+}
+
+.col-number {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.date-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.date {
+  font-weight: 600;
+}
+
+.time {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.score-value {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 16px;
+}
+
+.tile-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+}
+
+.tile-2, .tile-4 { background: #eee4da; color: #776e65; }
+.tile-8 { background: #f2b179; }
+.tile-16 { background: #f59563; }
+.tile-32 { background: #f67c5f; }
+.tile-64 { background: #f65e3b; }
+.tile-128 { background: #edcf72; }
+.tile-256 { background: #edcc61; }
+.tile-512 { background: #edc850; }
+.tile-1024 { background: #edc53f; }
+.tile-2048 { background: #edc22e; }
+.tile-4096 { background: #3c3a32; }
+.tile-8192 { background: #3c3a32; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background: var(--accent-2);
+  transform: translateY(-2px);
+}
+
+.page-info {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--card);
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  color: var(--text);
+}
+
+.empty-state p {
+  color: var(--muted);
+  margin: 0 0 24px 0;
+}
+
+/* Back Button */
+.back-to-game {
+  text-align: center;
+}
+
+.btn-back {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid var(--outline);
+}
+
+.btn-back:hover {
+  background: var(--card);
+  border-color: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .history-table {
+    font-size: 12px;
+  }
+  
+  .history-table thead th,
+  .history-table tbody td {
+    padding: 8px 4px;
+  }
+}
+</style>
+
+{% endblock %}

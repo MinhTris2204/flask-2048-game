@@ -135,6 +135,25 @@ main.container:has(.game-wrap) {
   font-weight: 700;
 }
 
+.nav-link {
+  padding: 8px 16px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid var(--outline);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  background: var(--card);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
 .btn-logout,
 .btn-login {
   padding: 10px 20px;
