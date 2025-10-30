@@ -13,10 +13,20 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "devsecret")
 
 # --- Database URL from env ---
+# Debug: In ra tất cả env vars có chứa DATABASE
+import sys
+print(">>> DEBUG: Checking DATABASE env vars:", file=sys.stderr)
+for key in os.environ:
+    if "DATABASE" in key or "MYSQL" in key:
+        print(f">>>   {key} = {os.environ[key][:50]}...", file=sys.stderr)
+
 db_url = os.getenv("DATABASE_URL")  # >>> PHẢI LÀ TÊN NÀY <<<
+print(f">>> DEBUG: DATABASE_URL = {db_url}", file=sys.stderr)
+
 if not db_url:
     # Chỉ fallback SQLite nếu KHÔNG có env (tránh override)
     db_url = "sqlite:///game2048.db"
+    print(">>> WARNING: No DATABASE_URL found, using SQLite fallback!", file=sys.stderr)
 
 # Chuẩn hoá scheme MySQL
 if db_url.startswith("mysql://"):
