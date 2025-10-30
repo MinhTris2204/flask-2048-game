@@ -56,6 +56,11 @@ def logout():
 @app.route("/login/google")
 def google_login():
     """Bắt đầu quá trình đăng nhập Google OAuth."""
+    # Kiểm tra Google OAuth có được config không
+    if not app.config["GOOGLE_CLIENT_ID"] or not app.config["GOOGLE_CLIENT_SECRET"]:
+        flash("Google Login chưa được cấu hình. Vui lòng liên hệ admin.", "warning")
+        return redirect(url_for("login"))
+    
     redirect_uri = url_for("google_callback", _external=True)
     return google.authorize_redirect(redirect_uri, prompt='select_account')
 
