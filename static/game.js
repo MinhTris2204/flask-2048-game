@@ -211,12 +211,16 @@ window.addEventListener("keydown", (e) => {
 });
 
 let touchStartX = 0, touchStartY = 0;
+// Touch events - Chỉ chặn khi bắt đầu trên board cho mobile
 boardEl.addEventListener("touchstart", e => {
-  e.preventDefault(); // Ngăn cuộn trang khi bắt đầu chạm khu vực game
-  const t = e.touches && e.touches[0];
-  if (!t) return;
-  touchStartX = t.clientX;
-  touchStartY = t.clientY;
+  // Chỉ block nếu bắt đầu trên board (tránh block toàn trang)
+  if (e.target === boardEl || boardEl.contains(e.target)) {
+    e.preventDefault();
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }
 }, { passive: false });
 
 boardEl.addEventListener("touchend", e => {
@@ -486,6 +490,56 @@ async function performSwap(row1, col1, row2, col2) {
     inputLocked = false;
   }
 }
+
+// Hamburger menu toggle logic
+const hamburgerMenuBtn = document.getElementById('hamburger-menu');
+const sideMenu = document.getElementById('side-menu');
+let sideBackdrop = null;
+
+// Hamburger menu: block scroll body/html khi mở
+function openSideMenu() {
+  sideMenu.classList.add('open');
+  if (!sideBackdrop) {
+    sideBackdrop = document.createElement('div');
+    sideBackdrop.className = 'side-backdrop';
+    sideBackdrop.onclick = closeSideMenu;
+    document.body.appendChild(sideBackdrop);
+  }
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+}
+function closeSideMenu() {
+  sideMenu.classList.remove('open');
+  if (sideBackdrop) {
+    sideBackdrop.remove();
+    sideBackdrop = null;
+  }
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+if (hamburgerMenuBtn && sideMenu) {
+  hamburgerMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (sideMenu.classList.contains('open')) closeSideMenu();
+    else openSideMenu();
+  });
+}
+document.addEventListener('click', function (e) {
+  if (
+    sideMenu.classList.contains('open') &&
+    !sideMenu.contains(e.target) &&
+    e.target !== hamburgerMenuBtn
+  ) {
+    closeSideMenu();
+  }
+});
+window.addEventListener('resize', function () {
+  if (window.innerWidth > 769) closeSideMenu();
+});
+// Đảm bảo khi vào lần đầu sẽ đóng side nếu mobile
+window.addEventListener('DOMContentLoaded', function () {
+  if (window.innerWidth <= 769) closeSideMenu();
+});
 
 
 document.addEventListener("DOMContentLoaded", startGame);

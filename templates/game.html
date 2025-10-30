@@ -3,10 +3,17 @@
 
 {% block content %}
 <section class="game-wrap container">
+  <!-- Hamburger menu button for mobile -->
+  <button id="hamburger-menu" class="hamburger-menu" aria-label="Menu" style="display:block;position:absolute;top:14px;left:20px;z-index:20">
+    <span style="display:block;width:28px;height:4px;background:#0ea5e9;margin:6px 0;border-radius:2px;"></span>
+    <span style="display:block;width:28px;height:4px;background:#0ea5e9;margin:6px 0;border-radius:2px;"></span>
+    <span style="display:block;width:28px;height:4px;background:#0ea5e9;margin:6px 0;border-radius:2px;"></span>
+  </button>
+
   <div class="game-layout">
 
 
-    <aside class="side">
+    <aside class="side" id="side-menu">
  
       <div class="panel">
         <div class="links">
