@@ -212,13 +212,15 @@ window.addEventListener("keydown", (e) => {
 
 let touchStartX = 0, touchStartY = 0;
 boardEl.addEventListener("touchstart", e => {
+  e.preventDefault(); // Ngăn cuộn trang khi bắt đầu chạm khu vực game
   const t = e.touches && e.touches[0];
   if (!t) return;
   touchStartX = t.clientX;
   touchStartY = t.clientY;
-}, { passive: true });
+}, { passive: false });
 
 boardEl.addEventListener("touchend", e => {
+  e.preventDefault(); // Ngăn cuộn trang khi kết thúc vuốt khu vực game
   const t = e.changedTouches && e.changedTouches[0];
   if (!t) return;
   const dx = t.clientX - touchStartX;
@@ -227,7 +229,7 @@ boardEl.addEventListener("touchend", e => {
   if (Math.max(absx, absy) < 30) return;
   if (absx > absy) handleMove(dx > 0 ? "right" : "left");
   else handleMove(dy > 0 ? "down" : "up");
-}, { passive: true });
+}, { passive: false });
 
 btnNew?.addEventListener("click", startGame);
 btnUndo?.addEventListener("click", undo);
