@@ -21,8 +21,14 @@ def payos_cancel():
         if order and order.status == 'pending':
             order.status = 'cancelled'
             db.session.commit()
+            
+            # Render payment error page thay vì redirect
+            return render_template("payment_error.html",
+                                 error_message="Bạn đã hủy thanh toán",
+                                 error_code="CANCELLED")
     
-    flash("Bạn đã hủy thanh toán!", "warning")
+    # Nếu không có order_code hoặc order không tìm thấy
+    flash("Không tìm thấy thông tin đơn hàng!", "warning")
     return redirect(url_for("premium_manage"))
 
 
