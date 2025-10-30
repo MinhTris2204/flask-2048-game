@@ -96,8 +96,8 @@ def payment(plan_id):
                     description=description,
                     return_url=PAYOS_RETURN_URL,
                     cancel_url=PAYOS_CANCEL_URL,
-                    buyer_name=current_user.username,
-                    buyer_email=current_user.email if current_user.email else None
+                    buyer_name=None,  # Tạm thời không gửi để test signature
+                    buyer_email=None
                 )
                 
                 print(f">>> PayOS Response: {result}")
