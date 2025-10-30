@@ -1,0 +1,5 @@
+.\.venv\Scripts\Activate.ps1
+
+#===Nạp bảng vào csdl==#
+python migration.py
+

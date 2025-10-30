@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán - 2048{% endblock %}
+{% block content %}
+<div class="card payment-card">
+  <h2>Thanh toán Premium</h2>
+  
+  <div class="payment-plan-box">
+    <h3 class="payment-plan-title">{{ plan.name }}</h3>
+    <p class="payment-plan-desc">{{ plan.description if plan.description else 'Hưởng trọn vẹn tính năng Premium' }}</p>
+    <div class="payment-plan-price">
+      {{ "{:,.0f}".format(plan_price) }} VND
+    </div>
+  </div>
+
+  <form method="post">
+    <div class="payment-method-section">
+      <div class="vnpay-header">
+        <div class="vnpay-emoji">🇻🇳</div>
+        <h3 class="vnpay-title">Thanh toán qua VNPay</h3>
+        <p class="vnpay-subtitle">Hỗ trợ tất cả ngân hàng tại Việt Nam</p>
+      </div>
+      
+      <input type="hidden" name="payment_method" value="vnpay">
+      
+      <div class="vnpay-features">
+        <p class="feature-item">✓ Hỗ trợ hơn 40 ngân hàng</p>
+        <p class="feature-item">✓ Thanh toán nhanh và an toàn</p>
+        <p class="feature-item">✓ Không phí phát sinh</p>
+      </div>
+    </div>
+
+    <div class="payment-total">
+      <h4 class="payment-total-title">Tổng cộng:</h4>
+      <div class="payment-total-amount">
+        <span>Thành tiền:</span>
+        <span>{{ "{:,.0f}".format(plan_price) }} VND</span>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-vnpay">
+      Thanh toán qua VNPay
+    </button>
+
+    <div class="payment-back-link">
+      <a href="{{ url_for('premium_manage') }}" class="link-muted">
+        ← Chọn gói khác
+      </a>
+    </div>
+  </form>
+
+  <div class="payment-security-info">
+    <p class="security-text">🔒 Thanh toán an toàn qua cổng VNPay</p>
+    <p class="security-text">✓ Được VNPay bảo hộ giao dịch</p>
+    <p class="security-text">✓ Hỗ trợ hoàn tiền trong 7 ngày nếu không hài lòng</p>
+  </div>
+</div>
+{% endblock %}

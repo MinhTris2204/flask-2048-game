@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}2048{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <nav class="nav-wrapper">
+        <div class="nav-left">
+          <a class="brand" href="{{ url_for('game') }}">
+            <span class="brand-icon">🎮</span>
+            <span class="brand-text">GAME 2048</span>
+          </a>
+        </div>
+        
+        <div class="nav-right">
+          {% if current_user.is_authenticated %}
+            <div class="user-info">
+              <span class="welcome-icon">👋</span>
+              <span class="welcome">Xin chào, <b>{{ current_user.username }}</b></span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Đăng xuất</a>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="btn-login">Đăng nhập</a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <div class="flash">
+          {% for cat, msg in messages %}
+            <div class="flash-item {{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

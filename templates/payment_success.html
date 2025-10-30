@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Kết quả thanh toán - 2048{% endblock %}
+{% block content %}
+<div class="card success-card">
+  <div class="success-header">
+    <div class="success-icon-circle">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+              stroke="white" 
+              stroke-width="2" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h2 class="success-title">✅ Thanh toán thành công!</h2>
+    <p class="success-message">
+      Premium đã được kích hoạt thành công
+    </p>
+  </div>
+
+  <div class="success-details-box">
+    <h3 class="success-details-title">Chi tiết giao dịch</h3>
+    
+    <div class="success-details-grid">
+      <div class="success-detail-row">
+        <span class="detail-label">Gói Premium:</span>
+        <span class="detail-value">{{ plan_name }}</span>
+      </div>
+      
+      <div class="success-detail-row">
+        <span class="detail-label">Thời hạn:</span>
+        <span class="detail-value">{{ duration }}</span>
+      </div>
+      
+      <div class="success-detail-row">
+        <span class="detail-label">Số tiền:</span>
+        <span class="detail-value-accent">{{ "{:,.0f}".format(amount) }} VND</span>
+      </div>
+      
+      <div class="success-detail-row">
+        <span class="detail-label">Mã giao dịch:</span>
+        <span class="detail-value-monospace">{{ transaction_no }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-congrats-box">
+    <h4 class="congrats-title">🎉 Chúc mừng!</h4>
+    <p class="congrats-message">
+      Bạn đã có thể sử dụng đầy đủ tính năng Premium:
+    </p>
+    <ul class="congrats-list">
+      <li>💡 Gợi ý nước đi tốt nhất (Hint)</li>
+      <li>🔀 Xáo trộn bàn cờ (Shuffle)</li>
+      <li>🔄 Đổi chỗ 2 ô bất kỳ (Swap)</li>
+    </ul>
+  </div>
+
+  <div class="success-actions">
+    <a href="{{ url_for('game') }}" class="btn-primary">
+      🎮 Chơi ngay
+    </a>
+    
+    <a href="{{ url_for('premium_packages') }}" class="btn-secondary">
+      ⭐ Xem gói khác
+    </a>
+  </div>
+
+  <div class="payment-footer-info">
+    <p class="footer-text">📧 Email xác nhận đã được gửi đến hộp thư của bạn</p>
+    <p class="footer-text">🛡️ Giao dịch được bảo vệ bởi VNPay</p>
+  </div>
+</div>
+{% endblock %}

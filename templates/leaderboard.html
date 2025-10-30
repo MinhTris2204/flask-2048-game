@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Bảng xếp hạng - 2048{% endblock %}
+{% block content %}
+<div class="leaderboard-container">
+  <div class="leaderboard-header">
+    <h1 class="leaderboard-title">
+      <span class="trophy-icon">🏆</span>
+      Top 20 Điểm Cao
+    </h1>
+    <p class="leaderboard-subtitle">Người chơi xuất sắc nhất</p>
+  </div>
+
+  <div class="leaderboard-table-wrapper">
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th class="rank-col">Xếp hạng</th>
+          <th class="player-col">Người chơi</th>
+          <th class="score-col">Điểm</th>
+          <th class="max-tile-col">Max Tile</th>
+          <th class="moves-col">Số lượt</th>
+          <th class="date-col">Ngày</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        {% set s = row[0] %}
+        {% set name = row[1] %}
+        <tr class="leaderboard-row {% if loop.index <= 3 %}top-3{% endif %}">
+          <td class="rank-cell">
+            {% if loop.index == 1 %}
+              <span class="rank-badge gold">🥇</span>
+            {% elif loop.index == 2 %}
+              <span class="rank-badge silver">🥈</span>
+            {% elif loop.index == 3 %}
+              <span class="rank-badge bronze">🥉</span>
+            {% else %}
+              <span class="rank-number">{{ loop.index }}</span>
+            {% endif %}
+          </td>
+          <td class="player-cell">
+            <span class="player-name">{{ name }}</span>
+          </td>
+          <td class="score-cell">
+            <span class="score-value">{{ s.score }}</span>
+          </td>
+          <td class="max-tile-cell">
+            <span class="tile-badge">{{ s.max_tile }}</span>
+          </td>
+          <td class="moves-cell">{{ s.moves }}</td>
+          <td class="date-cell">{{ s.created_at.strftime('%d/%m/%Y') if s.created_at else '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="leaderboard-footer">
+    <a href="{{ url_for('game') }}" class="btn-back">
+      <span>←</span>
+      <span>Quay lại game</span>
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block title %}Quản lý Premium - 2048{% endblock %}
+{% block content %}
+
+<div class="premium-manage-page">
+  <!-- Header -->
+  <div class="premium-header">
+    <h1 class="premium-title">
+      <span class="premium-icon">⭐</span>
+      Quản lý Premium
+    </h1>
+    <p class="premium-subtitle">Mở khóa tất cả tính năng với Premium</p>
+  </div>
+
+  <!-- Premium Status Card -->
+  <div class="premium-status-wrapper">
+    <div class="premium-status-card {% if is_premium %}premium-active{% else %}premium-inactive{% endif %}">
+      {% if is_premium %}
+        <!-- Active Premium -->
+        <div class="status-header">
+          <div class="status-icon-wrapper">
+            <span class="status-icon">⭐</span>
+            <div class="status-badge">Active</div>
+          </div>
+        </div>
+        
+        <div class="status-content">
+          <h3 class="status-title">Premium đang hoạt động</h3>
+          <div class="status-info">
+            <div class="info-item">
+              <span class="info-label">Hết hạn:</span>
+              <span class="info-value">
+                {% if premium_expires_at %}
+                  {{ premium_expires_at.strftime('%d/%m/%Y %H:%M') }}
+                {% else %}
+                  Không giới hạn
+                {% endif %}
+              </span>
+            </div>
+            {% if premium_expires_at %}
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar">
+                <div class="progress-fill" id="premium-progress"></div>
+              </div>
+              <span class="progress-text" id="progress-text">0% thời gian còn lại</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="status-actions">
+          <button onclick="cancelPremium()" class="btn-action-cancel">
+            <span class="btn-icon">🗑️</span>
+            <span>Hủy Premium</span>
+          </button>
+          <a href="{{ url_for('game') }}" class="btn-action-play">
+            <span class="btn-icon">🎮</span>
+            <span>Chơi ngay</span>
+          </a>
+        </div>
+      {% else %}
+        <!-- Inactive Premium -->
+        <div class="status-header">
+          <div class="status-icon-wrapper">
+            <span class="status-icon inactive">🔒</span>
+          </div>
+        </div>
+        
+        <div class="status-content">
+          <h3 class="status-title">Chưa có Premium</h3>
+          <p class="status-description">Nâng cấp để mở khóa tất cả tính năng độc quyền!</p>
+        </div>
+        
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-icon">💡</span>
+            <span>Gợi ý nước đi thông minh</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔀</span>
+            <span>Xáo trộn bàn cờ</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔄</span>
+            <span>Đổi chỗ 2 ô bất kỳ</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Premium Plans -->
+  <div class="premium-plans-wrapper">
+    <h2 class="section-title">📦 Gói Premium</h2>
+    <div class="plans-grid">
+      {% for plan in plans %}
+      <div class="plan-card {% if plan.duration_days >= 365 %}plan-yearly{% endif %}">
+        <div class="plan-header">
+          <h3 class="plan-name">{{ plan.name }}</h3>
+          {% if plan.duration_days >= 365 %}
+          <div class="popular-badge">Phổ biến</div>
+          {% endif %}
+        </div>
+        
+        <div class="plan-price-section">
+          <div class="plan-price">
+            <span class="price-amount">{{ "{:,.0f}".format(plan.price) }}</span>
+            <span class="price-unit">VND</span>
+          </div>
+          <div class="plan-duration">
+            {% if plan.duration_days >= 365 %}
+              {{ (plan.duration_days / 365) | round(1) }} năm
+            {% else %}
+              {{ plan.duration_days }} ngày
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="plan-description">
+          {{ plan.description if plan.description else 'Hưởng trọn vẹn tính năng Premium' }}
+        </div>
+        
+        <a href="{{ url_for('payment', plan_id=plan.id) }}" class="plan-btn">
+          {% if is_premium %}
+            <span>🔄 Gia hạn</span>
+          {% else %}
+            <span>🚀 Mua ngay</span>
+          {% endif %}
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Order History -->
+  {% if orders %}
+  <div class="order-history-wrapper">
+    <h2 class="section-title">📋 Lịch sử giao dịch</h2>
+    <div class="orders-list">
+      {% for order in orders %}
+      <div class="order-card">
+        <div class="order-main">
+          <div class="order-icon">
+            {% if order.status == 'completed' %}✅
+            {% elif order.status == 'pending' %}⏳
+            {% elif order.status == 'failed' %}❌
+            {% elif order.status == 'cancelled' %}🗑️
+            {% else %}📄{% endif %}
+          </div>
+          
+          <div class="order-details">
+            <h4 class="order-name">
+              {{ order.plan.name if order.plan else 'Premium' }}
+            </h4>
+            <p class="order-date">
+              {{ order.created_at.strftime('%d/%m/%Y %H:%M') }}
+            </p>
+            {% if order.transaction_id %}
+            <p class="order-transaction">
+              <span class="transaction-label">Mã giao dịch:</span>
+              <span class="transaction-code">{{ order.transaction_id }}</span>
+            </p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="order-right">
+          <div class="order-amount">
+            {{ "{:,.0f}".format(order.amount) }} <span class="currency">VND</span>
+          </div>
+          <div class="order-status order-status-{{ order.status }}">
+            {% if order.status == 'completed' %}Hoàn thành
+            {% elif order.status == 'pending' %}Đang xử lý
+            {% elif order.status == 'failed' %}Thất bại
+            {% elif order.status == 'cancelled' %}Đã hủy
+            {% else %}{{ order.status }}{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Back Button -->
+  <div class="premium-footer">
+    <a href="{{ url_for('game') }}" class="back-link">
+      <span>←</span>
+      <span>Quay lại game</span>
+    </a>
+  </div>
+</div>
+
+<!-- Toast Notification Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+function showToast(message, type = 'info', duration = 3000) {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  const icons = {
+    success: '✅',
+    error: '❌',
+    warning: '⚠️',
+    info: 'ℹ️'
+  };
+  
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+    <span class="toast-content">${message}</span>
+    <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+  `;
+  
+  const container = document.getElementById('toast-container');
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, duration);
+  
+  return toast;
+}
+
+async function cancelPremium() {
+  if (!confirm("Bạn có chắc muốn hủy Premium? Bạn sẽ mất quyền truy cập vào các tính năng premium ngay lập tức.")) {
+    return;
+  }
+  
+  try {
+    const res = await fetch("/api/premium/cancel", { method: "POST" });
+    const data = await res.json();
+    
+    if (data.ok) {
+      showToast("Premium đã được hủy thành công!", 'success');
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      showToast(data.message || "Không thể hủy Premium", 'error');
+    }
+  } catch (e) {
+    console.error("Cancel premium error:", e);
+    showToast("Có lỗi xảy ra khi hủy Premium", 'error');
+  }
+}
+
+// Calculate and update progress bar
+{% if premium_expires_at %}
+(function() {
+  const expiry = new Date("{{ premium_expires_at.isoformat() }}");
+  const now = new Date();
+  const created = new Date("{{ orders|selectattr('status', 'equalto', 'completed')|map(attribute='created_at')|list|last }}");
+  const total = expiry - created;
+  const elapsed = now - created;
+  const progress = Math.max(0, Math.min(100, (total - elapsed) / total * 100));
+  
+  const progressFill = document.getElementById('premium-progress');
+  const progressText = document.getElementById('progress-text');
+  
+  if (progressFill && progressText) {
+    progressFill.style.width = progress + '%';
+    progressText.textContent = Math.round(progress) + '% thời gian còn lại';
+  }
+})();
+{% endif %}
+</script>
+{% endblock %}

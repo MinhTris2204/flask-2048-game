@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán thất bại - 2048{% endblock %}
+{% block content %}
+<div class="card error-card">
+  <div class="error-header">
+    <div class="error-icon-circle">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+              stroke="white" 
+              stroke-width="2" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h2 class="error-title">❌ Thanh toán thất bại</h2>
+    <p class="error-message">
+      {{ error_message }}
+    </p>
+  </div>
+
+  <div class="error-info-box">
+    <h4 class="error-info-title">Thông tin lỗi</h4>
+    <p class="error-info-text">
+      Mã lỗi: <strong>{{ error_code }}</strong>
+    </p>
+  </div>
+
+  <div class="error-suggestions">
+    <h4 class="error-suggestions-title">💡 Gợi ý khắc phục</h4>
+    <ul class="error-suggestions-list">
+      <li>Kiểm tra số dư tài khoản/thẻ</li>
+      <li>Xác nhận thông tin thẻ chính xác</li>
+      <li>Thử phương thức thanh toán khác</li>
+      <li>Liên hệ ngân hàng nếu cần thiết</li>
+    </ul>
+  </div>
+
+  <div class="error-actions">
+    <a href="{{ url_for('premium_packages') }}" class="btn-primary">
+      🔄 Thử lại
+    </a>
+    
+    <a href="{{ url_for('game') }}" class="btn-secondary">
+      🎮 Về game
+    </a>
+  </div>
+
+  <div class="payment-footer-info">
+    <p class="footer-text">🛡️ Giao dịch được bảo vệ bởi VNPay</p>
+    <p class="footer-text">📞 Hỗ trợ: 1900 1234 (miễn phí)</p>
+  </div>
+</div>
+{% endblock %}

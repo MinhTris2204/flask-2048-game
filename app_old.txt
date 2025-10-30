@@ -1,0 +1,782 @@
+import os
+import uuid
+from datetime import timedelta, datetime
+from dotenv import load_dotenv
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import (
+    LoginManager, login_user, login_required, logout_user,
+    current_user, UserMixin
+)
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func, desc, and_
+from authlib.integrations.flask_client import OAuth
+from game_logic import Game2048
+from vnpay_config import VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_URL, VNPAY_RETURN_URL, VNPAY_IPN_URL
+from vnpay_helper import VNPay
+
+load_dotenv()
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "devsecret")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///game2048.db")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=7)
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+# Khởi tạo VNPAY
+vnpay = VNPay(VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_URL)
+
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+
+# Google OAuth configuration
+app.config["GOOGLE_CLIENT_ID"] = os.getenv("GOOGLE_CLIENT_ID", "")
+app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET", "")
+
+# OAuth setup
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=app.config["GOOGLE_CLIENT_ID"],
+    client_secret=app.config["GOOGLE_CLIENT_SECRET"],
+    authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
+    authorize_params=None,
+    access_token_url='https://oauth2.googleapis.com/token',
+    access_token_params=None,
+    refresh_token_url=None,
+    client_kwargs={
+        'scope': 'openid email profile',
+        'token_endpoint_auth_method': 'client_secret_post',
+    },
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
+)
+
+
+# --------------------- Models ---------------------
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)  # Nullable for OAuth users
+    email = db.Column(db.String(120), unique=True, nullable=True)
+    google_id = db.Column(db.String(255), unique=True, nullable=True)
+    is_premium = db.Column(db.Boolean, default=False, nullable=False)
+    premium_expires_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    def set_password(self, pw: str):
+        self.password_hash = generate_password_hash(pw)
+
+    def check_password(self, pw: str) -> bool:
+        if not self.password_hash:
+            return False
+        return check_password_hash(self.password_hash, pw)
+    
+    def check_premium_status(self):
+        """Kiểm tra premium có còn hiệu lực không."""
+        if not self.is_premium or not self.premium_expires_at:
+            return False
+        if datetime.now() > self.premium_expires_at:
+            self.is_premium = False
+            db.session.commit()
+            return False
+        return True
+    
+    def get_premium_days_left(self):
+        """Trả về số ngày premium còn lại."""
+        if not self.premium_expires_at:
+            return 0
+        delta = self.premium_expires_at - datetime.now()
+        return max(0, delta.days)
+
+
+class Score(db.Model):
+    __tablename__ = "scores"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    max_tile = db.Column(db.Integer, nullable=False)
+    moves = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+
+class PremiumPlan(db.Model):
+    __tablename__ = "premium_plans"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    duration_days = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    description = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+
+class Order(db.Model):
+    __tablename__ = "orders"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey("premium_plans.id"), nullable=True)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    status = db.Column(db.String(20), default="pending", nullable=False)
+    payment_method = db.Column(db.String(50))
+    transaction_id = db.Column(db.String(100), unique=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    completed_at = db.Column(db.DateTime)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
+
+
+# --------------------- Helpers: load/save game state ---------------------
+def load_game() -> Game2048:
+    g = Game2048()
+    state = session.get("game_state")
+    if state:
+        g.__dict__.update(state)
+        # đảm bảo grid không bị mất
+        g.grid = state.get("grid", g.grid)
+    return g
+
+
+def save_game(g: Game2048):
+    session["game_state"] = g.__dict__.copy()
+    session["game_state"]["grid"] = g.grid
+
+
+# --------------------- Routes: Auth ---------------------
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        if not username or not password:
+            flash("Vui lòng nhập đủ thông tin.", "danger")
+            return redirect(url_for("register"))
+        if User.query.filter_by(username=username).first():
+            flash("Tên đăng nhập đã tồn tại.", "warning")
+            return redirect(url_for("register"))
+
+        u = User(username=username)
+        u.set_password(password)
+        db.session.add(u)
+        db.session.commit()
+        flash("Đăng ký thành công! Vui lòng đăng nhập.", "success")
+        return redirect(url_for("login"))
+    return render_template("auth_register.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            login_user(user, remember=True)
+            # Set session permanent để duy trì session lâu hơn
+            session.permanent = True
+            return redirect(url_for("game"))
+        flash("Sai tên đăng nhập hoặc mật khẩu.", "danger")
+        return redirect(url_for("login"))
+    return render_template("auth_login.html")
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    session.pop("game_state", None)
+    flash("Đã đăng xuất.", "info")
+    return redirect(url_for("login"))
+
+
+@app.route("/login/google")
+def google_login():
+    """Bắt đầu quá trình đăng nhập Google OAuth."""
+    redirect_uri = url_for("google_callback", _external=True)
+    return google.authorize_redirect(redirect_uri, prompt='select_account')
+
+
+@app.route("/login/google/callback")
+def google_callback():
+    """Xử lý callback từ Google OAuth."""
+    try:
+        token = google.authorize_access_token()
+        user_info = token.get('userinfo')
+        
+        if not user_info:
+            flash("Không thể lấy thông tin từ Google.", "danger")
+            return redirect(url_for("login"))
+        
+        google_id = user_info.get('sub')
+        email = user_info.get('email')
+        name = user_info.get('name', email.split('@')[0] if email else 'user')
+        
+        # Tìm user theo google_id
+        user = User.query.filter_by(google_id=google_id).first()
+        
+        if user:
+            # User đã tồn tại, đăng nhập
+            login_user(user, remember=True)
+            flash(f"Chào mừng {user.username}!", "success")
+            return redirect(url_for("game"))
+        else:
+            # Kiểm tra email đã tồn tại chưa
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                # Link Google account với account hiện có
+                existing_user.google_id = google_id
+                if not existing_user.email:
+                    existing_user.email = email
+                db.session.commit()
+                login_user(existing_user, remember=True)
+                flash(f"Đã liên kết tài khoản Google với {existing_user.username}!", "success")
+                return redirect(url_for("game"))
+            
+            # Tạo username unique từ email hoặc name
+            base_username = name.replace(' ', '_').lower()
+            username = base_username
+            counter = 1
+            while User.query.filter_by(username=username).first():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            # Tạo user mới
+            new_user = User(
+                username=username,
+                email=email,
+                google_id=google_id
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            
+            login_user(new_user, remember=True)
+            flash(f"Tài khoản mới đã được tạo! Chào mừng {username}!", "success")
+            return redirect(url_for("game"))
+            
+    except Exception as e:
+        print(f"Google OAuth error: {e}")
+        flash("Có lỗi xảy ra khi đăng nhập với Google.", "danger")
+        return redirect(url_for("login"))
+
+
+# --------------------- Routes: Game & Leaderboard ---------------------
+@app.route("/")
+def home():
+    if current_user.is_authenticated:
+        return redirect(url_for("game"))
+    return redirect(url_for("login"))
+
+
+@app.route("/game")
+@login_required
+def game():
+    current_user.check_premium_status()
+    if "game_state" not in session:
+        g = Game2048()
+        g.setup()
+        save_game(g)
+    return render_template("game.html", 
+                           username=current_user.username,
+                           is_premium=current_user.is_premium)
+
+
+@app.route("/leaderboard")
+def leaderboard():
+    best_per_user = (
+        db.session.query(
+            Score.user_id.label("user_id"),
+            func.max(Score.score).label("best_score")
+        )
+        .group_by(Score.user_id)
+        .subquery()
+    )
+
+    rows = (
+        db.session.query(Score, User.username)
+        .join(best_per_user, and_(
+            Score.user_id == best_per_user.c.user_id,
+            Score.score == best_per_user.c.best_score
+        ))
+        .join(User, User.id == Score.user_id)
+        .order_by(
+            desc(Score.score),
+            desc(Score.max_tile),
+            Score.moves.asc(),
+            Score.created_at.asc()
+        )
+        .limit(20)
+        .all()
+    )
+
+    return render_template("leaderboard.html", rows=rows)
+
+
+# --------------------- API: Game Actions ---------------------
+@app.route("/api/start_game", methods=["POST"])
+@login_required
+def start_game():
+    g = Game2048()
+    result = g.setup()
+    save_game(g)
+    return jsonify({"ok": True, **result, "can_undo": False})
+
+
+@app.route("/api/move", methods=["POST"])
+@login_required
+def move():
+    if "game_state" not in session:
+        return jsonify({"ok": False, "message": "Chưa khởi tạo trò chơi"}), 400
+
+    payload = request.get_json(silent=True) or {}
+    direction = payload.get("direction")
+    if direction not in ("up", "down", "left", "right"):
+        return jsonify({"ok": False, "message": "Hướng không hợp lệ"}), 400
+
+    g = load_game()
+    result = g.move(direction)
+
+  
+    resp = {"ok": True, **result, "can_undo": g.last_state is not None}
+
+    if result.get("changed"):
+    
+        save_game(g)
+     
+        over = g.check_game_over() 
+        if over:
+           
+            score_entry = Score(
+                user_id=current_user.id,
+                score=g.score,
+                max_tile=g.max_tile(),
+                moves=g.moves
+            )
+            db.session.add(score_entry)
+            db.session.commit()
+           
+            session.pop("game_state", None)
+            resp["game_over"] = over
+    else:
+       
+        save_game(g)
+
+    return jsonify(resp)
+
+
+@app.route("/api/undo", methods=["POST"])
+@login_required
+def undo():
+    if "game_state" not in session:
+        return jsonify({"ok": False, "message": "Chưa khởi tạo trò chơi"}), 400
+
+    g = load_game()
+    result = g.undo()
+    save_game(g) 
+    return jsonify({"ok": True, **result, "can_undo": False})
+
+
+@app.route("/api/submit_score", methods=["POST"])
+@login_required
+def submit_score():
+    payload = request.get_json(silent=True) or {}
+    try:
+        score = int(payload.get("score", 0))
+        max_tile = int(payload.get("max_tile", 2))
+        moves = int(payload.get("moves", 0))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "message": "Payload không hợp lệ"}), 400
+
+    if score < 0 or max_tile < 2 or moves < 0:
+        return jsonify({"ok": False, "message": "Giá trị không hợp lệ"}), 400
+
+    s = Score(user_id=current_user.id, score=score, max_tile=max_tile, moves=moves)
+    db.session.add(s)
+    db.session.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/me")
+@login_required
+def me():
+    current_user.check_premium_status()
+    return jsonify({
+        "id": current_user.id, 
+        "username": current_user.username,
+        "is_premium": current_user.is_premium,
+        "premium_days_left": current_user.get_premium_days_left(),
+        "premium_expires_at": current_user.premium_expires_at.strftime("%Y-%m-%d %H:%M:%S") if current_user.premium_expires_at else None
+    })
+
+
+@app.route("/premium")
+@login_required
+def premium_packages():
+    """Chuyển hướng đến trang quản lý Premium."""
+    return redirect(url_for("premium_manage"))
+
+
+@app.route("/premium/manage")
+@login_required
+def premium_manage():
+    """Trang quản lý Premium."""
+    current_user.check_premium_status()
+    
+    # Lấy các gói Premium có sẵn
+    plans = PremiumPlan.query.filter_by(is_active=True).order_by(PremiumPlan.price).all()
+    
+    # Lấy lịch sử đơn hàng của user
+    orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(10).all()
+    
+    return render_template("premium_manage.html", 
+                         plans=plans, 
+                         orders=orders,
+                         is_premium=current_user.is_premium,
+                         premium_expires_at=current_user.premium_expires_at)
+
+
+@app.route("/payment/<int:plan_id>", methods=["GET", "POST"])
+@login_required
+def payment(plan_id):
+    plan = PremiumPlan.query.get_or_404(plan_id)
+    if not plan.is_active:
+        flash("Gói này không còn khả dụng", "danger")
+        return redirect(url_for("premium_manage"))
+    
+    # Convert plan price to float for template
+    plan_price = float(plan.price)
+    
+    if request.method == "POST":
+        payment_method = request.form.get("payment_method", "vnpay")
+        
+        if payment_method == "vnpay":
+            # Set session permanent trước khi redirect để giữ session
+            session.permanent = True
+            app.permanent_session_lifetime = timedelta(days=7)
+            
+            # Tạo order pending
+            order = Order(
+                user_id=current_user.id,
+                plan_id=plan.id,
+                amount=plan.price,
+                status="pending",
+                payment_method="vnpay",
+                transaction_id=str(uuid.uuid4())
+            )
+            db.session.add(order)
+            db.session.commit()
+            
+            # Tạo URL thanh toán VNPay
+            ip_addr = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+            order_info = f"Thanh toan goi Premium: {plan.name}"
+            
+            # Thời gian hết hạn (15 phút)
+            expire_date = (datetime.now() + timedelta(minutes=15)).strftime('%Y%m%d%H%M%S')
+            
+            vnpay_url = vnpay.create_payment_url(
+                amount=float(plan.price),
+                order_id=order.id,
+                order_info=order_info,
+                return_url=VNPAY_RETURN_URL,
+                ip_addr=ip_addr,
+                locale="vn",
+                order_type="other",
+                expire_date=expire_date
+            )
+            
+            return redirect(vnpay_url)
+        else:
+            # Xử lý thanh toán mock khác
+            # Calculate new expiration date
+            if current_user.premium_expires_at and current_user.premium_expires_at > datetime.now():
+                new_expires_at = current_user.premium_expires_at + timedelta(days=plan.duration_days)
+            else:
+                new_expires_at = datetime.now() + timedelta(days=plan.duration_days)
+            
+            order = Order(
+                user_id=current_user.id,
+                plan_id=plan.id,
+                amount=plan.price,
+                status="completed",
+                payment_method=payment_method,
+                transaction_id=str(uuid.uuid4()),
+                completed_at=datetime.now()
+            )
+            db.session.add(order)
+            
+            current_user.is_premium = True
+            current_user.premium_expires_at = new_expires_at
+            db.session.commit()
+            
+            flash("Thanh toán thành công! Premium đã được kích hoạt.", "success")
+            return redirect(url_for("game"))
+    
+    return render_template("payment.html", plan=plan, plan_price=plan_price)
+
+
+@app.route("/vnpay_return")
+def vnpay_return():
+    """VNPay Return URL - Hiển thị kết quả thanh toán cho khách hàng"""
+    # Lấy tất cả params từ VNPay
+    vnp_params = {}
+    for key, value in request.args.items():
+        if key.startswith('vnp_'):
+            vnp_params[key] = value
+    
+    # Kiểm tra checksum
+    if not vnpay.verify_return(vnp_params.copy()):
+        flash("Chữ ký không hợp lệ!", "danger")
+        return redirect(url_for("game"))
+    
+    # Parse response
+    result = vnpay.parse_response(vnp_params)
+    
+    # Kiểm tra kết quả thanh toán
+    if result['response_code'] == '00' and result['transaction_status'] == '00':
+        # Thanh toán thành công
+        order_id = result['txn_ref']
+        order = Order.query.get(order_id)
+        
+        if order and order.status == 'pending':
+            plan = PremiumPlan.query.get(order.plan_id)
+            user = User.query.get(order.user_id)
+            
+            if not user:
+                flash("Không tìm thấy người dùng!", "danger")
+                return redirect(url_for("game"))
+            
+            # Calculate premium expiration
+            if user.premium_expires_at and user.premium_expires_at > datetime.now():
+                new_expires_at = user.premium_expires_at + timedelta(days=plan.duration_days)
+                duration_text = f"{plan.duration_days} ngày"
+            else:
+                new_expires_at = datetime.now() + timedelta(days=plan.duration_days)
+                duration_text = f"{plan.duration_days} ngày"
+            
+            # Update order
+            order.status = 'completed'
+            order.completed_at = datetime.now()
+            order.transaction_id = result['transaction_no']
+            
+            # Activate premium
+            user.is_premium = True
+            user.premium_expires_at = new_expires_at
+            
+            db.session.commit()
+            
+            # Đăng nhập user sau khi xử lý thanh toán để giữ session
+            if not current_user.is_authenticated:
+                login_user(user, remember=True)
+                session.permanent = True
+            elif current_user.id != user.id:
+                # Nếu đang đăng nhập user khác, đăng xuất và đăng nhập user này
+                logout_user()
+                login_user(user, remember=True)
+                session.permanent = True
+            
+            return render_template("payment_success.html", 
+                                 plan_name=plan.name,
+                                 duration=duration_text,
+                                 amount=result['amount'],
+                                 transaction_no=result['transaction_no'])
+        else:
+            flash("Đơn hàng không hợp lệ hoặc đã được xử lý!", "warning")
+            return redirect(url_for("game"))
+    else:
+        # Thanh toán thất bại
+        error_messages = {
+            '07': 'Giao dịch bị nghi ngờ gian lận',
+            '09': 'Thẻ/Tài khoản chưa đăng ký InternetBanking',
+            '10': 'Xác thực thông tin sai quá 3 lần',
+            '11': 'Đã hết hạn chờ thanh toán',
+            '12': 'Thẻ/Tài khoản bị khóa',
+            '13': 'Sai mật khẩu OTP',
+            '24': 'Khách hàng hủy giao dịch',
+            '51': 'Tài khoản không đủ số dư',
+            '65': 'Vượt quá hạn mức giao dịch trong ngày',
+            '75': 'Ngân hàng đang bảo trì',
+            '79': 'Sai mật khẩu quá số lần quy định',
+            '99': 'Lỗi khác'
+        }
+        
+        error_message = error_messages.get(result['response_code'], f"Mã lỗi: {result['response_code']}")
+        
+        return render_template("payment_error.html", 
+                             error_message=error_message,
+                             error_code=result['response_code'])
+
+
+@app.route("/vnpay_ipn")
+def vnpay_ipn():
+    """VNPay IPN URL - Xử lý kết quả thanh toán từ VNPay (server-side)"""
+    # Lấy tất cả params từ VNPay
+    vnp_params = {}
+    for key, value in request.args.items():
+        if key.startswith('vnp_'):
+            vnp_params[key] = value
+    
+    # Kiểm tra checksum
+    if not vnpay.verify_return(vnp_params.copy()):
+        return jsonify({'RspCode': '97', 'Message': 'Invalid signature'}), 200
+    
+    # Parse response
+    result = vnpay.parse_response(vnp_params)
+    
+    # Tìm order
+    order_id = result['txn_ref']
+    order = Order.query.get(order_id)
+    
+    if not order:
+        return jsonify({'RspCode': '01', 'Message': 'Order not found'}), 200
+    
+    # Kiểm tra số tiền
+    if float(order.amount) != result['amount']:
+        return jsonify({'RspCode': '04', 'Message': 'Invalid amount'}), 200
+    
+    # Kiểm tra trạng thái
+    if order.status != 'pending':
+        return jsonify({'RspCode': '02', 'Message': 'Order already confirmed'}), 200
+    
+    # Xử lý kết quả
+    if result['response_code'] == '00' and result['transaction_status'] == '00':
+        # Thanh toán thành công
+        plan = PremiumPlan.query.get(order.plan_id)
+        user = User.query.get(order.user_id)
+        
+        if plan and user:
+            # Calculate premium expiration
+            if user.premium_expires_at and user.premium_expires_at > datetime.now():
+                new_expires_at = user.premium_expires_at + timedelta(days=plan.duration_days)
+            else:
+                new_expires_at = datetime.now() + timedelta(days=plan.duration_days)
+            
+            # Update order
+            order.status = 'completed'
+            order.completed_at = datetime.now()
+            order.transaction_id = result['transaction_no']
+            
+            # Activate premium
+            user.is_premium = True
+            user.premium_expires_at = new_expires_at
+            
+            db.session.commit()
+            
+            return jsonify({'RspCode': '00', 'Message': 'Success'}), 200
+    
+    # Thanh toán thất bại
+    order.status = 'failed'
+    db.session.commit()
+    
+    return jsonify({'RspCode': '00', 'Message': 'Confirmed'}), 200
+
+
+# --------------------- CLI tiện lợi ---------------------
+@app.route("/api/premium/cancel", methods=["POST"])
+@login_required
+def cancel_premium():
+    """Hủy Premium subscription."""
+    current_user.check_premium_status()
+    
+    if not current_user.is_premium:
+        return jsonify({"ok": False, "message": "Bạn chưa có Premium để hủy"}), 400
+    
+    # Ghi lại lịch sử hủy Premium vào orders
+    cancel_order = Order(
+        user_id=current_user.id,
+        plan_id=None,
+        amount=0,
+        status="cancelled",
+        payment_method="manual_cancel",
+        transaction_id=str(uuid.uuid4())
+    )
+    db.session.add(cancel_order)
+    
+    # Hủy Premium ngay lập tức
+    current_user.is_premium = False
+    current_user.premium_expires_at = None
+    
+    db.session.commit()
+    
+    return jsonify({"ok": True, "message": "Premium đã được hủy thành công"})
+
+
+@app.route("/api/premium/hint", methods=["POST"])
+@login_required
+def hint():
+    """Get game hint (premium feature)"""
+    current_user.check_premium_status()
+    if not current_user.is_premium:
+        return jsonify({"ok": False, "message": "Chức năng premium. Vui lòng nâng cấp!"}), 403
+    
+    if "game_state" not in session:
+        return jsonify({"ok": False, "message": "Chưa khởi tạo trò chơi"}), 400
+    
+    g = load_game()
+    result = g.get_hint()
+    if result:
+        save_game(g)
+        return jsonify({"ok": True, "direction": result.get("direction")})
+    
+    return jsonify({"ok": False, "message": "Không có gợi ý"}), 400
+
+
+@app.route("/api/premium/shuffle", methods=["POST"])
+@login_required
+def shuffle():
+    """Shuffle board (premium feature)"""
+    current_user.check_premium_status()
+    if not current_user.is_premium:
+        return jsonify({"ok": False, "message": "Chức năng premium. Vui lòng nâng cấp!"}), 403
+    
+    if "game_state" not in session:
+        return jsonify({"ok": False, "message": "Chưa khởi tạo trò chơi"}), 400
+    
+    g = load_game()
+    result = g.shuffle()
+    save_game(g)
+    return jsonify({"ok": True, "grid": result.get("grid")})
+
+
+@app.route("/api/premium/swap", methods=["POST"])
+@login_required
+def swap_tiles():
+    """Swap two tiles (premium feature)"""
+    current_user.check_premium_status()
+    if not current_user.is_premium:
+        return jsonify({"ok": False, "message": "Chức năng premium. Vui lòng nâng cấp!"}), 403
+    
+    if "game_state" not in session:
+        return jsonify({"ok": False, "message": "Chưa khởi tạo trò chơi"}), 400
+    
+    data = request.get_json()
+    row1 = data.get("row1")
+    col1 = data.get("col1")
+    row2 = data.get("row2")
+    col2 = data.get("col2")
+    
+    if row1 is None or col1 is None or row2 is None or col2 is None:
+        return jsonify({"ok": False, "message": "Thiếu tham số"}), 400
+    
+    g = load_game()
+    result = g.swap_two_tiles(row1, col1, row2, col2)
+    
+    if result.get("ok"):
+        save_game(g)
+    
+    return jsonify(result)
+
+
+@app.cli.command("init-db")
+def init_db():
+    db.create_all()
+    print("DB ready.")
+
+
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

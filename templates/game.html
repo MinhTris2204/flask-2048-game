@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Chơi 2048{% endblock %}
+
+{% block content %}
+<section class="game-wrap container">
+  <div class="game-layout">
+
+
+    <aside class="side">
+ 
+      <div class="panel">
+        <div class="links">
+          <a href="{{ url_for('leaderboard') }}">🏆 Bảng xếp hạng</a>
+        
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="score-box">
+          Score
+          <span id="score">0</span>
+        </div>
+        <div class="score-box">
+          Best
+          <span id="best">0</span>
+        </div>
+        <div class="score-box">
+          Moves
+          <span id="moves">0</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-undo">↩️ Hoàn tác</button>
+        <button id="btn-new" class="secondary">Ván mới</button>
+        <button id="btn-hint" class="premium" title="Gợi ý nước đi">💡 Gợi ý</button>
+        <button id="btn-shuffle" class="premium" title="Xáo trộn bàn cờ">🔀 Xáo trộn</button>
+        <button id="btn-swap" class="premium" title="Đổi chỗ 2 ô">🔄 Đổi chỗ 2 ô</button>
+      </div>
+      
+      <div class="premium-status" id="premium-status">
+        {% if is_premium %}
+          <a href="{{ url_for('premium_manage') }}" class="btn-manage-premium">⚙️ Quản lý Premium</a>
+        {% else %}
+          <a href="{{ url_for('premium_manage') }}" class="btn-upgrade">🌟 Nâng cấp Premium</a>
+        {% endif %}
+      </div>
+    </aside>
+
+    <div class="board" id="board"></div>
+
+  </div>
+</section>
+
+<!-- Toast Notification Container -->
+<div class="toast-container" id="toast-container"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // @ts-nocheck - Template variables from Jinja2
+  window.CURRENT_USER = "{{ username|e }}";
+  window.SUBMIT_SCORE_URL = "{{ url_for('submit_score') }}";
+  window.IS_PREMIUM = {{ 'true' if is_premium else 'false' }};
+</script>
+<script src="{{ url_for('static', filename='game.js') }}"></script>
+{% endblock %}
