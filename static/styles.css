@@ -400,6 +400,11 @@ main.container:has(.game-wrap) {
     width: 100%;
   }
   
+  .nav-right {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
   .brand {
     width: 100%;
     justify-content: center;
@@ -407,10 +412,18 @@ main.container:has(.game-wrap) {
   
   .user-info {
     font-size: 13px;
+    width: 100%;
+    justify-content: center;
   }
   
   .welcome {
     font-size: 14px;
+  }
+  
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 10px 16px;
   }
   
   .btn-logout,
@@ -2153,3 +2166,244 @@ main.container:has(.game-wrap) {
   box-shadow: none;
 }
 
+/* ========================================
+   RESPONSIVE MOBILE - Tối ưu cho điện thoại
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Container chung */
+  .container {
+    padding: 12px;
+  }
+  
+  body > main.container {
+    padding: 8px 12px;
+  }
+  
+  /* Premium page */
+  .premium-header {
+    padding: 20px 12px;
+  }
+  
+  .premium-title {
+    font-size: 24px;
+  }
+  
+  .premium-subtitle {
+    font-size: 14px;
+  }
+  
+  .premium-status-card {
+    padding: 20px;
+  }
+  
+  .plans-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .plan-card {
+    padding: 20px;
+  }
+  
+  .plan-name {
+    font-size: 18px;
+  }
+  
+  .price-amount {
+    font-size: 28px;
+  }
+  
+  /* Payment processing page */
+  .payment-processing-container {
+    padding: 12px;
+  }
+  
+  .payment-header {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .payment-timer-box {
+    width: 100%;
+  }
+  
+  .payment-info {
+    text-align: center;
+  }
+  
+  .payment-info h2 {
+    font-size: 18px;
+  }
+  
+  .payment-amount {
+    font-size: 24px;
+  }
+  
+  .payos-iframe-container {
+    height: 500px;
+  }
+  
+  .payment-footer-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .payment-help {
+    text-align: center;
+  }
+  
+  /* History page */
+  .history-page {
+    padding: 12px;
+  }
+  
+  .history-title {
+    font-size: 24px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .history-table-wrapper {
+    padding: 16px;
+    overflow-x: auto;
+  }
+  
+  .history-table {
+    font-size: 13px;
+  }
+  
+  .history-table thead th,
+  .history-table tbody td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+  
+  .tile-badge {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  /* Auth pages */
+  .auth {
+    margin: 16px auto;
+    padding: 0 12px;
+  }
+  
+  .auth h2 {
+    font-size: 20px;
+  }
+  
+  .auth input {
+    font-size: 14px;
+    padding: 12px 40px 12px 12px;
+  }
+  
+  .auth button {
+    font-size: 15px;
+    padding: 12px 16px;
+  }
+  
+  /* Game page */
+  .game-layout {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .side {
+    width: 100%;
+    max-height: 300px;
+  }
+  
+  /* Flash messages */
+  .flash-item {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+}
+
+/* Extra small mobile (< 400px) */
+@media (max-width: 400px) {
+  .board {
+    grid-template-columns: repeat(4, 65px);
+    grid-template-rows: repeat(4, 65px);
+    gap: 6px;
+    padding: 6px;
+  }
+  
+  .tile {
+    font-size: 20px;
+  }
+  
+  .score-box {
+    min-width: 80px;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .score-box span {
+    font-size: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .premium-title,
+  .history-title {
+    font-size: 20px;
+  }
+  
+  .premium-icon,
+  .history-icon {
+    font-size: 28px;
+  }
+}
+
+/* Landscape mode cho mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+  body > main.container {
+    overflow-y: auto;
+  }
+  
+  .game-wrap {
+    padding: 4px 0;
+  }
+  
+  .board {
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px);
+  }
+  
+  .side {
+    max-height: 250px;
+  }
+}
