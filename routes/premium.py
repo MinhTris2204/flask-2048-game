@@ -85,30 +85,44 @@ def payment(plan_id):
             db.session.commit()
             
             # Tạo payment link PayOS
-            description = f"Thanh toan goi Premium: {plan.name}"
-            
-            result = payos.create_payment_link(
-                order_code=order.id,
-                amount=int(plan.price),
-                description=description,
-                return_url=PAYOS_RETURN_URL,
-                cancel_url=PAYOS_CANCEL_URL,
-                buyer_name=current_user.username,
-                buyer_email=current_user.email if current_user.email else None
-            )
-            
-            if "error" in result:
-                print(f">>> PayOS Error: {result.get('error')}")
-                flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+            try:
+                description = f"Thanh toan goi Premium: {plan.name}"
+                
+                print(f">>> Creating PayOS link for order {order.id}, amount {plan.price}")
+                
+                result = payos.create_payment_link(
+                    order_code=order.id,
+                    amount=int(plan.price),
+                    description=description,
+                    return_url=PAYOS_RETURN_URL,
+                    cancel_url=PAYOS_CANCEL_URL,
+                    buyer_name=current_user.username,
+                    buyer_email=current_user.email if current_user.email else None
+                )
+                
+                print(f">>> PayOS Response: {result}")
+                
+                if "error" in result:
+                    print(f">>> PayOS Error: {result.get('error')}")
+                    flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                    return redirect(url_for("premium_manage"))
+                
+                # Lấy checkout URL
+                payment_url = result.get("data", {}).get("checkoutUrl")
+                if not payment_url:
+                    print(f">>> No checkoutUrl in response: {result}")
+                    flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                    return redirect(url_for("premium_manage"))
+                
+                print(f">>> Redirecting to: {payment_url}")
+                return redirect(payment_url)
+                
+            except Exception as e:
+                print(f">>> EXCEPTION in payment creation: {type(e).__name__}: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                flash("Có lỗi xảy ra. Vui lòng thử lại!", "danger")
                 return redirect(url_for("premium_manage"))
-            
-            # Lấy checkout URL
-            payment_url = result.get("data", {}).get("checkoutUrl")
-            if not payment_url:
-                flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
-                return redirect(url_for("premium_manage"))
-            
-            return redirect(payment_url)
         else:
             # Xử lý thanh toán mock khác
             # Calculate new expiration date

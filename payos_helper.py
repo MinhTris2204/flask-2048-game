@@ -52,12 +52,28 @@ class PayOS:
         }
         
         try:
+            print(f">>> PayOS API Request: {self.api_url}")
+            print(f">>> Payload: orderCode={payload.get('orderCode')}, amount={payload.get('amount')}")
+            
             response = requests.post(self.api_url, json=payload, headers=headers, timeout=30)
+            
+            print(f">>> PayOS API Status: {response.status_code}")
+            print(f">>> PayOS API Response: {response.text[:500]}")
+            
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            return result
+            
         except requests.exceptions.RequestException as e:
-            print(f"PayOS API Error: {e}")
+            print(f">>> PayOS API Error: {type(e).__name__}: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                print(f">>> Response status: {e.response.status_code}")
+                print(f">>> Response body: {e.response.text[:500]}")
             return {"error": str(e), "code": "API_ERROR"}
+            
+        except Exception as e:
+            print(f">>> PayOS Unexpected Error: {type(e).__name__}: {e}")
+            return {"error": str(e), "code": "UNKNOWN_ERROR"}
 
     def _create_signature(self, data: Dict[str, Any]) -> str:
         """
