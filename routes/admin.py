@@ -70,3 +70,65 @@ def seed_premium_plans():
             "status": "error",
             "message": f"Error seeding premium plans: {str(e)}"
         }), 500
+
+
+@app.route("/admin/update-prices", methods=["GET"])
+def update_premium_prices():
+    """Update giá các gói premium xuống dưới 20,000 VND"""
+    try:
+        plans_config = [
+            {
+                'duration_days': 30,
+                'new_price': 9000,
+                'name': 'Premium 1 tháng',
+                'description': 'Trải nghiệm Premium 1 tháng với giá ưu đãi'
+            },
+            {
+                'duration_days': 90,
+                'new_price': 15000,
+                'name': 'Premium 3 tháng',
+                'description': 'Tiết kiệm hơn với gói 3 tháng'
+            },
+            {
+                'duration_days': 365,
+                'new_price': 19000,
+                'name': 'Premium 1 năm',
+                'description': 'Ưu đãi cực khủng - Chỉ 19k/năm ⭐'
+            }
+        ]
+        
+        updated_plans = []
+        for config in plans_config:
+            plan = PremiumPlan.query.filter_by(
+                duration_days=config['duration_days']
+            ).first()
+            
+            if plan:
+                old_price = float(plan.price)
+                plan.price = config['new_price']
+                plan.name = config['name']
+                plan.description = config['description']
+                
+                updated_plans.append({
+                    'id': plan.id,
+                    'name': plan.name,
+                    'old_price': old_price,
+                    'new_price': config['new_price'],
+                    'duration_days': plan.duration_days
+                })
+        
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Prices updated successfully!",
+            "updated_count": len(updated_plans),
+            "plans": updated_plans
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": f"Error updating prices: {str(e)}"
+        }), 500
