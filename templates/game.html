@@ -3,6 +3,29 @@
 
 {% block content %}
 <section class="game-wrap container">
+  <!-- Hamburger button: only display on mobile -->
+  <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Mở menu" style="display:none">
+    <span class="hamburger-icon">☰</span>
+  </button>
+  
+  <!-- Offcanvas mobile menu -->
+  <nav class="mobile-drawer-menu" id="mobile-drawer-menu">
+    <div class="mobile-drawer-header">
+      <span class="mobile-drawer-title">Menu</span>
+      <button class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Đóng menu">&times;</button>
+    </div>
+    <div class="mobile-drawer-links">
+      <a href="{{ url_for('leaderboard') }}">🏆 Bảng xếp hạng</a>
+      {% if is_premium %}
+        <a href="{{ url_for('premium_manage') }}">⚙️ Quản lý Premium</a>
+      {% else %}
+        <a href="{{ url_for('premium_manage') }}">🌟 Nâng cấp Premium</a>
+      {% endif %}
+      <a href="{{ url_for('history') }}">🕓 Lịch sử</a>
+    </div>
+  </nav>
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
   <div class="game-layout">
 
 
@@ -60,9 +83,9 @@
 {% block scripts %}
 <script>
   // @ts-nocheck - Template variables from Jinja2
-  window.CURRENT_USER = "{{ username|e }}";
-  window.SUBMIT_SCORE_URL = "{{ url_for('submit_score') }}";
-  window.IS_PREMIUM = {{ 'true' if is_premium else 'false' }};
+  window.CURRENT_USER = {{ username|tojson }};
+  window.SUBMIT_SCORE_URL = {{ url_for('submit_score')|tojson }};
+  window.IS_PREMIUM = {{ is_premium|tojson }};
 </script>
 <script src="{{ url_for('static', filename='game.js') }}"></script>
 {% endblock %}

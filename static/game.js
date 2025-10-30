@@ -491,4 +491,49 @@ async function performSwap(row1, col1, row2, col2) {
   }
 }
 
+// ================================
+// Hamburger + Drawer Mobile Menu
+// ================================
+function setupHamburgerMenu() {
+  const btnHamburger = document.getElementById("hamburger-menu-btn");
+  const drawer = document.getElementById("mobile-drawer-menu");
+  const drawerBackdrop = document.getElementById("drawer-backdrop");
+  const btnDrawerClose = document.getElementById("mobile-drawer-close");
+
+  if (!btnHamburger || !drawer || !drawerBackdrop || !btnDrawerClose) return;
+
+  btnHamburger.addEventListener("click", () => {
+    drawer.classList.add("open");
+    drawerBackdrop.classList.add("open");
+    document.body.style.overflow = "hidden";
+    btnDrawerClose.focus();
+  });
+  btnDrawerClose.addEventListener("click", () => {
+    drawer.classList.remove("open");
+    drawerBackdrop.classList.remove("open");
+    document.body.style.overflow = "";
+    btnHamburger.focus();
+  });
+  drawerBackdrop.addEventListener("click", () => {
+    drawer.classList.remove("open");
+    drawerBackdrop.classList.remove("open");
+    document.body.style.overflow = "";
+  });
+  // Đóng menu bằng phím esc
+  document.addEventListener("keydown", e => {
+    if (drawer.classList.contains("open") && (e.key === "Escape" || e.key === "Esc")) {
+      drawer.classList.remove("open");
+      drawerBackdrop.classList.remove("open");
+      document.body.style.overflow = "";
+      btnHamburger.focus();
+    }
+  });
+}
+// Gọi khi DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupHamburgerMenu);
+} else {
+  setupHamburgerMenu();
+}
+
 document.addEventListener("DOMContentLoaded", startGame);
