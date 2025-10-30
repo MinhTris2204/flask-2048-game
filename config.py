@@ -13,20 +13,35 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "devsecret")
 
 # --- Database URL from env ---
-# Debug: In ra tất cả env vars có chứa DATABASE
+# Debug: In ra tất cả env vars có chứa DATABASE hoặc MYSQL
 import sys
-print(">>> DEBUG: Checking DATABASE env vars:", file=sys.stderr)
+print(">>> DEBUG: Checking DATABASE/MYSQL env vars:", file=sys.stderr)
 for key in os.environ:
     if "DATABASE" in key or "MYSQL" in key:
-        print(f">>>   {key} = {os.environ[key][:50]}...", file=sys.stderr)
+        val = os.environ[key]
+        print(f">>>   {key} = {val[:80] if val else '(empty)'}...", file=sys.stderr)
 
-db_url = os.getenv("DATABASE_URL")  # >>> PHẢI LÀ TÊN NÀY <<<
-print(f">>> DEBUG: DATABASE_URL = {db_url}", file=sys.stderr)
+# Thử đọc từ nhiều biến có thể: DATABASE_URL, MYSQL_URL, hoặc build từ parts
+db_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+
+# Nếu vẫn không có, thử build từ individual variables
+if not db_url:
+    mysql_host = os.getenv("MYSQLHOST")
+    mysql_port = os.getenv("MYSQLPORT")
+    mysql_user = os.getenv("MYSQLUSER")
+    mysql_password = os.getenv("MYSQLPASSWORD")
+    mysql_database = os.getenv("MYSQLDATABASE")
+    
+    if all([mysql_host, mysql_port, mysql_user, mysql_password, mysql_database]):
+        db_url = f"mysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
+        print(f">>> INFO: Built DATABASE_URL from individual MYSQL vars", file=sys.stderr)
+
+print(f">>> DEBUG: Final db_url = {db_url[:80] if db_url else '(none)'}...", file=sys.stderr)
 
 if not db_url:
     # Chỉ fallback SQLite nếu KHÔNG có env (tránh override)
     db_url = "sqlite:///game2048.db"
-    print(">>> WARNING: No DATABASE_URL found, using SQLite fallback!", file=sys.stderr)
+    print(">>> WARNING: No DATABASE_URL or MYSQL vars found, using SQLite fallback!", file=sys.stderr)
 
 # Chuẩn hoá scheme MySQL
 if db_url.startswith("mysql://"):
