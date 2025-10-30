@@ -77,22 +77,26 @@ class PayOS:
 
     def _create_signature(self, data: Dict[str, Any]) -> str:
         """
-        Tạo signature cho request
+        Tạo signature cho request theo chuẩn PayOS
         """
-        # Sort data theo key alphabet
-        sorted_data = dict(sorted(data.items()))
+        # Loại bỏ các field không cần thiết
+        filtered_data = {}
+        for key, value in data.items():
+            if key == "signature":  # Skip signature field
+                continue
+            if value is None or value == "":  # Skip empty values
+                continue
+            filtered_data[key] = value
+        
+        # Sort theo key alphabet
+        sorted_data = dict(sorted(filtered_data.items()))
         
         # Tạo query string
         query_parts = []
         for key, value in sorted_data.items():
-            if key == "signature":  # Skip signature field
-                continue
-            
             # Convert value to string
             if isinstance(value, (int, float)):
-                value_str = str(value)
-            elif value is None:
-                value_str = ""
+                value_str = str(int(value))  # Convert to int string (no decimals)
             else:
                 value_str = str(value)
             
@@ -100,11 +104,15 @@ class PayOS:
         
         query_string = "&".join(query_parts)
         
+        print(f">>> Signature data string: {query_string}")
+        
         # Create HMAC SHA256
         signature = hmac.new(
             self.checksum_key.encode("utf-8"),
             msg=query_string.encode("utf-8"),
             digestmod=hashlib.sha256
         ).hexdigest()
+        
+        print(f">>> Generated signature: {signature}")
         
         return signature
