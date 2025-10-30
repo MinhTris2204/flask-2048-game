@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Thanh toán - 2048{% endblock %}
+
 {% block content %}
+<link href="{{ url_for('static', filename='payos-payment.css') }}" rel="stylesheet">
 <div class="card payment-card">
   <h2>Thanh toán Premium</h2>
   
@@ -14,44 +16,74 @@
 
   <form method="post">
     <div class="payment-method-section">
-      <div class="vnpay-header">
-        <div class="vnpay-emoji">🇻🇳</div>
-        <h3 class="vnpay-title">Thanh toán qua VNPay</h3>
-        <p class="vnpay-subtitle">Hỗ trợ tất cả ngân hàng tại Việt Nam</p>
+      <div class="payos-header">
+        <div class="payos-logo">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="12" fill="#0088FF"/>
+            <path d="M24 12C17.373 12 12 17.373 12 24C12 30.627 17.373 36 24 36C30.627 36 36 30.627 36 24C36 17.373 30.627 12 24 12ZM28 26H20V22H28V26Z" fill="white"/>
+          </svg>
+        </div>
+        <h3 class="payos-title">Thanh toán qua PayOS</h3>
+        <p class="payos-subtitle">Quét QR hoặc chuyển khoản ngân hàng</p>
       </div>
       
-      <input type="hidden" name="payment_method" value="vnpay">
+      <input type="hidden" name="payment_method" value="payos">
       
-      <div class="vnpay-features">
-        <p class="feature-item">✓ Hỗ trợ hơn 40 ngân hàng</p>
-        <p class="feature-item">✓ Thanh toán nhanh và an toàn</p>
-        <p class="feature-item">✓ Không phí phát sinh</p>
+      <div class="payos-features">
+        <div class="feature-item">
+          <span class="feature-icon">📱</span>
+          <span>Quét mã QR bằng app ngân hàng</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🏦</span>
+          <span>Internet Banking / Mobile Banking</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">💳</span>
+          <span>Ví điện tử: Momo, ZaloPay, ViettelPay</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">⚡</span>
+          <span>Thanh toán nhanh chóng, tức thì</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔒</span>
+          <span>Bảo mật cao, an toàn 100%</span>
+        </div>
       </div>
     </div>
 
     <div class="payment-total">
-      <h4 class="payment-total-title">Tổng cộng:</h4>
+      <h4 class="payment-total-title">Tổng thanh toán:</h4>
       <div class="payment-total-amount">
-        <span>Thành tiền:</span>
-        <span>{{ "{:,.0f}".format(plan_price) }} VND</span>
+        <span class="amount-label">Số tiền:</span>
+        <span class="amount-value">{{ "{:,.0f}".format(plan_price) }} VND</span>
       </div>
     </div>
 
-    <button type="submit" class="btn-vnpay">
-      Thanh toán qua VNPay
+    <button type="submit" class="btn-payos">
+      <span class="btn-icon">💳</span>
+      <span>Thanh toán ngay</span>
+      <span class="btn-arrow">→</span>
     </button>
 
     <div class="payment-back-link">
       <a href="{{ url_for('premium_manage') }}" class="link-muted">
-        ← Chọn gói khác
+        ← Quay lại chọn gói khác
       </a>
     </div>
   </form>
 
   <div class="payment-security-info">
-    <p class="security-text">🔒 Thanh toán an toàn qua cổng VNPay</p>
-    <p class="security-text">✓ Được VNPay bảo hộ giao dịch</p>
-    <p class="security-text">✓ Hỗ trợ hoàn tiền trong 7 ngày nếu không hài lòng</p>
+    <p class="security-badge">
+      <span class="badge-icon">🔒</span>
+      <span class="badge-text">Thanh toán được bảo mật bởi PayOS</span>
+    </p>
+    <div class="security-features">
+      <span class="security-item">✓ Mã hóa SSL 256-bit</span>
+      <span class="security-item">✓ Tuân thủ chuẩn PCI DSS</span>
+      <span class="security-item">✓ Hỗ trợ 24/7</span>
+    </div>
   </div>
 </div>
 {% endblock %}

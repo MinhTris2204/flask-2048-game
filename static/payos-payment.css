@@ -1,0 +1,238 @@
+/* ========================================
+   PayOS Payment Gateway Styling
+   ======================================== */
+
+/* PayOS Header */
+.payos-header {
+  text-align: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.payos-logo {
+  display: inline-block;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.payos-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 12px 0 8px 0;
+}
+
+.payos-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* PayOS Features */
+.payos-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 2px solid var(--outline);
+}
+
+.payos-features .feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--outline);
+  transition: all 0.2s ease;
+}
+
+.payos-features .feature-item:hover {
+  border-color: #0088FF;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 136, 255, 0.1);
+}
+
+.feature-icon {
+  font-size: 24px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.payos-features .feature-item span:last-child {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Payment Total */
+.payment-total {
+  background: var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.payment-total-title {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
+.payment-total-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.amount-label {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.amount-value {
+  color: #0088FF;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* PayOS Button */
+.btn-payos {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 136, 255, 0.3);
+}
+
+.btn-payos:hover {
+  background: linear-gradient(135deg, #0066CC 0%, #0055AA 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 136, 255, 0.4);
+}
+
+.btn-payos:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 136, 255, 0.3);
+}
+
+.btn-payos .btn-icon {
+  font-size: 24px;
+}
+
+.btn-payos .btn-arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.btn-payos:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Security Info */
+.payment-security-info {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+}
+
+.security-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.badge-icon {
+  font-size: 20px;
+}
+
+.badge-text {
+  color: #0369a1;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.security-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.security-item {
+  color: #0284c7;
+  font-size: 13px;
+  padding: 6px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+}
+
+/* Payment Back Link */
+.payment-back-link {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.payment-back-link .link-muted {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.payment-back-link .link-muted:hover {
+  color: #0088FF;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .payos-title {
+    font-size: 20px;
+  }
+  
+  .amount-value {
+    font-size: 24px;
+  }
+  
+  .btn-payos {
+    font-size: 16px;
+    padding: 16px 20px;
+  }
+  
+  .payos-features .feature-item {
+    padding: 10px;
+  }
+  
+  .feature-icon {
+    font-size: 20px;
+  }
+}
