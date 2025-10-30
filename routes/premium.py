@@ -86,7 +86,8 @@ def payment(plan_id):
             
             # Tạo payment link PayOS
             try:
-                description = f"Thanh toan goi Premium: {plan.name}"
+                # Description tối đa 25 ký tự theo yêu cầu PayOS
+                description = f"Premium {plan.duration_days}d"  # VD: "Premium 365d" = 13 ký tự
                 
                 print(f">>> Creating PayOS link for order {order.id}, amount {plan.price}")
                 
