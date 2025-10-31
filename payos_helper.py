@@ -116,3 +116,38 @@ class PayOS:
         print(f">>> Generated signature: {signature}")
         
         return signature
+    
+    def verify_webhook_signature(self, webhook_data: Dict[str, Any]) -> bool:
+        """
+        Verify webhook signature từ PayOS
+        """
+        try:
+            # Lấy signature từ webhook data
+            received_signature = webhook_data.get("signature", "")
+            if not received_signature:
+                print(">>> PayOS Webhook: No signature in data")
+                return False
+            
+            # Lấy data để verify
+            data = webhook_data.get("data", {})
+            code = webhook_data.get("code")
+            
+            # Tạo data dict để verify
+            verify_data = {"code": code, **data}
+            
+            # Tạo signature từ data
+            expected_signature = self._create_signature(verify_data)
+            
+            # So sánh signature
+            is_valid = received_signature.lower() == expected_signature.lower()
+            
+            if not is_valid:
+                print(f">>> PayOS Webhook: Signature mismatch")
+                print(f">>> Received: {received_signature}")
+                print(f">>> Expected: {expected_signature}")
+            
+            return is_valid
+            
+        except Exception as e:
+            print(f">>> PayOS Webhook Verification Error: {type(e).__name__}: {e}")
+            return False
