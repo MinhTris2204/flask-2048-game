@@ -109,15 +109,28 @@ def payment(plan_id):
                 
                 print(f">>> PayOS Response: {result}")
                 
+                # Kiểm tra lỗi từ PayOS
+                if result.get("code") != "00" and result.get("code") != "200":
+                    error_desc = result.get("desc", "Unknown error")
+                    print(f">>> PayOS Error: {result.get('code')} - {error_desc}")
+                    flash(f"Lỗi PayOS: {error_desc}", "danger")
+                    return redirect(url_for("premium_manage"))
+                
                 if "error" in result:
                     print(f">>> PayOS Error: {result.get('error')}")
                     flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
                     return redirect(url_for("premium_manage"))
                 
-                # Lấy checkout URL
-                payment_url = result.get("data", {}).get("checkoutUrl")
+                # Lấy checkout URL - kiểm tra data không None
+                data = result.get("data")
+                if not data:
+                    print(f">>> No data in PayOS response: {result}")
+                    flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                    return redirect(url_for("premium_manage"))
+                
+                payment_url = data.get("checkoutUrl")
                 if not payment_url:
-                    print(f">>> No checkoutUrl in response: {result}")
+                    print(f">>> No checkoutUrl in response data: {result}")
                     flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
                     return redirect(url_for("premium_manage"))
                 

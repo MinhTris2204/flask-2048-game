@@ -81,21 +81,21 @@ class PayOS:
         Tạo signature cho request theo chuẩn PayOS
         Sử dụng JSON dumps như trong tài liệu PayOS
         """
-        # Loại bỏ signature field và các giá trị None/empty
-        filtered_data = {}
+        # Tạo copy của data và loại bỏ signature field (nếu có)
+        # PayOS yêu cầu signature được tính từ payload KHÔNG có signature
+        payload_for_signature = {}
         for key, value in data.items():
             if key == "signature":  # Skip signature field
                 continue
             if value is None or value == "":  # Skip empty values
                 continue
-            filtered_data[key] = value
-        
-        # Sort theo key alphabet
-        sorted_data = dict(sorted(filtered_data.items()))
+            payload_for_signature[key] = value
         
         # Tạo JSON string theo chuẩn PayOS
+        # Sort keys theo alphabet (PayOS yêu cầu)
         # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
-        json_string = json.dumps(sorted_data, separators=(",", ":"), ensure_ascii=False)
+        sorted_payload = dict(sorted(payload_for_signature.items()))
+        json_string = json.dumps(sorted_payload, separators=(",", ":"), ensure_ascii=False)
         
         print(f">>> Signature data string: {json_string}")
         
