@@ -211,29 +211,98 @@ window.addEventListener("keydown", (e) => {
 });
 
 let touchStartX = 0, touchStartY = 0;
-// Touch events - Chỉ chặn khi bắt đầu trên board cho mobile
+let touchMoved = false;
+let touchStartedOnBoard = false;
+const MIN_SWIPE_DISTANCE = 25; // Giảm khoảng cách để nhạy hơn
+
+// Touch events - Tối ưu cho vuốt mượt mà
 boardEl.addEventListener("touchstart", e => {
   // Chỉ block nếu bắt đầu trên board (tránh block toàn trang)
   if (e.target === boardEl || boardEl.contains(e.target)) {
-    e.preventDefault();
+    touchStartedOnBoard = true;
     const t = e.touches && e.touches[0];
-    if (!t) return;
+    if (!t || inputLocked) {
+      touchStartedOnBoard = false;
+      return;
+    }
     touchStartX = t.clientX;
     touchStartY = t.clientY;
+    touchMoved = false;
+  } else {
+    touchStartedOnBoard = false;
   }
-}, { passive: false });
+}, { passive: true }); // Dùng passive để browser tối ưu scroll performance
 
-boardEl.addEventListener("touchend", e => {
-  e.preventDefault(); // Ngăn cuộn trang khi kết thúc vuốt khu vực game
-  const t = e.changedTouches && e.changedTouches[0];
+// Touchmove để theo dõi quá trình vuốt - dùng passive để mượt hơn
+let lastTouchTime = 0;
+boardEl.addEventListener("touchmove", e => {
+  if (!touchStartedOnBoard || inputLocked) return;
+  
+  const now = performance.now();
+  // Throttle để tránh quá nhiều event (60fps max)
+  if (now - lastTouchTime < 16) return;
+  lastTouchTime = now;
+  
+  const t = e.touches && e.touches[0];
   if (!t) return;
+  
   const dx = t.clientX - touchStartX;
   const dy = t.clientY - touchStartY;
   const absx = Math.abs(dx), absy = Math.abs(dy);
-  if (Math.max(absx, absy) < 30) return;
-  if (absx > absy) handleMove(dx > 0 ? "right" : "left");
-  else handleMove(dy > 0 ? "down" : "up");
+  
+  // Nếu đã di chuyển đủ xa, đánh dấu là đã vuốt
+  if (Math.max(absx, absy) > 8) {
+    touchMoved = true;
+  }
+}, { passive: true }); // Passive cho touchmove để mượt mà hơn
+
+boardEl.addEventListener("touchend", e => {
+  if (!touchStartedOnBoard || inputLocked) {
+    touchStartedOnBoard = false;
+    touchMoved = false;
+    return;
+  }
+  
+  const t = e.changedTouches && e.changedTouches[0];
+  if (!t) {
+    touchStartedOnBoard = false;
+    touchMoved = false;
+    return;
+  }
+  
+  const dx = t.clientX - touchStartX;
+  const dy = t.clientY - touchStartY;
+  const absx = Math.abs(dx), absy = Math.abs(dy);
+  
+  // Chỉ xử lý nếu đã vuốt đủ xa
+  if (Math.max(absx, absy) >= MIN_SWIPE_DISTANCE && touchMoved) {
+    // Chỉ preventDefault khi cần (đã vuốt đủ xa)
+    e.preventDefault();
+    
+    // Sử dụng requestAnimationFrame để đảm bảo mượt mà
+    requestAnimationFrame(() => {
+      if (inputLocked) return; // Kiểm tra lại trước khi xử lý
+      
+      if (absx > absy) {
+        handleMove(dx > 0 ? "right" : "left");
+      } else {
+        handleMove(dy > 0 ? "down" : "up");
+      }
+    });
+  }
+  
+  // Reset state
+  touchStartedOnBoard = false;
+  touchMoved = false;
+  touchStartX = 0;
+  touchStartY = 0;
 }, { passive: false });
+
+// Touchcancel để reset trạng thái nếu vuốt bị hủy
+boardEl.addEventListener("touchcancel", () => {
+  touchStartedOnBoard = false;
+  touchMoved = false;
+}, { passive: true });
 
 btnNew?.addEventListener("click", startGame);
 btnUndo?.addEventListener("click", undo);

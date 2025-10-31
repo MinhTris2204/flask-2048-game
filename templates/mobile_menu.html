@@ -52,6 +52,20 @@
           
           <div class="sidebar-divider"></div>
           
+          {% if current_user.is_premium %}
+            <a href="{{ url_for('premium_manage') }}" class="sidebar-link highlight">
+              <span class="sidebar-icon">⚙️</span>
+              <span>Quản lý Premium</span>
+            </a>
+          {% else %}
+            <a href="{{ url_for('premium_manage') }}" class="sidebar-link highlight">
+              <span class="sidebar-icon">🌟</span>
+              <span>Nâng cấp Premium</span>
+            </a>
+          {% endif %}
+          
+          <div class="sidebar-divider"></div>
+          
           <a href="{{ url_for('logout') }}" class="sidebar-link logout">
             <span class="sidebar-icon">🚪</span>
             <span>Đăng xuất</span>

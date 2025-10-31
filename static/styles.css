@@ -777,12 +777,16 @@ main.container:has(.game-wrap) {
 
 @media (max-width:520px){
   .board{
-    grid-template-columns:repeat(4,80px);
-    grid-template-rows:repeat(4,80px);
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns:repeat(4,95px);
+    grid-template-rows:repeat(4,95px);
+    gap: 13px;
+    padding: 15px;
   }
-  .tile{font-size:26px; border-radius: 10px;}
+  .tile{
+    font-size:30px; 
+    border-radius: 13px;
+    will-change: transform; /* Tối ưu animation */
+  }
   .score-box {min-width: 90px; padding: 6px 10px; font-size: 14px;}
   .score-box span {font-size: 18px;}
   .overlay-content h2 {font-size: 36px;}
@@ -2414,31 +2418,66 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Bàn cờ lớn hơn trên mobile */
+/* Bàn cờ lớn hơn trên mobile - TO VÀ RÕ HƠN */
 @media (max-width: 600px) {
   .board {
-    grid-template-columns: repeat(4, 85px);
-    grid-template-rows: repeat(4, 85px);
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: repeat(4, 100px);
+    gap: 14px;
+    padding: 16px;
   }
   .tile { 
-    font-size: 28px; 
-    border-radius: 10px; 
+    font-size: 32px; 
+    border-radius: 14px; 
+    will-change: transform; /* Tối ưu animation */
   }
 }
 
 @media (max-width: 430px) {
   .board {
-    grid-template-columns: repeat(4, 75px);
-    grid-template-rows: repeat(4, 75px);
-    gap: 8px;
-    padding: 8px;
+    grid-template-columns: repeat(4, 90px);
+    grid-template-rows: repeat(4, 90px);
+    gap: 12px;
+    padding: 14px;
   }
   .tile { 
-    font-size: 22px; 
-    border-radius: 8px; 
+    font-size: 28px; 
+    border-radius: 12px; 
+    will-change: transform; /* Tối ưu animation */
   }
+}
+
+/* Tối ưu performance cho vuốt mượt */
+@media (max-width: 768px) {
+  .board {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-y pan-x; /* Cho phép vuốt nhưng tối ưu performance */
+    transform: translateZ(0); /* Kích hoạt hardware acceleration */
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  .tile {
+    transform: translateZ(0); /* Hardware acceleration cho từng tile */
+    backface-visibility: hidden;
+  }
+}
+
+/* Tối ưu rendering cho vuốt mượt */
+.board {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.tile {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* ========================================
@@ -2732,12 +2771,39 @@ main.container:has(.game-wrap) {
     flex-direction: column;
     gap: 8px;
     width: 100%;
+    max-height: 104px; /* Chiều cao cho 2 nút (48px + 8px gap + 48px) */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(14, 165, 233, 0.4) rgba(14, 165, 233, 0.1);
+    position: relative;
+  }
+  
+  .controls::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .controls::-webkit-scrollbar-track {
+    background: rgba(14, 165, 233, 0.1);
+    border-radius: 3px;
+  }
+  
+  .controls::-webkit-scrollbar-thumb {
+    background: rgba(14, 165, 233, 0.4);
+    border-radius: 3px;
+  }
+  
+  .controls::-webkit-scrollbar-thumb:hover {
+    background: rgba(14, 165, 233, 0.6);
   }
   
   .controls button {
     width: 100%;
     padding: 12px;
     font-size: 14px;
+    flex-shrink: 0;
+    min-height: 48px;
   }
   
   .premium-status {
