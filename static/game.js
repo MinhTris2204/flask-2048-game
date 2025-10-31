@@ -158,7 +158,6 @@ function showGameOverOverlay({ score, max_tile, moves }) {
   overlay.innerHTML = `
     <div class="overlay-content">
       <h2>Game Over</h2>
-      <p>Score: ${score} &bull; Max Tile: ${max_tile} &bull; Moves: ${moves}</p>
       <button id="btn-restart-overlay">Chơi lại</button>
     </div>
   `;
