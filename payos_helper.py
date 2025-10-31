@@ -92,10 +92,10 @@ class PayOS:
             payload_for_signature[key] = value
         
         # Tạo JSON string theo chuẩn PayOS
-        # Sort keys theo alphabet trước khi dumps
-        sorted_payload = dict(sorted(payload_for_signature.items()))
+        # Theo ví dụ PayOS: raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+        # KHÔNG sort keys - giữ nguyên thứ tự như payload gốc
         # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
-        json_string = json.dumps(sorted_payload, separators=(",", ":"), ensure_ascii=False)
+        json_string = json.dumps(payload_for_signature, separators=(",", ":"), ensure_ascii=False)
         
         print(f">>> Signature data string: {json_string}")
         
