@@ -777,19 +777,32 @@ main.container:has(.game-wrap) {
 
 @media (max-width:520px){
   .board{
-    grid-template-columns:repeat(4,95px);
-    grid-template-rows:repeat(4,95px);
-    gap: 13px;
-    padding: 15px;
+    grid-template-columns:repeat(4,68px);
+    grid-template-rows:repeat(4,68px);
+    gap: 8px;
+    padding: 10px;
   }
   .tile{
-    font-size:30px; 
-    border-radius: 13px;
-    will-change: transform; /* Tối ưu animation */
+    font-size:24px; 
+    border-radius: 10px;
+    will-change: transform;
   }
-  .score-box {min-width: 90px; padding: 6px 10px; font-size: 14px;}
-  .score-box span {font-size: 18px;}
-  .overlay-content h2 {font-size: 36px;}
+  .score-box {
+    min-width: 68px; 
+    padding: 5px 6px; 
+    font-size: 11px;
+  }
+  .score-box span {
+    font-size: 14px;
+  }
+  .controls button {
+    padding: 7px 8px;
+    font-size: 12px;
+    min-height: 38px;
+  }
+  .overlay-content h2 {
+    font-size: 30px;
+  }
 }
 
 .game-layout{
@@ -2401,49 +2414,183 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Bàn cờ căn giữa trên mobile - cho phép scroll */
+/* Bàn cờ căn giữa trên mobile - CỐ ĐỊNH TRONG MÀN HÌNH, KHÔNG TRÀN */
 @media (max-width: 768px) {
+  /* Main container - không scroll, fit trong viewport */
+  body > main.container:has(.game-wrap) {
+    overflow: hidden !important;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height cho mobile */
+    max-height: 100vh;
+    max-height: 100dvh;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+  
   .game-wrap {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow: hidden;
+    padding: 2px 4px;
+    gap: 4px;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    min-height: 0;
+  }
+  
+  .game-layout {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    gap: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .side {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  
+  .side .panel {
     padding: 8px 12px;
-    min-height: 100%;
+    flex-shrink: 0;
+  }
+  
+  .hud {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .score-box {
+    min-width: 75px;
+    padding: 6px 8px;
+    font-size: 12px;
+    flex: 1 1 auto;
+  }
+  
+  .score-box span {
+    font-size: 16px;
   }
   
   .board {
     margin: 0 auto;
+    flex-shrink: 0;
+  }
+  
+  .controls {
+    max-height: none;
+    overflow: visible;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  
+  .controls button {
+    padding: 8px 10px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+  
+  .premium-status {
+    flex-shrink: 0;
+  }
+  
+  .btn-upgrade,
+  .btn-manage-premium {
+    padding: 10px 12px;
+    font-size: 14px;
   }
 }
 
-/* Bàn cờ lớn hơn trên mobile - TO VÀ RÕ HƠN */
+/* Bàn cờ vừa màn hình mobile - KHÔNG TRÀN - TỰ ĐỘNG ĐIỀU CHỈNH */
 @media (max-width: 600px) {
   .board {
-    grid-template-columns: repeat(4, 100px);
-    grid-template-rows: repeat(4, 100px);
-    gap: 14px;
-    padding: 16px;
+    grid-template-columns: repeat(4, 70px);
+    grid-template-rows: repeat(4, 70px);
+    gap: 8px;
+    padding: 10px;
   }
   .tile { 
-    font-size: 32px; 
-    border-radius: 14px; 
-    will-change: transform; /* Tối ưu animation */
+    font-size: 24px; 
+    border-radius: 10px; 
+    will-change: transform;
+  }
+  
+  .score-box {
+    min-width: 70px;
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+  
+  .score-box span {
+    font-size: 14px;
+  }
+  
+  .controls button {
+    padding: 7px 8px;
+    font-size: 12px;
+    min-height: 38px;
   }
 }
 
 @media (max-width: 430px) {
   .board {
-    grid-template-columns: repeat(4, 90px);
-    grid-template-rows: repeat(4, 90px);
-    gap: 12px;
-    padding: 14px;
+    grid-template-columns: repeat(4, 65px);
+    grid-template-rows: repeat(4, 65px);
+    gap: 6px;
+    padding: 8px;
   }
   .tile { 
-    font-size: 28px; 
-    border-radius: 12px; 
-    will-change: transform; /* Tối ưu animation */
+    font-size: 22px; 
+    border-radius: 8px; 
+    will-change: transform;
+  }
+  
+  .score-box {
+    min-width: 65px;
+    padding: 4px 5px;
+    font-size: 10px;
+  }
+  
+  .score-box span {
+    font-size: 13px;
+  }
+  
+  .controls button {
+    padding: 6px 7px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+  
+  .game-wrap {
+    gap: 3px;
+    padding: 2px;
+  }
+  
+  .game-layout {
+    gap: 3px;
+  }
+  
+  .side {
+    gap: 3px;
   }
 }
 
@@ -2753,57 +2900,69 @@ main.container:has(.game-wrap) {
     width: 100%;
   }
   
+  /* Side panel - tối ưu để fit trong màn hình */
+  .side {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  
+  .side .panel {
+    width: 100%;
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+  
   .hud {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
+    margin-top: 0;
+    flex-shrink: 0;
   }
   
   .score-box {
     flex: 1 1 auto;
-    min-width: 90px;
+    min-width: 75px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .score-box span {
+    font-size: 16px;
   }
   
   .controls {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     width: 100%;
-    max-height: 104px; /* Chiều cao cho 2 nút (48px + 8px gap + 48px) */
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(14, 165, 233, 0.4) rgba(14, 165, 233, 0.1);
-    position: relative;
-  }
-  
-  .controls::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .controls::-webkit-scrollbar-track {
-    background: rgba(14, 165, 233, 0.1);
-    border-radius: 3px;
-  }
-  
-  .controls::-webkit-scrollbar-thumb {
-    background: rgba(14, 165, 233, 0.4);
-    border-radius: 3px;
-  }
-  
-  .controls::-webkit-scrollbar-thumb:hover {
-    background: rgba(14, 165, 233, 0.6);
+    overflow: visible; /* Không scroll, hiển thị tất cả */
+    flex-shrink: 0;
   }
   
   .controls button {
     width: 100%;
-    padding: 12px;
-    font-size: 14px;
+    padding: 8px 10px;
+    font-size: 13px;
     flex-shrink: 0;
-    min-height: 48px;
+    min-height: 40px;
+  }
+  
+  .premium-status {
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  .btn-upgrade,
+  .btn-manage-premium {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
   }
   
   .premium-status {
