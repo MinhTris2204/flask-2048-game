@@ -1,3 +1,4 @@
+import os
 from flask import request, redirect, url_for, flash, render_template, session
 from flask_login import login_user, login_required, logout_user
 from config import app, db, google
@@ -61,8 +62,10 @@ def google_login():
         flash("Google Login chưa được cấu hình. Vui lòng liên hệ admin.", "warning")
         return redirect(url_for("login"))
     
-    # Force HTTPS scheme cho production (Railway)
-    redirect_uri = url_for("google_callback", _external=True, _scheme='https')
+    # Lấy domain từ env hoặc dùng game2048.io.vn mặc định
+    oauth_domain = os.getenv("OAUTH_REDIRECT_DOMAIN", "game2048.io.vn")
+    redirect_uri = f"https://{oauth_domain}/login/google/callback"
+    
     print(f">>> Google OAuth Redirect URI: {redirect_uri}")
     return google.authorize_redirect(redirect_uri, prompt='select_account')
 
