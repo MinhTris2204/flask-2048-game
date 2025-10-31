@@ -28,7 +28,7 @@
   {# Open Graph / Facebook #}
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ request.url }}" />
-  <meta property="og:title" content="{% block og_title %}{% block title %}2048{% endblock %} - Game 2048 Online Miễn Phí{% endblock %}" />
+  <meta property="og:title" content="{% block og_title %}Game 2048 Online Miễn Phí{% endblock %}" />
   <meta property="og:description" content="{% block og_description %}Chơi game 2048 online miễn phí! Game puzzle hấp dẫn với bảng xếp hạng, tính năng premium, và giao diện đẹp mắt. Thử thách khả năng logic của bạn ngay hôm nay!{% endblock %}" />
   <meta property="og:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=5" />
   <meta property="og:image:width" content="512" />
@@ -39,7 +39,7 @@
   {# Twitter Card #}
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:url" content="{{ request.url }}" />
-  <meta name="twitter:title" content="{% block twitter_title %}{% block title %}2048{% endblock %} - Game 2048 Online{% endblock %}" />
+  <meta name="twitter:title" content="{% block twitter_title %}Game 2048 Online{% endblock %}" />
   <meta name="twitter:description" content="{% block twitter_description %}Chơi game 2048 online miễn phí! Game puzzle hấp dẫn với bảng xếp hạng và tính năng premium.{% endblock %}" />
   <meta name="twitter:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=5" />
   
