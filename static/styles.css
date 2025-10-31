@@ -1314,7 +1314,7 @@ main.container:has(.game-wrap) {
 /* Toast Notification */
 .toast-container {
   position: fixed;
-  top: 20%;
+  top: 60px; /* Ngay dưới header */
   right: 20px;
   z-index: 10000;
   display: flex;
@@ -2506,29 +2506,36 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Toast hiển thị trên header mobile - không che bàn cờ */
+/* Toast hiển thị trên header mobile - trong topbar */
 @media (max-width: 768px) {
   .toast-container {
-    top: 60px !important; /* Ngay dưới header */
+    top: 0 !important; /* Trên cùng, trong header/topbar */
     bottom: auto !important;
     right: 0 !important;
     left: 0 !important;
     max-width: 100vw !important;
-    padding: 0 12px;
-    align-items: center;
-    z-index: 10000 !important; /* Z-index cao nhưng dưới header một chút */
+    padding: 0;
+    align-items: stretch;
+    z-index: 10001 !important; /* Z-index cao hơn header để hiển thị trên */
     pointer-events: none;
+    background: transparent;
+    position: fixed;
   }
   .toast {
     min-width: unset;
-    max-width: calc(100vw - 24px);
+    max-width: 100%;
     width: 100%;
     font-size: 14px;
-    padding: 14px 20px;
+    padding: 10px 16px;
     text-align: center;
     box-sizing: border-box;
     pointer-events: auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    margin: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
   }
   .toast-close {
     width: 20px;
@@ -2536,6 +2543,16 @@ main.container:has(.game-wrap) {
     font-size: 14px;
     top: 6px;
     right: 6px;
+  }
+  
+  /* Đẩy topbar xuống khi có toast */
+  .topbar {
+    margin-top: 0;
+  }
+  
+  /* Đẩy main content xuống khi có toast */
+  body > main.container {
+    margin-top: 0;
   }
 }
 
