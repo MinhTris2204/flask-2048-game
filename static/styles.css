@@ -94,6 +94,25 @@ main.container:has(.game-wrap) {
   filter: none;
 }
 
+/* Logo từ file */
+.brand-logo {
+  height: 32px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .brand-logo {
+    height: 28px; /* Nhỏ hơn một chút trên mobile */
+  }
+}
+
+.sidebar-brand .brand-logo {
+  height: 36px;
+}
+
 .brand-text {
   font-size: 24px;
   font-weight: 800;
