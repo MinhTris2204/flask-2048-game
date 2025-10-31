@@ -757,19 +757,13 @@ main.container:has(.game-wrap) {
   flex-shrink: 0;
 }
 .tile{
-  display:flex; 
-  align-items:center; 
-  justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   border-radius:14px;
-  font-weight:900; 
-  font-size:32px;
+  font-weight:900; font-size:32px;
   box-shadow: none;
-  transition:transform .12s cubic-bezier(0.4, 0, 0.2, 1), background-color .12s ease, color .12s ease, box-shadow .12s ease;
+  transition:transform .12s ease, background-color .12s ease, color .12s ease, box-shadow .12s ease;
   user-select:none;
   border: none;
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
 }
 
 .tile.empty{background:#f8fafc; box-shadow: none; opacity:.7; border: none;}
@@ -789,40 +783,10 @@ main.container:has(.game-wrap) {
 .tile[data-val="4096"] { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: #ffffff; font-size: 28px; box-shadow: none; }
 .tile[data-val="8192"] { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); color: #ffffff; font-size: 28px; box-shadow: none; }
 
-.tile.spawn{
-  animation: pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  will-change: transform, opacity;
-}
-
-.tile.merge{
-  animation: mergeSmooth 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-@keyframes pop{
-  from{
-    transform: scale(0.6) translateZ(0);
-    opacity: 0;
-  }
-  to{
-    transform: scale(1) translateZ(0);
-    opacity: 1;
-  }
-}
-
-@keyframes mergeSmooth{
-  0%{
-    transform: scale(1) translateZ(0);
-  }
-  50%{
-    transform: scale(1.2) translateZ(0);
-  }
-  100%{
-    transform: scale(1) translateZ(0);
-  }
-}
+.tile.spawn{animation:pop .18s ease-out}
+.tile.merge{animation:bounce .2s ease-out}
+@keyframes pop{from{transform:scale(.7);opacity:.5} to{transform:scale(1);opacity:1}}
+@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 
 
 .controls{margin-top:10px; display:flex; gap:12px; flex-wrap: wrap;}
