@@ -157,9 +157,26 @@ function showGameOverOverlay({ score, max_tile, moves }) {
   overlay.className = "overlay";
   overlay.innerHTML = `
     <div class="overlay-content">
-      <h2>Game Over</h2>
-      <p>Score: ${score} &bull; Max Tile: ${max_tile} &bull; Moves: ${moves}</p>
-      <button id="btn-restart-overlay">Chơi lại</button>
+      <div class="game-over-icon">😢</div>
+      <h2>Game Over!</h2>
+      <div class="game-over-stats">
+        <div class="stat-item">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-label">Score</div>
+          <div class="stat-value">${score.toLocaleString()}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-label">Max Tile</div>
+          <div class="stat-value">${max_tile}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">🎮</div>
+          <div class="stat-label">Moves</div>
+          <div class="stat-value">${moves}</div>
+        </div>
+      </div>
+      <button id="btn-restart-overlay" class="btn-restart">🔄 Chơi lại</button>
     </div>
   `;
   boardEl.appendChild(overlay);

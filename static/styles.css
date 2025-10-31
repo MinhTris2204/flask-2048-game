@@ -970,8 +970,8 @@ main.container:has(.game-wrap) {
 .overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(4px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.95) 100%);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -979,22 +979,129 @@ main.container:has(.game-wrap) {
     text-align: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity .3s ease, visibility .3s ease;
-    border-radius: 16px; 
+    transition: opacity .4s ease, visibility .4s ease;
+    border-radius: 20px;
+    z-index: 100;
 }
+
 .overlay.show {
     opacity: 1;
     visibility: visible;
+    animation: overlayFadeIn 0.4s ease-out;
 }
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.overlay-content {
+    background: white;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    animation: contentSlideUp 0.5s ease-out;
+}
+
+@keyframes contentSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-over-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    animation: iconBounce 0.6s ease-out;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
 .overlay-content h2 {
-    font-size: 48px;
-    margin: 0;
-    color: var(--text);
+    font-size: 36px;
+    margin: 0 0 24px 0;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
 }
-.overlay-content p {
-    font-size: 18px;
-    margin: 8px 0 20px;
+
+.game-over-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.stat-item {
+    flex: 1;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 2px solid #e2e8f0;
+}
+
+.stat-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 12px;
     color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.btn-restart {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.btn-restart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+}
+
+.btn-restart:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
 }
 
 
@@ -1023,8 +1130,43 @@ main.container:has(.game-wrap) {
     font-size: 12px;
     min-height: 38px;
   }
+  
+  /* Game Over Overlay Mobile */
+  .overlay-content {
+    padding: 24px;
+    max-width: 90%;
+  }
+  
+  .game-over-icon {
+    font-size: 48px;
+  }
+  
   .overlay-content h2 {
-    font-size: 30px;
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  
+  .game-over-stats {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-item {
+    padding: 12px;
+  }
+  
+  .stat-icon {
+    font-size: 24px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .btn-restart {
+    padding: 14px 24px;
+    font-size: 16px;
   }
 }
 
