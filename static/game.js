@@ -79,8 +79,12 @@ function render({ grid, score, moves, new_tiles = [], merged_cells = [] }) {
       }
     
       if (merged_cells.some(cell => cell && cell.r === r && cell.c === c)) {
-      
-        setTimeout(() => div.classList.add("merge"), MERGE_DELAY_MS);
+        // Dùng requestAnimationFrame để animation mượt hơn, không bị khựng
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            div.classList.add("merge");
+          });
+        });
       }
       boardEl.appendChild(div);
     });
