@@ -79,7 +79,7 @@ class PayOS:
     def _create_signature(self, data: Dict[str, Any]) -> str:
         """
         Tạo signature cho request theo chuẩn PayOS
-        Sử dụng JSON dumps như trong tài liệu PayOS
+        Theo tài liệu: raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
         """
         # Tạo copy của data và loại bỏ signature field (nếu có)
         # PayOS yêu cầu signature được tính từ payload KHÔNG có signature
@@ -92,14 +92,15 @@ class PayOS:
             payload_for_signature[key] = value
         
         # Tạo JSON string theo chuẩn PayOS
-        # Sort keys theo alphabet (PayOS yêu cầu)
-        # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
+        # Sort keys theo alphabet trước khi dumps
         sorted_payload = dict(sorted(payload_for_signature.items()))
+        # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
         json_string = json.dumps(sorted_payload, separators=(",", ":"), ensure_ascii=False)
         
         print(f">>> Signature data string: {json_string}")
         
         # Create HMAC SHA256
+        # Theo tài liệu: hmac.new(PAYOS_CHECKSUM.encode(), raw.encode(), hashlib.sha256).hexdigest()
         signature = hmac.new(
             self.checksum_key.encode("utf-8"),
             msg=json_string.encode("utf-8"),
