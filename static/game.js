@@ -128,10 +128,13 @@ function render({ grid, score, moves, new_tiles = [], merged_cells = [] }) {
   movesEl.textContent = moves;
 
  
+  // Parse score to number để so sánh đúng (tránh bug khi score là string)
+  const currentScore = typeof score === 'number' ? score : parseInt(score, 10);
   const best = parseInt(localStorage.getItem("best") || "0", 10);
-  if (score > best) {
-    localStorage.setItem("best", score);
-    bestEl.textContent = score;
+  
+  if (currentScore > best) {
+    localStorage.setItem("best", currentScore);
+    bestEl.textContent = currentScore;
   } else {
     bestEl.textContent = best;
   }
@@ -428,7 +431,7 @@ btnShuffle?.addEventListener("click", async () => {
     
     if (data.ok && data.grid) {
       setTimeout(() => {
-        render({ grid: data.grid, score: scoreEl.textContent, moves: movesEl.textContent, new_tiles: [], merged_cells: [] });
+        render({ grid: data.grid, score: parseInt(scoreEl.textContent, 10), moves: parseInt(movesEl.textContent, 10), new_tiles: [], merged_cells: [] });
         
         // Animate new tiles in
         const newTiles = document.querySelectorAll('.tile:not(.empty)');
@@ -662,8 +665,8 @@ async function performSwap(row1, col1, row2, col2) {
         setTimeout(() => {
           render({ 
             grid: data.grid, 
-            score: scoreEl.textContent, 
-            moves: movesEl.textContent, 
+            score: parseInt(scoreEl.textContent, 10), 
+            moves: parseInt(movesEl.textContent, 10), 
             new_tiles: [], 
             merged_cells: [] 
           });
@@ -672,8 +675,8 @@ async function performSwap(row1, col1, row2, col2) {
       } else {
         render({ 
           grid: data.grid, 
-          score: scoreEl.textContent, 
-          moves: movesEl.textContent, 
+          score: parseInt(scoreEl.textContent, 10), 
+          moves: parseInt(movesEl.textContent, 10), 
           new_tiles: [], 
           merged_cells: [] 
         });
