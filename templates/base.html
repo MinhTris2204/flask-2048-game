@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   {# Meta Description #}
-  <meta name="description" content="{% block description %}Chơi game 2048 online miễn phí! Game puzzle hấp dẫn với bảng xếp hạng, tính năng premium, và giao diện đẹp mắt. Thử thách khả năng logic của bạn ngay hôm nay!{% endblock %}" />
+  <meta name="description" content="{% block description %}🎮 Chơi game 2048 online miễn phí ngay! Game puzzle logic hấp dẫn với bảng xếp hạng, tính năng hoàn tác, gợi ý thông minh. Thử thách bản thân và đạt điểm cao nhất! 🏆{% endblock %}" />
   <meta name="keywords" content="2048, game 2048, puzzle game, game online, game miễn phí, trò chơi số, logic game, game giải trí" />
   <meta name="author" content="GAME 2048" />
   <meta name="robots" content="index, follow" />
@@ -25,23 +25,29 @@
   <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}?v=5">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}?v=5">
   
-  {# Open Graph / Facebook #}
+  {# Open Graph / Facebook / Zalo / Messenger #}
+  {# Tạo file og-image.png (1200x630px) để preview đẹp hơn, xem HUONG_DAN_TAO_PREVIEW_IMAGE.md #}
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ request.url }}" />
-  <meta property="og:title" content="{% block og_title %}Game 2048 Online Miễn Phí{% endblock %}" />
-  <meta property="og:description" content="{% block og_description %}Chơi game 2048 online miễn phí! Game puzzle hấp dẫn với bảng xếp hạng, tính năng premium, và giao diện đẹp mắt. Thử thách khả năng logic của bạn ngay hôm nay!{% endblock %}" />
-  <meta property="og:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=5" />
+  <meta property="og:title" content="{% block og_title %}🎮 Game 2048 Online - Chơi Miễn Phí | GAME 2048{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}🏆 Chơi game 2048 online miễn phí ngay! ✨ Game puzzle logic hấp dẫn với bảng xếp hạng, tính năng hoàn tác, gợi ý thông minh. 🎯 Thử thách bản thân và đạt điểm cao nhất!{% endblock %}" />
+  <meta property="og:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=6" />
+  <meta property="og:image:secure_url" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=6" />
+  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="512" />
   <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="Logo Game 2048 - Game puzzle số logic" />
   <meta property="og:site_name" content="GAME 2048" />
   <meta property="og:locale" content="vi_VN" />
+  <meta property="fb:app_id" content="" />
   
   {# Twitter Card #}
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="{{ request.url }}" />
-  <meta name="twitter:title" content="{% block twitter_title %}Game 2048 Online{% endblock %}" />
-  <meta name="twitter:description" content="{% block twitter_description %}Chơi game 2048 online miễn phí! Game puzzle hấp dẫn với bảng xếp hạng và tính năng premium.{% endblock %}" />
-  <meta name="twitter:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=5" />
+  <meta name="twitter:title" content="{% block twitter_title %}🎮 Game 2048 Online - Chơi Miễn Phí{% endblock %}" />
+  <meta name="twitter:description" content="{% block twitter_description %}🏆 Game puzzle logic hấp dẫn với bảng xếp hạng và tính năng premium. Thử thách bản thân ngay!{% endblock %}" />
+  <meta name="twitter:image" content="{{ url_for('static', filename='logo.png', _external=True) }}?v=6" />
+  <meta name="twitter:image:alt" content="Logo Game 2048" />
   
   {# Canonical URL #}
   <link rel="canonical" href="{{ request.url }}" />
