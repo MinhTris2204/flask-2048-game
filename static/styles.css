@@ -1394,27 +1394,26 @@ main.container:has(.game-wrap) {
   margin: 4px 0;
 }
 
-/* Toast Notification */
+/* ==================== TOAST NOTIFICATION BASE ==================== */
 .toast-container {
   position: fixed;
-  top: 80px; /* Dưới header một chút */
-  right: 20px;
   z-index: 10000;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 380px;
   pointer-events: none;
 }
 
-/* Trên trang game (PC), toast nằm bên phải bàn cờ, không che bàn cờ */
+/* ==================== TOAST PC ==================== */
+.toast-container-pc {
+  /* Ẩn trên mobile */
+  display: none;
+}
+
 @media (min-width: 901px) {
-  /* Selector cho toast khi có game-wrap trong trang */
-  body:has(.game-wrap) .toast-container {
-    /* Đơn giản hóa: tính từ left edge của board
-       Container: max-width 900px, centered
-       Sidebar: 240px, Gap: 20px, Board: 428px
-       Vị trí toast = center + padding left + sidebar + gap + board width + margin */
+  .toast-container-pc {
+    display: flex;
+    /* Vị trí: bên phải bàn cờ, dưới header */
     left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
     right: auto;
     top: 80px;
@@ -1422,26 +1421,61 @@ main.container:has(.game-wrap) {
     width: 300px;
     position: fixed;
   }
-}
-
-/* Fallback selector */
-@media (min-width: 901px) {
-  main.container:has(.game-wrap) .toast-container {
-    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
-    right: auto;
-    top: 80px;
-    max-width: 300px;
-    width: 300px;
-    position: fixed;
+  
+  /* Trên màn hình rất lớn (>1200px) */
+  @media (min-width: 1200px) {
+    .toast-container-pc {
+      max-width: 320px;
+      width: 320px;
+    }
   }
 }
 
-/* Trên màn hình rất lớn (>1200px), điều chỉnh lại */
-@media (min-width: 1200px) {
-  body:has(.game-wrap) .toast-container,
-  main.container:has(.game-wrap) .toast-container {
-    max-width: 320px;
-    width: 320px;
+/* ==================== TOAST MOBILE ==================== */
+.toast-container-mobile {
+  /* Ẩn trên PC */
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .toast-container-mobile {
+    display: flex;
+    /* Vị trí: từ dưới header trở xuống - chèn vào phần nội dung */
+    top: 80px !important;
+    bottom: auto !important;
+    right: 0 !important;
+    left: 0 !important;
+    max-width: 100vw !important;
+    padding: 8px 12px 0 12px;
+    align-items: stretch;
+    z-index: 10001 !important;
+    pointer-events: none;
+    background: transparent;
+  }
+  
+  /* Style toast trên mobile */
+  .toast-container-mobile .toast {
+    min-width: unset;
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 16px;
+    text-align: center;
+    box-sizing: border-box;
+    pointer-events: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 12px 12px 0 0; /* Bo góc trên, không bo góc dưới */
+    margin: 0;
+    border: 2px solid var(--outline);
+    border-bottom: none; /* Không có border dưới để chèn vào nội dung */
+  }
+  
+  .toast-container-mobile .toast-close {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    top: 6px;
+    right: 6px;
   }
 }
 

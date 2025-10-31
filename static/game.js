@@ -6,7 +6,16 @@ const btnNew  = document.getElementById("btn-new");
 const btnUndo = document.getElementById("btn-undo");
 const btnHint = document.getElementById("btn-hint");
 const btnShuffle = document.getElementById("btn-shuffle");
-const toastContainer = document.getElementById("toast-container");
+
+// Toast containers - PC và Mobile riêng
+const toastContainerPC = document.getElementById("toast-container-pc");
+const toastContainerMobile = document.getElementById("toast-container-mobile");
+
+// Function để lấy container đúng (PC hoặc Mobile)
+function getToastContainer() {
+  const isMobile = window.innerWidth <= 900;
+  return isMobile ? toastContainerMobile : toastContainerPC;
+}
 
 let inputLocked = false;   
 const ANIM_MS = 140;       
@@ -14,6 +23,7 @@ const MERGE_DELAY_MS = 40;
 
 // Toast notification function
 function showToast(message, type = 'info', duration = 3000) {
+  const toastContainer = getToastContainer();
   if (!toastContainer) {
     console.warn("Toast container not found");
     return;
