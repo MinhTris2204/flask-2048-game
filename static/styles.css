@@ -1411,44 +1411,37 @@ main.container:has(.game-wrap) {
 @media (min-width: 901px) {
   /* Selector cho toast khi có game-wrap trong trang */
   body:has(.game-wrap) .toast-container {
-    /* Container: max-width 900px, center, padding 16px mỗi bên
-       Nội dung bên trong: sidebar 240px + gap 20px + board 428px = 688px
-       Toast nằm ngay sau board trong container
-       Tính toán: 
-       - Center container: 50% (450px từ left)
-       - Padding left: 16px
-       - Sidebar: 240px  
-       - Gap: 20px
-       - Board width: 428px (100px*4 + 14px*3 gap + 14px*2 padding)
-       - Vị trí toast: 450px + 16px + 240px + 20px + 428px = 1154px từ left
-       Nhưng đơn giản hơn: tính từ center + một nửa container width */
-    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 20px); /* 20px margin sau board */
+    /* Đơn giản hóa: tính từ left edge của board
+       Container: max-width 900px, centered
+       Sidebar: 240px, Gap: 20px, Board: 428px
+       Vị trí toast = center + padding left + sidebar + gap + board width + margin */
+    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
     right: auto;
     top: 80px;
     max-width: 300px;
-    width: auto;
-    min-width: 280px;
+    width: 300px;
     position: fixed;
   }
-  
-  /* Fallback nếu :has() không được hỗ trợ */
-  main.container:has(.game-wrap) ~ * .toast-container,
-  .game-wrap ~ .toast-container {
-    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 20px);
+}
+
+/* Fallback selector */
+@media (min-width: 901px) {
+  main.container:has(.game-wrap) .toast-container {
+    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
     right: auto;
     top: 80px;
     max-width: 300px;
-    width: auto;
-    min-width: 280px;
+    width: 300px;
     position: fixed;
   }
 }
 
 /* Trên màn hình rất lớn (>1200px), điều chỉnh lại */
 @media (min-width: 1200px) {
-  body:has(.game-wrap) .toast-container {
+  body:has(.game-wrap) .toast-container,
+  main.container:has(.game-wrap) .toast-container {
     max-width: 320px;
-    min-width: 300px;
+    width: 320px;
   }
 }
 
