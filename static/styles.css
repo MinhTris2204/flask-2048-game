@@ -702,6 +702,8 @@ main.container:has(.game-wrap) {
 .flash{
   margin:8px 0;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 .flash-item{
   padding:10px 14px; 
@@ -726,6 +728,7 @@ main.container:has(.game-wrap) {
   height: 100%;
   justify-content: center;
   padding: 8px 0;
+  z-index: 1;
 }
 .hud{display:flex; gap:12px; margin-top:6px; flex-wrap: wrap;}
 .score-box{
@@ -756,6 +759,7 @@ main.container:has(.game-wrap) {
   box-shadow: none;
   position: relative;
   flex-shrink: 0;
+  z-index: 3;
 }
 .tile{
   display:flex; align-items:center; justify-content:center;
@@ -1011,6 +1015,8 @@ main.container:has(.game-wrap) {
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  position: relative;
+  z-index: 2;
 }
 
 
@@ -1397,7 +1403,7 @@ main.container:has(.game-wrap) {
 /* ==================== TOAST NOTIFICATION BASE ==================== */
 .toast-container {
   position: fixed;
-  z-index: 10000;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1416,29 +1422,38 @@ main.container:has(.game-wrap) {
     /* Vị trí: nằm ở khoảng trống bên phải màn hình, không chèn vào bàn cờ
        Container max-width: 900px, căn giữa
        Toast nằm ở khoảng trống bên phải màn hình */
-    right: 20px;
+    right: calc((100vw - 900px) / 2 + 900px + 20px);
     left: auto;
-    top: 80px; /* Dưới header (header ~60-70px) */
+    top: 100px;
     max-width: 350px;
-    width: 350px;
+    width: calc((100vw - 900px) / 2 - 40px);
     position: fixed;
   }
   
-  /* Trên màn hình rất lớn (>1200px) */
+  /* Trên màn hình vừa (901px - 1200px) - toast nằm sát bên phải */
+  @media (max-width: 1199px) {
+    .toast-container-pc {
+      right: 20px;
+      width: 320px;
+      max-width: 320px;
+    }
+  }
+  
+  /* Trên màn hình lớn (>=1200px) - toast nằm trong khoảng trống bên phải */
   @media (min-width: 1200px) {
     .toast-container-pc {
+      right: calc((100vw - 900px) / 2 + 900px + 20px);
+      width: calc((100vw - 900px) / 2 - 40px);
       max-width: 380px;
-      width: 380px;
-      right: max(20px, calc((100vw - 900px) / 2 - 20px));
     }
   }
   
   /* Trên màn hình cực lớn (>1600px) */
   @media (min-width: 1600px) {
     .toast-container-pc {
-      right: max(40px, calc((100vw - 900px) / 2));
+      right: calc((100vw - 900px) / 2 + 900px + 30px);
       max-width: 400px;
-      width: 400px;
+      width: calc((100vw - 900px) / 2 - 60px);
     }
   }
 }
