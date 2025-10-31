@@ -17,6 +17,25 @@ function getToastContainer() {
   return isMobile ? toastContainerMobile : toastContainerPC;
 }
 
+// Xử lý resize để tự động chuyển đổi container nếu cần
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // Chuyển toast từ container này sang container kia nếu cần
+    const currentIsMobile = window.innerWidth <= 900;
+    const fromContainer = currentIsMobile ? toastContainerPC : toastContainerMobile;
+    const toContainer = currentIsMobile ? toastContainerMobile : toastContainerPC;
+    
+    if (fromContainer && toContainer && fromContainer.children.length > 0) {
+      // Di chuyển tất cả toast sang container mới
+      Array.from(fromContainer.children).forEach(toast => {
+        toContainer.appendChild(toast);
+      });
+    }
+  }, 100);
+});
+
 let inputLocked = false;   
 const ANIM_MS = 140;       
 const MERGE_DELAY_MS = 40;
