@@ -14,6 +14,11 @@ const MERGE_DELAY_MS = 40;
 
 // Toast notification function
 function showToast(message, type = 'info', duration = 3000) {
+  if (!toastContainer) {
+    console.warn("Toast container not found");
+    return;
+  }
+  
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   
@@ -49,6 +54,10 @@ function showToast(message, type = 'info', duration = 3000) {
 
 
 function render({ grid, score, moves, new_tiles = [], merged_cells = [] }) {
+  if (!boardEl || !scoreEl || !movesEl || !bestEl) {
+    console.error("Required DOM elements not found");
+    return;
+  }
   
   // Save current grid to window for swap functionality
   window.currentGrid = grid;
@@ -100,11 +109,17 @@ function render({ grid, score, moves, new_tiles = [], merged_cells = [] }) {
 }
 
 function updateUndoButton(canUndo) {
+  if (!btnUndo) return;
   btnUndo.disabled = !canUndo;
   btnUndo.classList.toggle("disabled", !canUndo);
 }
 
 function showGameOverOverlay({ score, max_tile, moves }) {
+  if (!boardEl) {
+    console.error("Board element not found");
+    return;
+  }
+  
   removeGameOverOverlay();
   const overlay = document.createElement("div");
   overlay.className = "overlay";
@@ -117,7 +132,10 @@ function showGameOverOverlay({ score, max_tile, moves }) {
   `;
   boardEl.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add("show"));
-  document.getElementById("btn-restart-overlay").addEventListener("click", startGame);
+  const restartBtn = document.getElementById("btn-restart-overlay");
+  if (restartBtn) {
+    restartBtn.addEventListener("click", startGame);
+  }
 }
 
 function removeGameOverOverlay() {
@@ -644,48 +662,8 @@ async function performSwap(row1, col1, row2, col2) {
 }
 
 // ================================
-// Hamburger + Drawer Mobile Menu
+// Hamburger Menu đã được xử lý trong mobile_menu.html
+// Không cần setup ở đây nữa
 // ================================
-function setupHamburgerMenu() {
-  const btnHamburger = document.getElementById("hamburger-menu-btn");
-  const drawer = document.getElementById("mobile-drawer-menu");
-  const drawerBackdrop = document.getElementById("drawer-backdrop");
-  const btnDrawerClose = document.getElementById("mobile-drawer-close");
-
-  if (!btnHamburger || !drawer || !drawerBackdrop || !btnDrawerClose) return;
-
-  btnHamburger.addEventListener("click", () => {
-    drawer.classList.add("open");
-    drawerBackdrop.classList.add("open");
-    document.body.style.overflow = "hidden";
-    btnDrawerClose.focus();
-  });
-  btnDrawerClose.addEventListener("click", () => {
-    drawer.classList.remove("open");
-    drawerBackdrop.classList.remove("open");
-    document.body.style.overflow = "";
-    btnHamburger.focus();
-  });
-  drawerBackdrop.addEventListener("click", () => {
-    drawer.classList.remove("open");
-    drawerBackdrop.classList.remove("open");
-    document.body.style.overflow = "";
-  });
-  // Đóng menu bằng phím esc
-  document.addEventListener("keydown", e => {
-    if (drawer.classList.contains("open") && (e.key === "Escape" || e.key === "Esc")) {
-      drawer.classList.remove("open");
-      drawerBackdrop.classList.remove("open");
-      document.body.style.overflow = "";
-      btnHamburger.focus();
-    }
-  });
-}
-// Gọi khi DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupHamburgerMenu);
-} else {
-  setupHamburgerMenu();
-}
 
 document.addEventListener("DOMContentLoaded", startGame);
