@@ -2106,6 +2106,13 @@ main.container:has(.game-wrap) {
   flex-shrink: 0;
 }
 
+/* Ẩn premium-status trên mobile - đã có trong menu 3 chấm */
+@media (max-width: 768px) {
+  .premium-status {
+    display: none;
+  }
+}
+
 .btn-upgrade {
   display: block;
   width: 100%;
@@ -2509,15 +2516,7 @@ main.container:has(.game-wrap) {
     min-height: 40px;
   }
   
-  .premium-status {
-    flex-shrink: 0;
-  }
-  
-  .btn-upgrade,
-  .btn-manage-premium {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
+  /* Premium status đã ẩn - có trong menu 3 chấm */
 }
 
 /* Bàn cờ vừa màn hình mobile - KHÔNG TRÀN - TỰ ĐỘNG ĐIỀU CHỈNH */
@@ -2953,24 +2952,5 @@ main.container:has(.game-wrap) {
     min-height: 40px;
   }
   
-  .premium-status {
-    width: 100%;
-    flex-shrink: 0;
-  }
-  
-  .btn-upgrade,
-  .btn-manage-premium {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-  }
-  
-  .premium-status {
-    width: 100%;
-  }
-  
-  .btn-upgrade,
-  .btn-manage-premium {
-    width: 100%;
-  }
+  /* Premium status đã ẩn - có trong menu 3 chấm */
 }

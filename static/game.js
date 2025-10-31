@@ -215,7 +215,7 @@ let touchMoved = false;
 let touchStartedOnBoard = false;
 const MIN_SWIPE_DISTANCE = 25; // Giảm khoảng cách để nhạy hơn
 
-// Touch events - Tối ưu cho vuốt mượt mà
+// Touch events - Cố định bàn cờ khi vuốt, không cho scroll trang
 boardEl.addEventListener("touchstart", e => {
   // Chỉ block nếu bắt đầu trên board (tránh block toàn trang)
   if (e.target === boardEl || boardEl.contains(e.target)) {
@@ -228,15 +228,20 @@ boardEl.addEventListener("touchstart", e => {
     touchStartX = t.clientX;
     touchStartY = t.clientY;
     touchMoved = false;
+    // Prevent default ngay từ đầu để ngăn scroll
+    e.preventDefault();
   } else {
     touchStartedOnBoard = false;
   }
-}, { passive: true }); // Dùng passive để browser tối ưu scroll performance
+}, { passive: false }); // Không passive để có thể preventDefault
 
-// Touchmove để theo dõi quá trình vuốt - dùng passive để mượt hơn
+// Touchmove để theo dõi quá trình vuốt và ngăn scroll
 let lastTouchTime = 0;
 boardEl.addEventListener("touchmove", e => {
   if (!touchStartedOnBoard || inputLocked) return;
+  
+  // Prevent default để ngăn scroll trang khi vuốt trên board
+  e.preventDefault();
   
   const now = performance.now();
   // Throttle để tránh quá nhiều event (60fps max)
@@ -254,7 +259,7 @@ boardEl.addEventListener("touchmove", e => {
   if (Math.max(absx, absy) > 8) {
     touchMoved = true;
   }
-}, { passive: true }); // Passive cho touchmove để mượt mà hơn
+}, { passive: false }); // Không passive để có thể preventDefault
 
 boardEl.addEventListener("touchend", e => {
   if (!touchStartedOnBoard || inputLocked) {
