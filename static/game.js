@@ -423,8 +423,8 @@ btnSwap?.addEventListener("click", () => {
   if (!swapMode) {
     swapMode = true;
     btnSwap.classList.add("active");
-    btnSwap.textContent = "✓ Chọn 2 ô (Ấn ESC để hủy)";
-    showToast("Chế độ Đổi chỗ: Click vào 2 ô bất kỳ để đổi chỗ. Ấn ESC để hủy.", 'info', 3500);
+    btnSwap.textContent = "✓ Chọn 2 ô";
+    showToast("Chế độ Đổi chỗ: Click vào 2 ô bất kỳ để đổi chỗ.", 'info', 3500);
   } else {
     swapMode = false;
     btnSwap.classList.remove("active");
