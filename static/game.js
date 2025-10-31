@@ -37,8 +37,8 @@ window.addEventListener('resize', () => {
 });
 
 let inputLocked = false;   
-const ANIM_MS = 100;       
-const MERGE_DELAY_MS = 20;
+const ANIM_MS = 60;       
+const MERGE_DELAY_MS = 10;
 
 // Toast notification function
 function showToast(message, type = 'info', duration = 3000) {

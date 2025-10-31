@@ -766,7 +766,7 @@ main.container:has(.game-wrap) {
   border-radius:14px;
   font-weight:900; font-size:32px;
   box-shadow: none;
-  transition:transform .08s ease, background-color .08s ease, color .08s ease, box-shadow .08s ease;
+  transition:transform .05s ease-out, background-color .05s ease-out, color .05s ease-out;
   user-select:none;
   border: none;
   /* GPU acceleration for smooth animation */
@@ -795,17 +795,17 @@ main.container:has(.game-wrap) {
 .tile[data-val="8192"] { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); color: #ffffff; font-size: 28px; box-shadow: none; }
 
 .tile.spawn{
-  animation: pop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: pop 0.1s ease-out;
 }
 
 .tile.merge{
-  animation: bounce 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: bounce 0.12s ease-out;
 }
 
 @keyframes pop {
   from {
-    transform: scale3d(0.7, 0.7, 1);
-    opacity: 0.5;
+    transform: scale3d(0.8, 0.8, 1);
+    opacity: 0.6;
   }
   to {
     transform: scale3d(1, 1, 1);
@@ -818,7 +818,7 @@ main.container:has(.game-wrap) {
     transform: scale3d(1, 1, 1);
   }
   50% {
-    transform: scale3d(1.2, 1.2, 1);
+    transform: scale3d(1.15, 1.15, 1);
   }
   100% {
     transform: scale3d(1, 1, 1);
