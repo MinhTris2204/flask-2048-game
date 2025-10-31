@@ -1,0 +1,137 @@
+<!-- Mobile Hamburger Button -->
+<button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- Mobile Sidebar Menu -->
+<div class="mobile-sidebar" id="mobile-sidebar">
+  <div class="mobile-sidebar-overlay" id="sidebar-overlay"></div>
+  
+  <div class="mobile-sidebar-panel">
+    <div class="mobile-sidebar-header">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🎮</span>
+        <span class="brand-text">GAME 2048</span>
+      </div>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close">✕</button>
+    </div>
+    
+    <div class="mobile-sidebar-content">
+      {% if current_user.is_authenticated %}
+        <div class="sidebar-user">
+          <span class="sidebar-avatar">👤</span>
+          <div class="sidebar-user-info">
+            <span class="sidebar-username">{{ current_user.username }}</span>
+            {% if current_user.is_premium %}
+              <span class="sidebar-badge premium">⭐ Premium</span>
+            {% else %}
+              <span class="sidebar-badge">Free</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <a href="{{ url_for('game') }}" class="sidebar-link">
+            <span class="sidebar-icon">🎮</span>
+            <span>Chơi game</span>
+          </a>
+          
+          <a href="{{ url_for('game_history') }}" class="sidebar-link">
+            <span class="sidebar-icon">📊</span>
+            <span>Xem lịch sử</span>
+          </a>
+          
+          <a href="{{ url_for('premium_manage') }}" class="sidebar-link">
+            <span class="sidebar-icon">⭐</span>
+            <span>Quản lý Premium</span>
+          </a>
+          
+          {% if not current_user.is_premium %}
+          <a href="{{ url_for('premium_manage') }}" class="sidebar-link highlight">
+            <span class="sidebar-icon">🚀</span>
+            <span>Nâng cấp Premium</span>
+          </a>
+          {% endif %}
+          
+          <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
+            <span class="sidebar-icon">🏆</span>
+            <span>Bảng xếp hạng</span>
+          </a>
+          
+          <div class="sidebar-divider"></div>
+          
+          <a href="{{ url_for('logout') }}" class="sidebar-link logout">
+            <span class="sidebar-icon">🚪</span>
+            <span>Đăng xuất</span>
+          </a>
+        </nav>
+      {% else %}
+        <nav class="sidebar-nav">
+          <a href="{{ url_for('login') }}" class="sidebar-link highlight">
+            <span class="sidebar-icon">🔐</span>
+            <span>Đăng nhập</span>
+          </a>
+          
+          <a href="{{ url_for('register') }}" class="sidebar-link">
+            <span class="sidebar-icon">📝</span>
+            <span>Đăng ký</span>
+          </a>
+          
+          <div class="sidebar-divider"></div>
+          
+          <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
+            <span class="sidebar-icon">🏆</span>
+            <span>Bảng xếp hạng</span>
+          </a>
+        </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+// Mobile Menu Toggle
+(function() {
+  const hamburger = document.getElementById('hamburger-btn');
+  const sidebar = document.getElementById('mobile-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const closeBtn = document.getElementById('sidebar-close');
+  
+  function openSidebar() {
+    sidebar.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  
+  if (hamburger) {
+    hamburger.addEventListener('click', openSidebar);
+  }
+  
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeSidebar);
+  }
+  
+  // Close on link click
+  const sidebarLinks = document.querySelectorAll('.sidebar-link');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeSidebar);
+  });
+  
+  // Close on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+      closeSidebar();
+    }
+  });
+})();
+</script>
