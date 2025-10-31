@@ -91,19 +91,46 @@ class PayOS:
                 continue
             payload_for_signature[key] = value
         
-        # Tạo JSON string theo chuẩn PayOS
-        # PayOS yêu cầu sort keys alphabetically trước khi tạo signature
-        sorted_payload = dict(sorted(payload_for_signature.items()))
-        # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
-        json_string = json.dumps(sorted_payload, separators=(",", ":"), ensure_ascii=False)
+        # Theo tài liệu PayOS: signature được tạo từ query string format
+        # Format: key1=value1&key2=value2... (sort keys alphabetically)
         
-        print(f">>> Signature data string: {json_string}")
+        def convert_obj_to_query_str(obj: dict) -> str:
+            """Convert object to query string format như PayOS yêu cầu"""
+            query_string = []
+            
+            # Sort keys alphabetically
+            sorted_items = sorted(obj.items())
+            
+            for key, value in sorted_items:
+                value_as_string = ""
+                if isinstance(value, (int, float, bool)):
+                    value_as_string = str(value)
+                elif value in [None, 'null', 'NULL']:
+                    value_as_string = ""
+                elif isinstance(value, list):
+                    # Handle arrays - sort objects in array by key
+                    sorted_array = [dict(sorted(item.items())) if isinstance(item, dict) else item for item in value]
+                    value_as_string = json.dumps(sorted_array, separators=(',', ':'), ensure_ascii=False).replace('None', 'null')
+                elif isinstance(value, dict):
+                    # Handle nested objects - sort keys
+                    sorted_dict = dict(sorted(value.items()))
+                    value_as_string = json.dumps(sorted_dict, separators=(',', ':'), ensure_ascii=False).replace('None', 'null')
+                else:
+                    value_as_string = str(value)
+                
+                query_string.append(f"{key}={value_as_string}")
+            
+            return "&".join(query_string)
         
-        # Create HMAC SHA256
-        # Theo tài liệu: hmac.new(PAYOS_CHECKSUM.encode(), raw.encode(), hashlib.sha256).hexdigest()
+        # Tạo query string từ payload (đã sort keys alphabetically)
+        data_query_str = convert_obj_to_query_str(payload_for_signature)
+        
+        print(f">>> Signature data (Query string, sorted): {data_query_str}")
+        
+        # Create HMAC SHA256 từ query string
         signature = hmac.new(
             self.checksum_key.encode("utf-8"),
-            msg=json_string.encode("utf-8"),
+            msg=data_query_str.encode("utf-8"),
             digestmod=hashlib.sha256
         ).hexdigest()
         
@@ -116,6 +143,7 @@ class PayOS:
         Verify webhook signature từ PayOS
         Theo tài liệu PayOS: signature được tạo từ toàn bộ payload (trừ field "signature")
         Webhook structure: {code, desc, success, data, signature}
+        Sử dụng query string format giống như payment-requests
         """
         try:
             # Lấy signature từ webhook data
@@ -127,7 +155,7 @@ class PayOS:
             # Tạo copy của webhook_data và loại bỏ signature field
             payload_for_verify = {k: v for k, v in webhook_data.items() if k != "signature"}
             
-            # Tạo signature từ payload (đã sort keys alphabetically)
+            # Tạo signature từ payload (dùng query string format như payment-requests)
             expected_signature = self._create_signature(payload_for_verify)
             
             # So sánh signature (case-insensitive)
