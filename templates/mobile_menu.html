@@ -1,8 +1,10 @@
 <!-- Mobile Hamburger Button -->
 <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
-  <span></span>
-  <span></span>
-  <span></span>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1"></circle>
+    <circle cx="12" cy="5" r="1"></circle>
+    <circle cx="12" cy="19" r="1"></circle>
+  </svg>
 </button>
 
 <!-- Mobile Sidebar Menu -->
@@ -43,18 +45,6 @@
             <span>Xem lịch sử</span>
           </a>
           
-          <a href="{{ url_for('premium_manage') }}" class="sidebar-link">
-            <span class="sidebar-icon">⭐</span>
-            <span>Quản lý Premium</span>
-          </a>
-          
-          {% if not current_user.is_premium %}
-          <a href="{{ url_for('premium_manage') }}" class="sidebar-link highlight">
-            <span class="sidebar-icon">🚀</span>
-            <span>Nâng cấp Premium</span>
-          </a>
-          {% endif %}
-          
           <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
             <span class="sidebar-icon">🏆</span>
             <span>Bảng xếp hạng</span>
@@ -69,18 +59,6 @@
         </nav>
       {% else %}
         <nav class="sidebar-nav">
-          <a href="{{ url_for('login') }}" class="sidebar-link highlight">
-            <span class="sidebar-icon">🔐</span>
-            <span>Đăng nhập</span>
-          </a>
-          
-          <a href="{{ url_for('register') }}" class="sidebar-link">
-            <span class="sidebar-icon">📝</span>
-            <span>Đăng ký</span>
-          </a>
-          
-          <div class="sidebar-divider"></div>
-          
           <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
             <span class="sidebar-icon">🏆</span>
             <span>Bảng xếp hạng</span>

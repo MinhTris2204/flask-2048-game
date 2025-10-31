@@ -2432,29 +2432,32 @@ main.container:has(.game-wrap) {
 /* Hamburger button - Chỉ hiện trên mobile */
 .hamburger-btn {
   display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 22px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
   z-index: 1000;
-  margin-right: 12px;
+  margin-right: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-.hamburger-btn span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: all 0.3s ease;
+.hamburger-btn:hover {
+  background: var(--surface);
 }
 
-.hamburger-btn:hover span {
-  background: var(--accent);
+.hamburger-btn svg {
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover svg {
+  color: var(--accent);
+  transform: scale(1.1);
 }
 
 /* Mobile Sidebar */
@@ -2474,15 +2477,17 @@ main.container:has(.game-wrap) {
 }
 
 .mobile-sidebar-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.3s ease;
   backdrop-filter: blur(4px);
+  z-index: 9999;
 }
 
 .mobile-sidebar.active .mobile-sidebar-overlay {
@@ -2490,18 +2495,20 @@ main.container:has(.game-wrap) {
 }
 
 .mobile-sidebar-panel {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 280px;
   max-width: 85%;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height cho mobile */
   background: var(--card);
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  z-index: 10000;
 }
 
 .mobile-sidebar.active .mobile-sidebar-panel {
@@ -2672,12 +2679,50 @@ main.container:has(.game-wrap) {
     display: block;
   }
   
-  /* Ẩn desktop nav items trên mobile */
-  .nav-link {
+  /* Ẩn tất cả nav items trên mobile header */
+  .nav-link,
+  .user-info,
+  .btn-logout,
+  .btn-login {
     display: none !important;
   }
   
-  .user-info {
-    display: none !important;
+  /* Game controls: Vuốt ngang thay vì dọc */
+  .side {
+    width: 100%;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+  }
+  
+  .controls {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    min-width: min-content;
+  }
+  
+  .controls button,
+  .premium-card {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    min-width: 140px;
+  }
+  
+  /* Ẩn scrollbar nhưng vẫn scroll được */
+  .side::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .side::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .side::-webkit-scrollbar-thumb {
+    background: var(--outline);
+    border-radius: 4px;
   }
 }
