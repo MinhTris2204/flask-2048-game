@@ -217,6 +217,11 @@ const MIN_SWIPE_DISTANCE = 25; // Giảm khoảng cách để nhạy hơn
 
 // Touch events - Cố định bàn cờ khi vuốt, không cho scroll trang
 boardEl.addEventListener("touchstart", e => {
+  // Nếu đang ở swap mode, không xử lý swipe (để handler riêng của swap xử lý)
+  if (swapMode) {
+    return;
+  }
+  
   // Chỉ block nếu bắt đầu trên board (tránh block toàn trang)
   if (e.target === boardEl || boardEl.contains(e.target)) {
     touchStartedOnBoard = true;
@@ -238,6 +243,11 @@ boardEl.addEventListener("touchstart", e => {
 // Touchmove để theo dõi quá trình vuốt và ngăn scroll
 let lastTouchTime = 0;
 boardEl.addEventListener("touchmove", e => {
+  // Nếu đang ở swap mode, không xử lý swipe
+  if (swapMode) {
+    return; // Để handler riêng của swap xử lý
+  }
+  
   if (!touchStartedOnBoard || inputLocked) return;
   
   // Prevent default để ngăn scroll trang khi vuốt trên board
@@ -262,6 +272,11 @@ boardEl.addEventListener("touchmove", e => {
 }, { passive: false }); // Không passive để có thể preventDefault
 
 boardEl.addEventListener("touchend", e => {
+  // Nếu đang ở swap mode, không xử lý swipe
+  if (swapMode) {
+    return; // Để handler riêng của swap xử lý
+  }
+  
   if (!touchStartedOnBoard || inputLocked) {
     touchStartedOnBoard = false;
     touchMoved = false;
@@ -418,9 +433,15 @@ btnSwap?.addEventListener("click", () => {
   }
 });
 
-// Handle tile click for swap mode
-document.addEventListener("click", function(e) {
+// Function to handle tile selection for swap (dùng chung cho cả click và touch)
+function handleTileSelection(e, touchEvent = false) {
   if (!swapMode) return;
+  
+  // Nếu là touch event trong swap mode, prevent default để tránh conflict với swipe
+  if (touchEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
   
   // Tìm tile element từ target hoặc parent
   let cell = e.target;
@@ -457,11 +478,12 @@ document.addEventListener("click", function(e) {
     return;
   }
   
-  console.log("Clicked tile:", { row, col, value });
+  console.log("Selected tile:", { row, col, value });
   
   if (firstTile === null) {
     firstTile = { row, col, value };
     cell.style.border = "3px solid #fbbf24";
+    showToast("Đã chọn ô đầu tiên. Chọn ô thứ hai để đổi chỗ.", 'info', 2000);
   } else {
     if (firstTile.row === row && firstTile.col === col) {
       showToast("Đã chọn ô này rồi! Chọn ô khác.", 'warning');
@@ -480,7 +502,64 @@ document.addEventListener("click", function(e) {
     btnSwap.textContent = "🔄 Đổi chỗ 2 ô";
     firstTile = null;
   }
+}
+
+// Handle tile click for swap mode (PC)
+document.addEventListener("click", function(e) {
+  handleTileSelection(e, false);
 });
+
+// Handle tile touch for swap mode (Mobile)
+// Track touch for swap mode separately
+let swapTouchStart = { x: 0, y: 0, time: 0 };
+let swapTouchMoved = false;
+
+boardEl.addEventListener("touchstart", function(e) {
+  if (!swapMode) return; // Chỉ xử lý trong swap mode
+  
+  const t = e.touches && e.touches[0];
+  if (!t) return;
+  
+  swapTouchStart.x = t.clientX;
+  swapTouchStart.y = t.clientY;
+  swapTouchStart.time = Date.now();
+  swapTouchMoved = false;
+}, { passive: false });
+
+boardEl.addEventListener("touchmove", function(e) {
+  if (!swapMode) return;
+  
+  const t = e.touches && e.touches[0];
+  if (!t) return;
+  
+  const dx = Math.abs(t.clientX - swapTouchStart.x);
+  const dy = Math.abs(t.clientY - swapTouchStart.y);
+  
+  // Nếu di chuyển quá nhiều (>10px), coi như là swipe, không phải tap
+  if (dx > 10 || dy > 10) {
+    swapTouchMoved = true;
+  }
+}, { passive: false });
+
+boardEl.addEventListener("touchend", function(e) {
+  if (!swapMode) return;
+  
+  // Chỉ xử lý nếu không phải swipe (tap)
+  if (!swapTouchMoved) {
+    const t = e.changedTouches && e.changedTouches[0];
+    if (t) {
+      const touchTime = Date.now() - swapTouchStart.time;
+      // Chỉ xử lý tap nếu thời gian < 300ms (tap nhanh)
+      if (touchTime < 300) {
+        handleTileSelection(e, true);
+      }
+    }
+  }
+  
+  // Reset
+  swapTouchMoved = false;
+  swapTouchStart = { x: 0, y: 0, time: 0 };
+}, { passive: false });
 
 // Handle ESC to cancel swap mode
 document.addEventListener("keydown", (e) => {
