@@ -777,13 +777,13 @@ main.container:has(.game-wrap) {
 
 @media (max-width:520px){
   .board{
-    grid-template-columns:repeat(4,68px);
-    grid-template-rows:repeat(4,68px);
+    grid-template-columns:repeat(4,73px);
+    grid-template-rows:repeat(4,73px);
     gap: 8px;
     padding: 10px;
   }
   .tile{
-    font-size:24px; 
+    font-size:25px; 
     border-radius: 10px;
     will-change: transform;
   }
@@ -2522,14 +2522,14 @@ main.container:has(.game-wrap) {
 /* Bàn cờ vừa màn hình mobile - KHÔNG TRÀN - TỰ ĐỘNG ĐIỀU CHỈNH */
 @media (max-width: 600px) {
   .board {
-    grid-template-columns: repeat(4, 70px);
-    grid-template-rows: repeat(4, 70px);
-    gap: 8px;
-    padding: 10px;
+    grid-template-columns: repeat(4, 75px);
+    grid-template-rows: repeat(4, 75px);
+    gap: 9px;
+    padding: 11px;
   }
   .tile { 
-    font-size: 24px; 
-    border-radius: 10px; 
+    font-size: 26px; 
+    border-radius: 11px; 
     will-change: transform;
   }
   
@@ -2552,14 +2552,14 @@ main.container:has(.game-wrap) {
 
 @media (max-width: 430px) {
   .board {
-    grid-template-columns: repeat(4, 65px);
-    grid-template-rows: repeat(4, 65px);
-    gap: 6px;
-    padding: 8px;
+    grid-template-columns: repeat(4, 70px);
+    grid-template-rows: repeat(4, 70px);
+    gap: 7px;
+    padding: 9px;
   }
   .tile { 
-    font-size: 22px; 
-    border-radius: 8px; 
+    font-size: 24px; 
+    border-radius: 9px; 
     will-change: transform;
   }
   
