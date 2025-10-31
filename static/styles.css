@@ -1409,36 +1409,35 @@ main.container:has(.game-wrap) {
 
 /* Trên trang game (PC), toast nằm bên phải bàn cờ, không che bàn cờ */
 @media (min-width: 901px) {
-  /* Toast trong game-wrap: dùng absolute positioning relative to game-wrap */
-  .game-wrap .toast-container {
-    position: absolute;
-    top: 0;
-    left: calc(240px + 20px + 428px + 12px); /* sidebar + gap + board + margin */
-    right: auto;
-    width: 300px;
-    max-width: 300px;
-    z-index: 10000;
-  }
-  
-  /* Fallback: toast nằm ngoài game-wrap */
-  body:has(.game-wrap) .toast-container,
-  main.container:has(.game-wrap) .toast-container {
-    position: fixed;
+  /* Selector cho toast khi có game-wrap trong trang */
+  body:has(.game-wrap) .toast-container {
+    /* Đơn giản hóa: tính từ left edge của board
+       Container: max-width 900px, centered
+       Sidebar: 240px, Gap: 20px, Board: 428px
+       Vị trí toast = center + padding left + sidebar + gap + board width + margin */
     left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
     right: auto;
     top: 80px;
     max-width: 300px;
     width: 300px;
+    position: fixed;
+  }
+}
+
+/* Fallback selector */
+@media (min-width: 901px) {
+  main.container:has(.game-wrap) .toast-container {
+    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
+    right: auto;
+    top: 80px;
+    max-width: 300px;
+    width: 300px;
+    position: fixed;
   }
 }
 
 /* Trên màn hình rất lớn (>1200px), điều chỉnh lại */
 @media (min-width: 1200px) {
-  .game-wrap .toast-container {
-    width: 320px;
-    max-width: 320px;
-  }
-  
   body:has(.game-wrap) .toast-container,
   main.container:has(.game-wrap) .toast-container {
     max-width: 320px;
