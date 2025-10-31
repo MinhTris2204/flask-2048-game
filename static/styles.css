@@ -1407,14 +1407,26 @@ main.container:has(.game-wrap) {
   pointer-events: none;
 }
 
-/* Trên trang game (PC), toast nằm bên phải màn hình, không che bàn cờ */
+/* Trên trang game (PC), toast nằm bên phải bàn cờ, không che bàn cờ */
 @media (min-width: 901px) {
   main.container:has(.game-wrap) .toast-container {
-    /* Trên màn hình lớn (>900px), toast nằm bên phải màn hình
-       Vì container có max-width 900px, nên sẽ có khoảng trống bên phải
-       Toast sẽ nằm ở khoảng trống đó */
-    right: max(20px, calc((100vw - 900px) / 2 + 20px));
-    max-width: min(380px, calc((100vw - 900px) / 2 - 40px));
+    /* Container: max-width 900px, padding 16px mỗi bên
+       Sidebar: 240px, Gap: 20px, Board: ~400px
+       Tính toán: toast nằm ngay sau board, cách bên phải màn hình một khoảng */
+    left: calc(50% + 330px); /* 50% (center) + 450px (nửa container) - 240px (sidebar) - 20px (gap) - margin */
+    right: auto;
+    top: 80px;
+    max-width: 320px;
+    width: 320px;
+  }
+}
+
+/* Trên màn hình rất lớn (>1200px), điều chỉnh lại để toast không quá xa */
+@media (min-width: 1200px) {
+  main.container:has(.game-wrap) .toast-container {
+    left: calc(50% + 350px);
+    max-width: 350px;
+    width: 350px;
   }
 }
 
