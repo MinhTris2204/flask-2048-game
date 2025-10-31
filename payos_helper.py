@@ -5,6 +5,7 @@ Xử lý API calls cho PayOS
 
 import hmac
 import hashlib
+import json
 import requests
 from typing import Dict, Any
 
@@ -78,8 +79,9 @@ class PayOS:
     def _create_signature(self, data: Dict[str, Any]) -> str:
         """
         Tạo signature cho request theo chuẩn PayOS
+        Sử dụng JSON dumps như trong tài liệu PayOS
         """
-        # Loại bỏ các field không cần thiết
+        # Loại bỏ signature field và các giá trị None/empty
         filtered_data = {}
         for key, value in data.items():
             if key == "signature":  # Skip signature field
@@ -91,25 +93,16 @@ class PayOS:
         # Sort theo key alphabet
         sorted_data = dict(sorted(filtered_data.items()))
         
-        # Tạo query string
-        query_parts = []
-        for key, value in sorted_data.items():
-            # Convert value to string
-            if isinstance(value, (int, float)):
-                value_str = str(int(value))  # Convert to int string (no decimals)
-            else:
-                value_str = str(value)
-            
-            query_parts.append(f"{key}={value_str}")
+        # Tạo JSON string theo chuẩn PayOS
+        # Dùng separators để loại bỏ space, ensure_ascii=False để giữ Unicode
+        json_string = json.dumps(sorted_data, separators=(",", ":"), ensure_ascii=False)
         
-        query_string = "&".join(query_parts)
-        
-        print(f">>> Signature data string: {query_string}")
+        print(f">>> Signature data string: {json_string}")
         
         # Create HMAC SHA256
         signature = hmac.new(
             self.checksum_key.encode("utf-8"),
-            msg=query_string.encode("utf-8"),
+            msg=json_string.encode("utf-8"),
             digestmod=hashlib.sha256
         ).hexdigest()
         

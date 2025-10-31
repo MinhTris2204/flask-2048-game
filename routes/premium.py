@@ -121,13 +121,10 @@ def payment(plan_id):
                     flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
                     return redirect(url_for("premium_manage"))
                 
-                print(f">>> Rendering payment processing page with checkout URL: {payment_url}")
-                # Render trang nhúng PayOS thay vì redirect trực tiếp
-                return render_template("payment_processing.html",
-                                     checkout_url=payment_url,
-                                     order_code=order.id,
-                                     amount=float(plan.price),
-                                     description=plan.name)
+                print(f">>> Redirecting to PayOS checkout URL: {payment_url}")
+                # Redirect trực tiếp đến checkoutUrl của PayOS (theo hướng dẫn PayOS)
+                # PayOS sẽ tự hiển thị STK/QR đúng quy tắc
+                return redirect(payment_url)
                 
             except Exception as e:
                 print(f">>> EXCEPTION in payment creation: {type(e).__name__}: {str(e)}")
