@@ -5,14 +5,10 @@ from flask_login import login_required, current_user, login_user, logout_user
 from config import app, db
 from models import PremiumPlan, Order, User
 from payos_config import PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY, PAYOS_RETURN_URL, PAYOS_CANCEL_URL
-from payos import PayOS, PaymentData, ItemData
-from payos_helper import PayOS as PayOSHelper  # Vẫn dùng cho webhook verification
+from payos_helper import PayOS
 
-# Khởi tạo PayOS (thư viện chính thức)
+# Khởi tạo PayOS helper (tự implement - đã cải thiện signature generation)
 payos = PayOS(PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY)
-
-# Khởi tạo PayOSHelper (tự implement) cho webhook verification
-payos_helper = PayOSHelper(PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY)
 
 
 @app.route("/payos/cancel")
@@ -94,40 +90,47 @@ def payment(plan_id):
             db.session.add(order)
             db.session.commit()
             
-            # Tạo payment link PayOS bằng thư viện chính thức
+            # Tạo payment link PayOS
             try:
                 # Description tối đa 25 ký tự theo yêu cầu PayOS
                 description = f"Premium {plan.duration_days}d"  # VD: "Premium 365d" = 13 ký tự
                 
                 print(f">>> Creating PayOS link for order {order.id}, amount {plan.price}")
                 
-                # Tạo item data
-                item = ItemData(
-                    name=plan.name,
-                    quantity=1,
-                    price=int(plan.price)
-                )
-                
-                # Tạo payment data
-                payment_data = PaymentData(
-                    orderCode=order.id,
+                result = payos.create_payment_link(
+                    order_code=order.id,
                     amount=int(plan.price),
                     description=description,
-                    items=[item],
-                    cancelUrl=PAYOS_CANCEL_URL,
-                    returnUrl=PAYOS_RETURN_URL,
+                    return_url=PAYOS_RETURN_URL,
+                    cancel_url=PAYOS_CANCEL_URL,
+                    buyer_name=None,
+                    buyer_email=None
                 )
                 
-                # Tạo payment link bằng thư viện chính thức
-                payment_link_response = payos.createPaymentLink(payment_data)
+                print(f">>> PayOS Response: {result}")
                 
-                print(f">>> PayOS Response: {payment_link_response.to_json() if hasattr(payment_link_response, 'to_json') else payment_link_response}")
+                # Kiểm tra lỗi từ PayOS
+                if result.get("code") != "00" and result.get("code") != "200":
+                    error_desc = result.get("desc", "Unknown error")
+                    print(f">>> PayOS Error: {result.get('code')} - {error_desc}")
+                    flash(f"Lỗi PayOS: {error_desc}", "danger")
+                    return redirect(url_for("premium_manage"))
                 
-                # Lấy checkout URL từ response
-                payment_url = payment_link_response.checkoutUrl
+                if "error" in result:
+                    print(f">>> PayOS Error: {result.get('error')}")
+                    flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                    return redirect(url_for("premium_manage"))
                 
+                # Lấy checkout URL - kiểm tra data không None
+                data = result.get("data")
+                if not data:
+                    print(f">>> No data in PayOS response: {result}")
+                    flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
+                    return redirect(url_for("premium_manage"))
+                
+                payment_url = data.get("checkoutUrl")
                 if not payment_url:
-                    print(f">>> No checkoutUrl in PayOS response")
+                    print(f">>> No checkoutUrl in response data: {result}")
                     flash("Không thể tạo link thanh toán. Vui lòng thử lại!", "danger")
                     return redirect(url_for("premium_manage"))
                 
@@ -279,8 +282,8 @@ def payos_webhook():
     if not webhook_data:
         return jsonify({"error": "No data"}), 400
     
-    # Verify signature (dùng PayOSHelper vì thư viện chính thức có thể chưa có method này)
-    if not payos_helper.verify_webhook_signature(webhook_data):
+    # Verify signature
+    if not payos.verify_webhook_signature(webhook_data):
         print(">>> PayOS Webhook: Invalid signature")
         return jsonify({"error": "Invalid signature"}), 400
     
