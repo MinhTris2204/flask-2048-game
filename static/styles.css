@@ -371,10 +371,14 @@ main.container:has(.game-wrap) {
   .leaderboard-table-wrapper {
     padding: 16px;
     overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   .leaderboard-table {
-    min-width: 600px;
+    min-width: 100%;
+    width: 100%;
+    display: table;
   }
 
   .leaderboard-table th,
@@ -2286,11 +2290,16 @@ main.container:has(.game-wrap) {
   .game-layout {
     flex-direction: column;
     gap: 12px;
+    align-items: center;
+    width: 100%;
+    overflow-x: hidden;
   }
   
   .side {
     width: 100%;
-    max-height: 300px;
+    max-width: 100%;
+    max-height: none;
+    overflow: visible;
   }
   
   /* Flash messages */
@@ -2388,13 +2397,20 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Bàn cờ căn giữa và cố định trên mobile */
+/* Bàn cờ căn giữa trên mobile - cho phép scroll */
 @media (max-width: 768px) {
   .game-wrap {
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    overflow: hidden;
+    justify-content: flex-start;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 8px 12px;
+    min-height: 100%;
+  }
+  
+  .board {
+    margin: 0 auto;
   }
 }
 
@@ -2687,42 +2703,49 @@ main.container:has(.game-wrap) {
     display: none !important;
   }
   
-  /* Game controls: Vuốt ngang thay vì dọc */
+  /* Game controls: Giữ dọc trên mobile */
   .side {
     width: 100%;
-    max-height: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 8px;
+    max-width: 100%;
+    overflow: visible;
+  }
+  
+  .side .panel {
+    width: 100%;
+  }
+  
+  .hud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .score-box {
+    flex: 1 1 auto;
+    min-width: 90px;
   }
   
   .controls {
     display: flex;
-    flex-direction: row;
-    gap: 12px;
-    min-width: min-content;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
   }
   
-  .controls button,
-  .premium-card {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    min-width: 140px;
+  .controls button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
   }
   
-  /* Ẩn scrollbar nhưng vẫn scroll được */
-  .side::-webkit-scrollbar {
-    height: 4px;
+  .premium-status {
+    width: 100%;
   }
   
-  .side::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .side::-webkit-scrollbar-thumb {
-    background: var(--outline);
-    border-radius: 4px;
+  .btn-upgrade,
+  .btn-manage-premium {
+    width: 100%;
   }
 }
