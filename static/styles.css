@@ -2509,7 +2509,7 @@ main.container:has(.game-wrap) {
 /* Toast hiển thị từ dưới header trở xuống - chèn vào phần nội dung */
 @media (max-width: 768px) {
   .toast-container {
-    top: 60px !important; /* Ngay dưới header, từ đây trở xuống */
+    top: 80px !important; /* Nhích xuống thêm một chút */
     bottom: auto !important;
     right: 0 !important;
     left: 0 !important;
