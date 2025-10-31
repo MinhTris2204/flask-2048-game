@@ -135,9 +135,12 @@ def payment(plan_id):
                     return redirect(url_for("premium_manage"))
                 
                 print(f">>> Redirecting to PayOS checkout URL: {payment_url}")
-                # Redirect trực tiếp đến checkoutUrl của PayOS (theo hướng dẫn PayOS)
-                # PayOS sẽ tự hiển thị STK/QR đúng quy tắc
-                return redirect(payment_url)
+                # Hiển thị trang trung gian với countdown timer và tự động redirect
+                return render_template("payment_processing.html",
+                                     checkout_url=payment_url,
+                                     amount=plan.price,
+                                     description=description,
+                                     order_code=order.id)
                 
             except Exception as e:
                 print(f">>> EXCEPTION in payment creation: {type(e).__name__}: {str(e)}")

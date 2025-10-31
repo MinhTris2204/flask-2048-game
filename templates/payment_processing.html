@@ -232,7 +232,7 @@
 </style>
 
 <script>
-// Countdown timer
+// Countdown timer cho thanh toán (15 phút)
 let timeLeft = 15 * 60; // 15 minutes in seconds
 const countdownEl = document.getElementById('countdown');
 const timerDisplay = document.querySelector('.timer-display');
@@ -264,14 +264,6 @@ function updateCountdown() {
 const countdownInterval = setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// Cancel payment function
-function cancelPayment() {
-  if (confirm('Bạn có chắc muốn hủy thanh toán?')) {
-    clearInterval(countdownInterval);
-    window.location.href = "{{ url_for('payos_cancel') }}?orderCode={{ order_code }}";
-  }
-}
-
 // Listen for successful payment (if PayOS sends postMessage)
 window.addEventListener('message', function(event) {
   // Check if message is from PayOS
@@ -280,6 +272,15 @@ window.addEventListener('message', function(event) {
     window.location.href = "{{ url_for('payos_return') }}?code=00&orderCode={{ order_code }}&status=PAID";
   }
 });
+
+// Cancel payment function
+function cancelPayment() {
+  if (confirm('Bạn có chắc muốn hủy thanh toán?')) {
+    clearInterval(countdownInterval);
+    clearInterval(redirectInterval);
+    window.location.href = "{{ url_for('payos_cancel') }}?orderCode={{ order_code }}";
+  }
+}
 
 // Prevent accidental page close
 window.addEventListener('beforeunload', function(e) {
