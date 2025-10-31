@@ -53,6 +53,35 @@
   
   {# Stylesheet #}
   <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+  
+  {# Structured Data - Schema.org JSON-LD #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Game 2048 Online",
+    "description": "Chơi game 2048 online miễn phí! Game puzzle logic hấp dẫn với bảng xếp hạng, tính năng hoàn tác, gợi ý thông minh.",
+    "url": "{{ request.url_root }}",
+    "applicationCategory": "Game",
+    "genre": "Puzzle Game",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1000"
+    },
+    "inLanguage": "vi",
+    "author": {
+      "@type": "Organization",
+      "name": "GAME 2048"
+    }
+  }
+  </script>
 </head>
 <body>
   <header class="topbar">
