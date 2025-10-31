@@ -789,33 +789,95 @@ main.container:has(.game-wrap) {
 @keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 
 
-.controls{margin-top:10px; display:flex; gap:10px}
+.controls{margin-top:10px; display:flex; gap:12px; flex-wrap: wrap;}
 .controls button{
-  padding:14px 22px; border-radius:12px; border:0;
-  font-size:16px; display:flex; align-items:center; gap: 8px;
-  background: linear-gradient(135deg, var(--accent-2) 0%, #0d9488 100%); color:#fff; font-weight:700; cursor:pointer;
-  box-shadow: none;
-  transition: transform .1s ease, filter .1s ease;
+  flex: 1;
+  min-width: 110px;
+  padding:14px 20px; 
+  border-radius:14px; 
+  border: 2px solid transparent;
+  font-size:15px; 
+  display:flex; 
+  align-items:center; 
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+  color:var(--text); 
+  font-weight:700; 
+  cursor:pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
-.controls button:hover{filter:brightness(1.05); box-shadow: none;}
-.controls button:active{transform:translateY(1px) scale(.98)}
-.controls button.secondary{background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%); color:#fff; box-shadow: none;}
-.controls button.secondary:hover{box-shadow: none;}
+
+.controls button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transition: left 0.5s;
+}
+
+.controls button:hover::before {
+  left: 100%;
+}
+
+.controls button:hover{
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.controls button:active{
+  transform:translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controls button.secondary{
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color:#fff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.controls button.secondary:hover{
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
 
 .controls button:disabled{
-  background:#94a3b8; color:#e2e8f0; cursor:not-allowed; opacity:.7;
-  filter:saturate(.8); box-shadow: none;
+  background:#94a3b8; 
+  color:#e2e8f0; 
+  cursor:not-allowed; 
+  opacity:.7;
+  filter:saturate(.8); 
+  box-shadow: none;
+  transform: none !important;
 }
 
 .controls button.premium{
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color:#fff;
+  border-color:#d97706;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
   position:relative;
-  box-shadow: none;
 }
 
 .controls button.premium::before{
   content: "⭐ ";
+  font-size: 16px;
+}
+
+.controls button.premium:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border-color: #b45309;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
 
 .controls button.premium.active{
@@ -2778,30 +2840,37 @@ main.container:has(.game-wrap) {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  border: 2px solid rgba(226, 232, 240, 0.8);
   cursor: pointer;
   padding: 0;
   z-index: 1000;
-  margin-right: 8px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  margin-right: 12px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .hamburger-btn:hover {
-  background: var(--surface);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .hamburger-btn svg {
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.5;
 }
 
 .hamburger-btn:hover svg {
   color: var(--accent);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* Mobile Sidebar */
