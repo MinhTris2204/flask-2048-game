@@ -1413,20 +1413,32 @@ main.container:has(.game-wrap) {
 @media (min-width: 901px) {
   .toast-container-pc {
     display: flex;
-    /* Vị trí: bên phải bàn cờ, dưới header */
-    left: calc(50vw - 450px + 16px + 240px + 20px + 428px + 12px);
-    right: auto;
-    top: 80px;
-    max-width: 300px;
-    width: 300px;
+    /* Vị trí: nằm ở khoảng trống bên phải màn hình, không chèn vào bàn cờ
+       Container max-width: 900px, căn giữa
+       Toast nằm ở khoảng trống bên phải màn hình */
+    right: 20px;
+    left: auto;
+    top: 80px; /* Dưới header (header ~60-70px) */
+    max-width: 350px;
+    width: 350px;
     position: fixed;
   }
   
   /* Trên màn hình rất lớn (>1200px) */
   @media (min-width: 1200px) {
     .toast-container-pc {
-      max-width: 320px;
-      width: 320px;
+      max-width: 380px;
+      width: 380px;
+      right: max(20px, calc((100vw - 900px) / 2 - 20px));
+    }
+  }
+  
+  /* Trên màn hình cực lớn (>1600px) */
+  @media (min-width: 1600px) {
+    .toast-container-pc {
+      right: max(40px, calc((100vw - 900px) / 2));
+      max-width: 400px;
+      width: 400px;
     }
   }
 }
