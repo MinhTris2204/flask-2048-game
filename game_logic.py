@@ -151,7 +151,12 @@ class Game2048:
 
     def max_tile(self):
         """Tìm ô có giá trị lớn nhất."""
-        return max(max(row) for row in self.grid)
+        max_val = 0
+        for row in self.grid:
+            for val in row:
+                if val > max_val:
+                    max_val = val
+        return max_val
 
     def undo(self):
         """Hoàn tác nước đi trước."""
