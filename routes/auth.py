@@ -91,7 +91,6 @@ def google_callback():
         if user:
             # User đã tồn tại, đăng nhập
             login_user(user, remember=True)
-            flash(f"Chào mừng {user.username}!", "success")
             return redirect(url_for("game"))
         else:
             # Kiểm tra email đã tồn tại chưa
@@ -124,7 +123,6 @@ def google_callback():
             db.session.commit()
             
             login_user(new_user, remember=True)
-            flash(f"Tài khoản mới đã được tạo! Chào mừng {username}!", "success")
             return redirect(url_for("game"))
             
     except Exception as e:
