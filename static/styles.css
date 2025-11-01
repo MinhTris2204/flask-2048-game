@@ -622,9 +622,18 @@ main.container:has(.game-wrap) {
 
 /* Responsive cho tablet và mobile */
 @media (max-width: 768px) {
+  .topbar {
+    padding: 0;
+  }
+  
+  .topbar .container {
+    padding: 0;
+  }
+  
   .nav-wrapper {
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    padding: 6px 0;
   }
   
   .nav-left, .nav-center, .nav-right {
@@ -633,12 +642,12 @@ main.container:has(.game-wrap) {
   
   .nav-center {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   
   .nav-right {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   
   .brand {
@@ -659,7 +668,7 @@ main.container:has(.game-wrap) {
   .nav-link {
     width: 100%;
     text-align: center;
-    padding: 10px 16px;
+    padding: 8px 16px;
   }
   
   .btn-logout,
@@ -1108,13 +1117,13 @@ main.container:has(.game-wrap) {
 
 @media (max-width:520px){
   .board{
-    grid-template-columns:repeat(4,73px);
-    grid-template-rows:repeat(4,73px);
-    gap: 8px;
+    grid-template-columns:repeat(4,82px);
+    grid-template-rows:repeat(4,82px);
+    gap: 9px;
     padding: 10px;
   }
   .tile{
-    font-size:25px; 
+    font-size:28px; 
     border-radius: 10px;
     will-change: transform;
   }
@@ -2769,9 +2778,9 @@ main.container:has(.game-wrap) {
 /* Extra small mobile (< 400px) */
 @media (max-width: 400px) {
   .board {
-    grid-template-columns: repeat(4, 65px);
-    grid-template-rows: repeat(4, 65px);
-    gap: 6px;
+    grid-template-columns: repeat(4, 72px);
+    grid-template-rows: repeat(4, 72px);
+    gap: 7px;
     padding: 6px;
   }
   
@@ -2968,9 +2977,9 @@ main.container:has(.game-wrap) {
 /* Bàn cờ vừa màn hình mobile - KHÔNG TRÀN - TỰ ĐỘNG ĐIỀU CHỈNH */
 @media (max-width: 600px) {
   .board {
-    grid-template-columns: repeat(4, 75px);
-    grid-template-rows: repeat(4, 75px);
-    gap: 9px;
+    grid-template-columns: repeat(4, 84px);
+    grid-template-rows: repeat(4, 84px);
+    gap: 10px;
     padding: 11px;
   }
   .tile { 
@@ -2998,9 +3007,9 @@ main.container:has(.game-wrap) {
 
 @media (max-width: 430px) {
   .board {
-    grid-template-columns: repeat(4, 70px);
-    grid-template-rows: repeat(4, 70px);
-    gap: 7px;
+    grid-template-columns: repeat(4, 78px);
+    grid-template-rows: repeat(4, 78px);
+    gap: 8px;
     padding: 9px;
   }
   .tile { 
