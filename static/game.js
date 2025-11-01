@@ -154,18 +154,54 @@ function showGameOverOverlay({ score, max_tile, moves }) {
   
   removeGameOverOverlay();
   const overlay = document.createElement("div");
-  overlay.className = "overlay";
+  overlay.className = "overlay game-over-overlay";
   overlay.innerHTML = `
-    <div class="overlay-content">
-      <h2>Game Over</h2>
-      <button id="btn-restart-overlay">Chơi lại</button>
+    <div class="overlay-content game-over-content">
+      <div class="game-over-icon">😢</div>
+      <h2 class="game-over-title">Game Over!</h2>
+      <div class="game-over-stats">
+        <div class="stat-item">
+          <span class="stat-label">Điểm số</span>
+          <span class="stat-value">${score.toLocaleString()}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ô cao nhất</span>
+          <span class="stat-value">${max_tile}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Số nước</span>
+          <span class="stat-value">${moves}</span>
+        </div>
+      </div>
+      <div class="game-over-buttons">
+        <button id="btn-restart-overlay" class="btn-game-over btn-primary-overlay">
+          <span class="btn-icon">🔄</span>
+          <span>Chơi lại</span>
+        </button>
+        <button id="btn-leaderboard-overlay" class="btn-game-over btn-secondary-overlay">
+          <span class="btn-icon">🏆</span>
+          <span>Bảng xếp hạng</span>
+        </button>
+      </div>
     </div>
   `;
   boardEl.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add("show"));
+  
   const restartBtn = document.getElementById("btn-restart-overlay");
+  const leaderboardBtn = document.getElementById("btn-leaderboard-overlay");
+  
   if (restartBtn) {
-    restartBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", () => {
+      removeGameOverOverlay();
+      startGame();
+    });
+  }
+  
+  if (leaderboardBtn) {
+    leaderboardBtn.addEventListener("click", () => {
+      window.location.href = "/leaderboard";
+    });
   }
 }
 

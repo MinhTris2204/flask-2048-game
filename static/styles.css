@@ -1118,6 +1118,7 @@ main.container:has(.game-wrap) {
     visibility: hidden;
     transition: opacity .3s ease, visibility .3s ease;
     border-radius: 16px; 
+    z-index: 100;
 }
 .overlay.show {
     opacity: 1;
@@ -1132,6 +1133,194 @@ main.container:has(.game-wrap) {
     font-size: 18px;
     margin: 8px 0 20px;
     color: var(--muted);
+}
+
+/* Game Over Overlay - Tối ưu cho mobile và PC */
+.game-over-overlay {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.game-over-content {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 249, 255, 0.98) 100%);
+  padding: 32px 24px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.game-over-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: bounce-in 0.6s ease-out;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.game-over-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 24px 0;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.game-over-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.game-over-stats .stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(2, 132, 199, 0.05) 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(14, 165, 233, 0.2);
+}
+
+.game-over-stats .stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.game-over-stats .stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.game-over-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-game-over {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-game-over .btn-icon {
+  font-size: 20px;
+}
+
+.btn-primary-overlay {
+  background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary-overlay:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+}
+
+.btn-secondary-overlay {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-secondary-overlay:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-game-over:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Mobile optimization */
+@media (max-width: 520px) {
+  .game-over-content {
+    padding: 24px 16px;
+    width: 95%;
+  }
+  
+  .game-over-icon {
+    font-size: 48px;
+  }
+  
+  .game-over-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  
+  .game-over-stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .game-over-stats .stat-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+  }
+  
+  .game-over-stats .stat-label {
+    font-size: 13px;
+  }
+  
+  .game-over-stats .stat-value {
+    font-size: 18px;
+  }
+  
+  .game-over-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-game-over {
+    width: 100%;
+    min-width: unset;
+  }
 }
 
 
