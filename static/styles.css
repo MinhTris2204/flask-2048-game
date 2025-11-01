@@ -627,13 +627,21 @@ main.container:has(.game-wrap) {
   }
   
   .topbar .container {
-    padding: 0;
+    padding: 0 4px;
   }
   
   .nav-wrapper {
     flex-direction: column;
     gap: 8px;
     padding: 6px 0;
+  }
+  
+  .nav-left {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 4px;
   }
   
   .nav-left, .nav-center, .nav-right {
@@ -651,8 +659,20 @@ main.container:has(.game-wrap) {
   }
   
   .brand {
-    width: 100%;
+    flex: 1;
     justify-content: center;
+    min-width: 0;
+  }
+  
+  .brand-logo {
+    height: 32px;
+    flex-shrink: 0;
+  }
+  
+  .brand-text {
+    font-size: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   
   .user-info {
@@ -3090,19 +3110,20 @@ main.container:has(.game-wrap) {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
   border: 2px solid rgba(226, 232, 240, 0.8);
   cursor: pointer;
   padding: 0;
   z-index: 1000;
-  margin-right: 12px;
+  margin-right: 8px;
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
   animation: hamburger-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 /* Animation nhấp nháy cho hamburger */
@@ -3117,19 +3138,6 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Animation cho SVG icon */
-@keyframes hamburger-wiggle {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-5deg);
-  }
-  75% {
-    transform: rotate(5deg);
-  }
-}
-
 .hamburger-btn:hover {
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-color: var(--accent);
@@ -3141,16 +3149,14 @@ main.container:has(.game-wrap) {
 .hamburger-btn svg {
   color: var(--text);
   transition: all 0.3s ease;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   stroke-width: 2.5;
-  animation: hamburger-wiggle 3s ease-in-out infinite;
 }
 
 .hamburger-btn:hover svg {
   color: var(--accent);
   transform: scale(1.05);
-  animation: none; /* Dừng animation khi hover */
 }
 
 /* Mobile Sidebar */
