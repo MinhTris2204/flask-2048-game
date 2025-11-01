@@ -63,6 +63,12 @@ main.container:has(.game-wrap) {
   box-shadow: none;
   position: relative;
   z-index: 5;
+  padding: 0 8px;
+}
+
+.topbar .container {
+  max-width: 100%;
+  padding: 0 8px;
 }
 
 .nav-wrapper {
@@ -70,6 +76,7 @@ main.container:has(.game-wrap) {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
+  gap: 20px;
 }
 
 .nav-left {
@@ -125,8 +132,9 @@ main.container:has(.game-wrap) {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 .user-info {
@@ -528,10 +536,44 @@ main.container:has(.game-wrap) {
 }
 
 /* Responsive cho laptop nhỏ - tránh navigation xuống dòng */
-@media (max-width: 1200px) and (min-width: 769px) {
-  .container {
-    max-width: 100%;
-    padding: 16px 20px;
+@media (max-width: 1280px) and (min-width: 1025px) {
+  .topbar .container {
+    padding: 0 4px;
+  }
+  
+  .nav-wrapper {
+    gap: 15px;
+  }
+  
+  .nav-right {
+    gap: 7px;
+  }
+  
+  .nav-link {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+  
+  .user-info {
+    padding: 5px 10px;
+    max-width: 180px;
+  }
+  
+  .btn-logout,
+  .btn-login {
+    padding: 7px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Laptop rất nhỏ - bắt đầu rút gọn text */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .topbar .container {
+    padding: 0 4px;
+  }
+  
+  .nav-wrapper {
+    gap: 10px;
   }
   
   .nav-right {
@@ -539,22 +581,22 @@ main.container:has(.game-wrap) {
   }
   
   .nav-link {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 13px;
   }
   
   .user-info {
     padding: 4px 8px;
-    max-width: 140px;
-    gap: 4px;
-  }
-  
-  .welcome-icon {
-    font-size: 14px;
+    max-width: 150px;
   }
   
   .welcome {
-    font-size: 12px;
+    font-size: 13px;
+  }
+  
+  /* Rút gọn "Xin chào" trên laptop nhỏ */
+  .welcome::before {
+    content: "";
   }
   
   .btn-logout,
