@@ -75,13 +75,22 @@ main.container:has(.game-wrap) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 12px 0;
   gap: 20px;
 }
 
 .nav-left {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
 }
 
 .brand {
@@ -90,6 +99,7 @@ main.container:has(.game-wrap) {
   gap: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .brand:hover {
@@ -132,9 +142,10 @@ main.container:has(.game-wrap) {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: nowrap;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  justify-content: flex-end;
 }
 
 .user-info {
@@ -542,11 +553,15 @@ main.container:has(.game-wrap) {
   }
   
   .nav-wrapper {
-    gap: 15px;
+    gap: 10px;
+  }
+  
+  .nav-center {
+    gap: 8px;
   }
   
   .nav-right {
-    gap: 7px;
+    gap: 8px;
   }
   
   .nav-link {
@@ -573,7 +588,11 @@ main.container:has(.game-wrap) {
   }
   
   .nav-wrapper {
-    gap: 10px;
+    gap: 8px;
+  }
+  
+  .nav-center {
+    gap: 6px;
   }
   
   .nav-right {
@@ -594,11 +613,6 @@ main.container:has(.game-wrap) {
     font-size: 13px;
   }
   
-  /* Rút gọn "Xin chào" trên laptop nhỏ */
-  .welcome::before {
-    content: "";
-  }
-  
   .btn-logout,
   .btn-login {
     padding: 6px 12px;
@@ -613,8 +627,13 @@ main.container:has(.game-wrap) {
     gap: 12px;
   }
   
-  .nav-left, .nav-right {
+  .nav-left, .nav-center, .nav-right {
     width: 100%;
+  }
+  
+  .nav-center {
+    flex-direction: column;
+    gap: 8px;
   }
   
   .nav-right {
