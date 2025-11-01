@@ -1,0 +1,114 @@
+@startuml Game 2048 - Basic Game Flow
+title Game 2048 - Basic Game Flow (Đăng nhập và chơi game)
+
+start
+
+:User truy cập website;
+:Chuyển đến /game route;
+
+if (User đã đăng nhập?) then (chưa)
+  :Redirect đến /login;
+  :Người dùng đăng nhập;
+  :Xác thực thông tin;
+  if (Đăng nhập thành công?) then (thất bại)
+    :Hiển thị lỗi;
+    stop
+  else (thành công)
+    :Set session;
+  endif
+else (đã đăng nhập)
+endif
+
+:Check Premium status;
+:Load trang game;
+
+if (Có game_state trong session?) then (không có)
+  :Khởi tạo Game2048 mới;
+  :Gọi setup() để tạo grid;
+  :Thêm 2 tile random (2 hoặc 4);
+  :Lưu game_state vào session;
+else (có)
+  :Load game từ session;
+endif
+
+:Hiển thị board với grid hiện tại;
+:Hiển thị score, moves, best;
+
+repeat
+  :User nhấn phím/swipe;
+  
+  if (Input locked?) then (có)
+    :Bỏ qua input;
+  else (không)
+    :Lock input;
+    :Gọi API /api/move;
+    :Load game từ session;
+    
+    :Check game_over flag;
+    if (Game đã kết thúc?) then (có)
+      :Return error;
+    else (chưa)
+      :Lưu last_state để undo;
+      :Thực hiện move(direction);
+      
+      note right
+        **Xử lý move:**
+        1. Transpose nếu up/down
+        2. Reverse nếu right/down
+        3. Compress từng row
+        4. Merge các ô giống nhau
+        5. Compress lại
+        6. Reverse/Transpose lại
+      end note
+      
+      if (Grid có thay đổi?) then (không)
+        :Không thêm tile mới;
+        :Return changed=False;
+      else (có)
+        :Thêm tile random (2 hoặc 4);
+        :Tăng moves count;
+        :Update score nếu merge;
+        :Lưu game_state vào session;
+        :Return changed=True, merged_cells, new_tile;
+      endif
+      
+      :Render board với animation;
+      :Update score, moves display;
+      
+      if (Có ô nào bị merge?) then (có)
+        :Animation merge;
+      endif
+      
+      if (Có tile mới?) then (có)
+        :Animation spawn;
+      endif
+      
+      :Check game over;
+      if (Hết nước đi?) then (có)
+        :Set game_over = True;
+        :Tạo Score entry;
+        :Lưu vào database;
+        :Xóa game_state khỏi session;
+        :Hiển thị Game Over overlay;
+        :Return game_over info;
+        
+        if (User muốn chơi lại?) then (có)
+          :Gọi start_game API;
+          :Khởi tạo game mới;
+        else (không)
+          stop
+        endif
+      else (chưa)
+        :Cập nhật Undo button state;
+      endif
+    endif
+    
+    :Unlock input sau animation;
+  endif
+  
+repeat while (User tiếp tục chơi?) is (có)
+
+stop
+
+@enduml
+

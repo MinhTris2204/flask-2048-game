@@ -27,9 +27,11 @@ def sitemap_xml():
     pages = [
         {'loc': '/', 'priority': '1.0', 'changefreq': 'daily'},
         {'loc': '/game', 'priority': '1.0', 'changefreq': 'daily'},
+        {'loc': '/guide', 'priority': '0.9', 'changefreq': 'weekly'},
+        {'loc': '/strategy', 'priority': '0.9', 'changefreq': 'weekly'},
+        {'loc': '/leaderboard', 'priority': '0.9', 'changefreq': 'daily'},
         {'loc': '/login', 'priority': '0.8', 'changefreq': 'monthly'},
         {'loc': '/register', 'priority': '0.8', 'changefreq': 'monthly'},
-        {'loc': '/leaderboard', 'priority': '0.9', 'changefreq': 'daily'},
         {'loc': '/game-history', 'priority': '0.7', 'changefreq': 'weekly'},
         {'loc': '/premium/manage', 'priority': '0.7', 'changefreq': 'monthly'},
     ]

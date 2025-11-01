@@ -1,0 +1,107 @@
+@startuml Undo and Leaderboard Flow
+title Undo Move and Leaderboard Flow
+
+start
+
+partition "Undo Flow" {
+  :User đang chơi game;
+  :User click "Undo" button;
+  
+  :Gọi API /api/undo;
+  :Check user đăng nhập;
+  
+  if (Game chưa khởi tạo?) then (có)
+    :Return error "Chưa khởi tạo trò chơi";
+    stop
+  endif
+  
+  :Load game từ session;
+  
+  :Check last_state có tồn tại?;
+  if (Không có last_state?) then (có)
+    :Return current state với can_undo=False;
+    :Disable Undo button;
+    stop
+  endif
+  
+  :Gọi game.undo();
+  
+  note right
+    **undo() operation:**
+    1. Restore grid từ last_state["grid"]
+    2. Restore score từ last_state["score"]
+    3. Restore moves từ last_state["moves"]
+    4. Set game_over = False
+    5. Clear last_state
+  end note
+  
+  :Return grid, score, moves;
+  :Set can_undo = False;
+  :Save game state;
+  :Render board với animation;
+  :Update score, moves display;
+  :Disable Undo button;
+}
+
+partition "Leaderboard Flow" {
+  :User truy cập /leaderboard;
+  
+  :Query database để lấy best scores;
+  
+  note right
+    **Query logic:**
+    1. Group by user_id
+    2. Get max score per user
+    3. Join với scores để lấy chi tiết
+    4. Join với users để lấy username
+    5. Order by: score DESC, max_tile DESC, moves ASC, created_at ASC
+    6. Limit 20 records
+  end note
+  
+  :Execute query;
+  :Lấy danh sách top 20 players;
+  
+  :Hiển thị leaderboard page;
+  :Show rank, username, best score, max tile, moves;
+  
+  if (User click vào username?) then (có)
+    :Xem profile/history của user đó;
+  endif
+}
+
+partition "Game History Flow" {
+  :User đã đăng nhập;
+  :User truy cập /history;
+  
+  :Get page number từ request (default=1);
+  :Set per_page = 20;
+  
+  :Query scores của user hiện tại;
+  :Order by created_at DESC;
+  :Pagination;
+  
+  :Calculate statistics;
+  
+  note right
+    **Statistics:**
+    1. total_games: Count scores
+    2. best_score: Max score
+    3. best_tile: Max max_tile
+    4. avg_score: Average score
+    5. total_moves: Sum moves
+  end note
+  
+  :Hiển thị game_history page;
+  :Show stats summary;
+  :Show paginated scores list;
+  
+  if (User muốn xem trang khác?) then (có)
+    :Load page mới;
+    :Repeat query với page mới;
+  endif
+}
+
+stop
+
+@enduml
+

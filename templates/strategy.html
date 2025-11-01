@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}Chiến Thuật Chơi 2048{% endblock %}
+
+{% block description %}🎯 Chiến thuật chơi game 2048 chuyên sâu - Bí quyết, tips và tricks để đạt điểm cao, vượt qua 2048 và đạt 4096, 8192 trong game puzzle 2048 online miễn phí.{% endblock %}
+
+{% block og_title %}🏆 Chiến Thuật Chơi Game 2048 - Bí Quyết Đạt Điểm Cao{% endblock %}
+
+{% block content %}
+<div class="content-page">
+  <div class="content-header strategy-header">
+    <h1>🏆 Chiến Thuật Chơi Game 2048</h1>
+    <p class="subtitle">Bí quyết và chiến lược nâng cao để trở thành cao thủ game 2048</p>
+  </div>
+
+  <div class="content-body">
+    <!-- Chiến lược cơ bản -->
+    <section class="guide-section">
+      <h2>🎯 Chiến Lược Corner Strategy (Giữ Góc)</h2>
+      
+      <div class="strategy-box featured">
+        <h3>Chiến Thuật Quan Trọng Nhất!</h3>
+        <p>Đây là <strong>chiến thuật game 2048</strong> được các cao thủ sử dụng nhiều nhất để đạt điểm cao.</p>
+      </div>
+
+      <h3>Cách Thực Hiện:</h3>
+      <ol class="guide-list">
+        <li><strong>Chọn một góc:</strong> Thường là góc dưới bên phải hoặc trái</li>
+        <li><strong>Giữ ô lớn nhất ở góc đó:</strong> KHÔNG BAO GIỜ di chuyển ra khỏi góc</li>
+        <li><strong>Xếp theo thứ tự giảm dần:</strong> 
+          <ul>
+            <li>Hàng dưới: 2048 - 1024 - 512 - 256</li>
+            <li>Hàng trên đó: 128 - 64 - 32 - 16</li>
+          </ul>
+        </li>
+        <li><strong>Chỉ dùng 3 phím:</strong> Nếu giữ góc dưới phải, chỉ dùng: Phải (→), Xuống (↓), Lên (↑)</li>
+      </ol>
+
+      <div class="example-box">
+        <h4>Ví dụ Layout Lý Tưởng (Góc Dưới Phải):</h4>
+        <div class="board-example">
+          <div class="row">
+            <span>2</span><span>4</span><span>8</span><span>16</span>
+          </div>
+          <div class="row">
+            <span>4</span><span>8</span><span>16</span><span>32</span>
+          </div>
+          <div class="row">
+            <span>8</span><span>32</span><span>64</span><span>128</span>
+          </div>
+          <div class="row">
+            <span>256</span><span>512</span><span>1024</span><span class="highlight">2048</span>
+          </div>
+        </div>
+        <p class="note">✅ Các số xếp theo Snake Pattern (hình rắn) từ lớn đến nhỏ</p>
+      </div>
+    </section>
+
+    <!-- Chiến thuật nâng cao -->
+    <section class="guide-section">
+      <h2>🚀 Chiến Thuật Nâng Cao</h2>
+
+      <div class="advanced-strategies">
+        <div class="strategy-item">
+          <h3>1. Snake Pattern (Hình Rắn)</h3>
+          <p>Xếp các ô theo hình rắn từ góc đến góc đối diện:</p>
+          <ul>
+            <li>Hàng 1 (dưới): Lớn → Nhỏ (trái sang phải)</li>
+            <li>Hàng 2: Nhỏ → Lớn (phải sang trái)</li>
+            <li>Hàng 3: Lớn → Nhỏ (trái sang phải)</li>
+            <li>Hàng 4: Nhỏ → Lớn (phải sang trái)</li>
+          </ul>
+          <p class="tip">💡 Pattern này giúp bạn ghép các ô dễ dàng hơn!</p>
+        </div>
+
+        <div class="strategy-item">
+          <h3>2. Building Adjacent Tiles</h3>
+          <p>Luôn cố gắng tạo các ô liền kề có giá trị giống nhau để sẵn sàng ghép:</p>
+          <ul>
+            <li>Tạo cặp 2-2, 4-4, 8-8 gần nhau</li>
+            <li>Không để các ô nhỏ chen giữa các ô lớn</li>
+            <li>Ghép các ô nhỏ trước khi chúng gây cản trở</li>
+          </ul>
+        </div>
+
+        <div class="strategy-item">
+          <h3>3. Emergency Moves (Nước Đi Khẩn Cấp)</h3>
+          <p>Khi bàn chơi gần đầy:</p>
+          <ul>
+            <li>Ưu tiên tạo không gian trống ở góc có ô lớn nhất</li>
+            <li>Ghép các ô nhỏ để giải phóng không gian</li>
+            <li>Có thể phá vỡ pattern tạm thời để thoát khỏi bế tắc</li>
+          </ul>
+        </div>
+
+        <div class="strategy-item">
+          <h3>4. Planning Ahead (Tư Duy Trước)</h3>
+          <p>Luôn nghĩ 2-3 bước trước:</p>
+          <ul>
+            <li>Dự đoán vị trí ô mới sẽ xuất hiện</li>
+            <li>Tính toán chuỗi ghép tiếp theo</li>
+            <li>Tránh các nước đi khiến bàn chơi bế tắc</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sai lầm thường gặp -->
+    <section class="guide-section">
+      <h2>❌ 7 Sai Lầm Phổ Biến Cần Tránh</h2>
+
+      <div class="mistakes-list">
+        <div class="mistake-item">
+          <h4>1. Di Chuyển Lung Tung</h4>
+          <p>❌ <strong>Sai lầm:</strong> Bấm phím liên tục không có kế hoạch</p>
+          <p>✅ <strong>Đúng:</strong> Suy nghĩ kỹ trước mỗi nước đi, chỉ dùng 2-3 hướng chính</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>2. Không Giữ Ô Lớn Ở Góc</h4>
+          <p>❌ <strong>Sai lầm:</strong> Để ô lớn nhất di chuyển khắp bàn chơi</p>
+          <p>✅ <strong>Đúng:</strong> Luôn giữ ô lớn nhất ở một góc cố định</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>3. Lấp Đầy Bàn Chơi</h4>
+          <p>❌ <strong>Sai lầm:</strong> Để bàn chơi quá đầy, không có không gian di chuyển</p>
+          <p>✅ <strong>Đúng:</strong> Luôn giữ 1-2 ô trống để linh hoạt</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>4. Bỏ Qua Các Ô Nhỏ</h4>
+          <p>❌ <strong>Sai lầm:</strong> Chỉ tập trung ghép ô lớn, bỏ quên các ô 2, 4</p>
+          <p>✅ <strong>Đúng:</strong> Ghép các ô nhỏ thường xuyên để tránh lộn xộn</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>5. Phá Vỡ Pattern</h4>
+          <p>❌ <strong>Sai lầm:</strong> Di chuyển làm xáo trộn thứ tự các ô</p>
+          <p>✅ <strong>Đúng:</strong> Duy trì Snake Pattern hoặc thứ tự giảm dần</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>6. Vội Vàng, Không Kiên Nhẫn</h4>
+          <p>❌ <strong>Sai lầm:</strong> Bấm phím nhanh, không suy nghĩ</p>
+          <p>✅ <strong>Đúng:</strong> Chơi chậm rãi, tính toán kỹ càng</p>
+        </div>
+
+        <div class="mistake-item">
+          <h4>7. Không Sử Dụng Tính Năng Undo/Hint</h4>
+          <p>❌ <strong>Sai lầm:</strong> Tự cao, không dùng công cụ hỗ trợ</p>
+          <p>✅ <strong>Đúng:</strong> Dùng Undo khi sai lầm, Hint khi bế tắc</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips & Tricks -->
+    <section class="guide-section">
+      <h2>💎 Tips & Tricks Từ Cao Thủ</h2>
+
+      <div class="tips-pro">
+        <div class="tip-pro">
+          <span class="tip-icon">🎯</span>
+          <div>
+            <h4>Monotonicity (Tính Đơn Điệu)</h4>
+            <p>Giữ các hàng/cột luôn tăng hoặc giảm dần - không lên xuống lộn xộn.</p>
+          </div>
+        </div>
+
+        <div class="tip-pro">
+          <span class="tip-icon">🔄</span>
+          <div>
+            <h4>Merging Chains (Chuỗi Ghép)</h4>
+            <p>Tạo ra chuỗi ghép liên tiếp trong một nước đi: 2+2=4, 4+4=8, 8+8=16...</p>
+          </div>
+        </div>
+
+        <div class="tip-pro">
+          <span class="tip-icon">📊</span>
+          <div>
+            <h4>Smoothness (Độ Mượt)</h4>
+            <p>Giữ các ô liền kề có giá trị gần nhau (ví dụ: 64-128-64 thay vì 2-128-4).</p>
+          </div>
+        </div>
+
+        <div class="tip-pro">
+          <span class="tip-icon">🎲</span>
+          <div>
+            <h4>Expect the Worst</h4>
+            <p>Luôn dự đoán ô mới sẽ xuất hiện ở vị trí tệ nhất và lên kế hoạch cho trường hợp đó.</p>
+          </div>
+        </div>
+
+        <div class="tip-pro">
+          <span class="tip-icon">⏱️</span>
+          <div>
+            <h4>Không Vội, Không Lo</h4>
+            <p>Game 2048 không giới hạn thời gian. Hãy nghĩ kỹ trước khi di chuyển!</p>
+          </div>
+        </div>
+
+        <div class="tip-pro">
+          <span class="tip-icon">📈</span>
+          <div>
+            <h4>Luyện Tập Thường Xuyên</h4>
+            <p>Chơi nhiều để nhận ra patterns và phát triển trực giác.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mục tiêu -->
+    <section class="guide-section">
+      <h2>🏅 Mục Tiêu Theo Cấp Độ</h2>
+
+      <div class="levels-grid">
+        <div class="level-card beginner">
+          <h3>🌱 Người Mới</h3>
+          <ul>
+            <li>Đạt ô 512</li>
+            <li>Điểm: 5,000+</li>
+            <li>Thời gian: 5-10 phút</li>
+          </ul>
+        </div>
+
+        <div class="level-card intermediate">
+          <h3>⚡ Trung Bình</h3>
+          <ul>
+            <li>Đạt ô 1024</li>
+            <li>Điểm: 10,000+</li>
+            <li>Thời gian: 10-20 phút</li>
+          </ul>
+        </div>
+
+        <div class="level-card advanced">
+          <h3>🔥 Nâng Cao</h3>
+          <ul>
+            <li>Đạt ô 2048</li>
+            <li>Điểm: 20,000+</li>
+            <li>Thời gian: 20-30 phút</li>
+          </ul>
+        </div>
+
+        <div class="level-card expert">
+          <h3>👑 Cao Thủ</h3>
+          <ul>
+            <li>Đạt ô 4096+</li>
+            <li>Điểm: 40,000+</li>
+            <li>Thời gian: 30+ phút</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kết luận -->
+    <section class="guide-section">
+      <h2>🎊 Tổng Kết</h2>
+      <div class="conclusion-box">
+        <p><strong>Chơi game 2048 online</strong> không chỉ là may mắn mà còn cần <strong>chiến lược</strong> và <strong>kiên nhẫn</strong>. Áp dụng các chiến thuật trên, bạn sẽ dễ dàng đạt 2048 và vượt lên 4096, 8192!</p>
+        
+        <p>Hãy nhớ:</p>
+        <ul>
+          <li>✅ Giữ ô lớn nhất ở góc</li>
+          <li>✅ Xếp theo Snake Pattern</li>
+          <li>✅ Chỉ dùng 2-3 hướng di chuyển</li>
+          <li>✅ Suy nghĩ trước khi hành động</li>
+          <li>✅ Luyện tập thường xuyên</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="guide-section cta-section">
+      <h2>🎮 Áp Dụng Chiến Thuật Ngay!</h2>
+      <p>Đã hiểu rõ chiến lược? Thử ngay và đạt điểm cao kỷ lục!</p>
+      <div class="cta-buttons">
+        <a href="{{ url_for('game') }}" class="btn btn-primary btn-large">🏆 Chơi Ngay</a>
+        <a href="{{ url_for('leaderboard') }}" class="btn btn-secondary btn-large">📊 Bảng Xếp Hạng</a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+/* Kế thừa style từ guide.html và thêm style riêng */
+.strategy-header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.strategy-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.strategy-box.featured {
+  border: 3px solid #ffd700;
+}
+
+.example-box {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.board-example {
+  max-width: 300px;
+  margin: 20px auto;
+  background: #bbada0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.board-example .row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.board-example .row:last-child {
+  margin-bottom: 0;
+}
+
+.board-example span {
+  background: #eee4da;
+  padding: 15px;
+  text-align: center;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.board-example span.highlight {
+  background: #edc22e;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.note {
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  color: #666;
+}
+
+.advanced-strategies, .mistakes-list {
+  display: grid;
+  gap: 20px;
+}
+
+.strategy-item, .mistake-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.mistake-item {
+  border-left-color: #f5576c;
+}
+
+.tips-pro {
+  display: grid;
+  gap: 15px;
+}
+
+.tip-pro {
+  display: flex;
+  align-items: start;
+  gap: 15px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.tip-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.level-card {
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+}
+
+.level-card.beginner {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.level-card.intermediate {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.level-card.advanced {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.level-card.expert {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.level-card h3 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.level-card ul {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.level-card li {
+  padding: 5px 0;
+  font-size: 1.05rem;
+}
+
+.conclusion-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.conclusion-box ul {
+  margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+  .levels-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .board-example {
+    max-width: 250px;
+  }
+  
+  .board-example span {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}
+</style>
+{% endblock %}

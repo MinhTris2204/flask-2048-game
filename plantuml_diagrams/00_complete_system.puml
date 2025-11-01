@@ -1,0 +1,148 @@
+@startuml Complete System Overview
+title Complete System Architecture - Game 2048
+
+!define RECTANGLE class
+
+package "Frontend" as Frontend {
+  rectangle "Templates" as Templates
+  rectangle "Static Files" as Static {
+    note right: CSS, JavaScript\nLogo, Icons
+  }
+}
+
+package "Backend - Flask Application" as Backend {
+  rectangle "Routes" as Routes {
+    component "auth.py" as Auth
+    component "game.py" as Game
+    component "premium.py" as Premium
+    component "api.py" as API
+    component "history.py" as History
+  }
+  
+  rectangle "Core Logic" as Core {
+    component "game_logic.py" as GameLogic {
+      class Game2048 {
+        + setup()
+        + move(direction)
+        + undo()
+        + check_game_over()
+        + get_hint()
+        + shuffle()
+        + swap_two_tiles()
+        + any_moves_left()
+        + max_tile()
+      }
+    }
+    component "helpers.py" as Helpers {
+      + save_game(game)
+      + load_game()
+    }
+  }
+  
+  rectangle "Models" as Models {
+    class User {
+      + id
+      + username
+      + email
+      + password_hash
+      + google_id
+      + is_premium
+      + premium_expires_at
+      + check_premium_status()
+      + get_premium_days_left()
+    }
+    
+    class Score {
+      + id
+      + user_id
+      + score
+      + max_tile
+      + moves
+      + created_at
+    }
+    
+    class PremiumPlan {
+      + id
+      + name
+      + duration_days
+      + price
+      + is_active
+    }
+    
+    class Order {
+      + id
+      + user_id
+      + plan_id
+      + amount
+      + status
+      + transaction_id
+      + created_at
+      + completed_at
+    }
+  }
+  
+  rectangle "Config" as Config {
+    component "config.py"
+    component "payos_config.py"
+    component "payos_helper.py"
+  }
+}
+
+package "External Services" as External {
+  rectangle "PayOS" as PayOS {
+    note right: Payment Gateway\nWebhook integration
+  }
+  
+  rectangle "Google OAuth" as Google {
+    note right: Authentication\nSingle Sign-On
+  }
+}
+
+database "SQLite Database" as DB {
+  note right: Users\nScores\nPremiumPlans\nOrders
+}
+
+User ||--o{ Score : has many
+User ||--o{ Order : places
+PremiumPlan ||--o{ Order : has many
+
+Frontend --> Backend : HTTP Requests
+Auth --> User : CRUD
+Auth --> Google : OAuth
+Game --> GameLogic : uses
+API --> GameLogic : calls
+API --> Score : creates
+Premium --> PremiumPlan : queries
+Premium --> Order : creates
+Premium --> User : updates
+Premium --> PayOS : integration
+API --> Helpers : uses
+Helpers --> DB : session storage
+Models --> DB : ORM
+
+note top of GameLogic
+  Core game engine:
+  - Grid management
+  - Move processing
+  - Tile merging
+  - Game over detection
+  - Premium features
+end note
+
+note top of Premium
+  Payment flow:
+  - Create order
+  - PayOS checkout
+  - Webhook handling
+  - Premium activation
+end note
+
+note top of Auth
+  Authentication:
+  - Username/password
+  - Google OAuth
+  - Session management
+end note
+
+@enduml
+

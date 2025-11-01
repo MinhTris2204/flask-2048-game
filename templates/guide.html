@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}Hướng Dẫn Chơi{% endblock %}
+
+{% block description %}🎮 Hướng dẫn chơi game 2048 online chi tiết cho người mới bắt đầu. Cách chơi, luật chơi, mẹo và bí quyết để đạt điểm cao trong game puzzle 2048 miễn phí.{% endblock %}
+
+{% block og_title %}📖 Hướng Dẫn Chơi Game 2048 - Luật Chơi & Cách Chơi Chi Tiết{% endblock %}
+
+{% block content %}
+<div class="content-page">
+  <div class="content-header">
+    <h1>📖 Hướng Dẫn Chơi Game 2048</h1>
+    <p class="subtitle">Tìm hiểu cách chơi game 2048 online miễn phí - Game puzzle số logic hấp dẫn nhất</p>
+  </div>
+
+  <div class="content-body">
+    <!-- Giới thiệu -->
+    <section class="guide-section">
+      <h2>🎯 Game 2048 Là Gì?</h2>
+      <p><strong>Game 2048</strong> là một <strong>game puzzle số</strong> được yêu thích trên toàn thế giới. Mục tiêu của <strong>game 2048 online</strong> là ghép các ô số giống nhau để tạo thành ô 2048. Đây là <strong>game miễn phí</strong>, dễ chơi nhưng khó thành thạo - hoàn hảo để rèn luyện tư duy logic!</p>
+      
+      <div class="highlight-box">
+        <p>💡 <strong>Chơi game 2048 miễn phí</strong> ngay trên website này - không cần tải về, không quảng cáo phiền nhiễu!</p>
+      </div>
+    </section>
+
+    <!-- Luật chơi -->
+    <section class="guide-section">
+      <h2>📜 Luật Chơi Game 2048</h2>
+      
+      <h3>Cách Chơi Cơ Bản:</h3>
+      <ol class="guide-list">
+        <li><strong>Bàn chơi 4x4:</strong> Game 2048 có lưới 4x4 (16 ô)</li>
+        <li><strong>Di chuyển:</strong> Vuốt hoặc dùng phím mũi tên (↑ ↓ ← →) để di chuyển tất cả các ô theo hướng đó</li>
+        <li><strong>Ghép số:</strong> Khi hai ô có cùng số chạm nhau, chúng sẽ hợp nhất thành một ô có giá trị gấp đôi
+          <ul>
+            <li>2 + 2 = 4</li>
+            <li>4 + 4 = 8</li>
+            <li>8 + 8 = 16</li>
+            <li>... cho đến 2048!</li>
+          </ul>
+        </li>
+        <li><strong>Ô mới xuất hiện:</strong> Sau mỗi lượt di chuyển, một ô số 2 hoặc 4 sẽ xuất hiện ngẫu nhiên</li>
+        <li><strong>Mục tiêu:</strong> Tạo ra ô có giá trị <strong>2048</strong> để chiến thắng!</li>
+      </ol>
+
+      <div class="warning-box">
+        <p>⚠️ <strong>Lưu ý:</strong> Game kết thúc khi bàn chơi đầy và không còn nước đi hợp lệ nào!</p>
+      </div>
+    </section>
+
+    <!-- Điều khiển -->
+    <section class="guide-section">
+      <h3>🎮 Cách Điều Khiển:</h3>
+      <div class="control-grid">
+        <div class="control-item">
+          <strong>💻 Trên PC:</strong>
+          <ul>
+            <li>Phím <kbd>↑</kbd> - Di chuyển lên</li>
+            <li>Phím <kbd>↓</kbd> - Di chuyển xuống</li>
+            <li>Phím <kbd>←</kbd> - Di chuyển trái</li>
+            <li>Phím <kbd>→</kbd> - Di chuyển phải</li>
+          </ul>
+        </div>
+        <div class="control-item">
+          <strong>📱 Trên Mobile:</strong>
+          <ul>
+            <li>Vuốt lên - Di chuyển lên</li>
+            <li>Vuốt xuống - Di chuyển xuống</li>
+            <li>Vuốt trái - Di chuyển trái</li>
+            <li>Vuốt phải - Di chuyển phải</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mẹo chơi -->
+    <section class="guide-section">
+      <h2>💡 Mẹo Chơi Game 2048 Cho Người Mới</h2>
+      
+      <div class="tips-list">
+        <div class="tip-item">
+          <h4>1. Giữ Ô Lớn Nhất Ở Một Góc</h4>
+          <p>Luôn giữ ô có giá trị lớn nhất ở một góc (thường là góc dưới phải hoặc dưới trái). Đây là <strong>chiến thuật game 2048</strong> quan trọng nhất!</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>2. Xếp Các Ô Theo Thứ Tự Giảm Dần</h4>
+          <p>Sắp xếp các ô từ lớn đến nhỏ theo một hàng hoặc cột để dễ ghép.</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>3. Di Chuyển Chủ Yếu 2 Hướng</h4>
+          <p>Chỉ sử dụng 2-3 hướng di chuyển chính, hạn chế di chuyển lung tung.</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>4. Luôn Giữ Không Gian Trống</h4>
+          <p>Đừng để bàn chơi quá đầy, luôn giữ 1-2 ô trống để linh hoạt.</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>5. Suy Nghĩ Trước Khi Di Chuyển</h4>
+          <p>Đừng vội vàng! Mỗi nước đi cần có kế hoạch để tránh bế tắc.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tính năng -->
+    <section class="guide-section">
+      <h2>⭐ Tính Năng Đặc Biệt</h2>
+      
+      <div class="features-grid">
+        <div class="feature-item">
+          <h4>🔄 Hoàn Tác (Undo)</h4>
+          <p>Quay lại nước đi trước đó nếu bạn nhầm lẫn</p>
+        </div>
+        <div class="feature-item">
+          <h4>💡 Gợi Ý (Hint)</h4>
+          <p>Nhận gợi ý nước đi tốt nhất từ AI</p>
+        </div>
+        <div class="feature-item">
+          <h4>💾 Lưu Game Tự Động</h4>
+          <p>Game tự động lưu, không lo mất tiến độ</p>
+        </div>
+        <div class="feature-item">
+          <h4>🏆 Bảng Xếp Hạng</h4>
+          <p>So tài với người chơi khác trên toàn quốc</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="guide-section">
+      <h2>❓ Câu Hỏi Thường Gặp</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <h4>Q: Game 2048 có miễn phí không?</h4>
+          <p><strong>A:</strong> Có! <strong>Game 2048 online</strong> trên website này hoàn toàn <strong>miễn phí</strong>, không cần đăng ký, không quảng cáo phiền nhiễu.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Q: Làm sao để đạt điểm cao trong game 2048?</h4>
+          <p><strong>A:</strong> Áp dụng các chiến thuật như giữ ô lớn ở góc, xếp theo thứ tự, và suy nghĩ kỹ trước mỗi bước. Xem thêm <a href="{{ url_for('strategy') }}">Chiến Thuật Chơi 2048</a>.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Q: Game 2048 có chơi được trên điện thoại không?</h4>
+          <p><strong>A:</strong> Có! Website hỗ trợ đầy đủ trên mobile, tablet và máy tính. Chơi mọi lúc mọi nơi!</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Q: Điểm cao nhất có thể đạt được là bao nhiêu?</h4>
+          <p><strong>A:</strong> Sau khi đạt 2048, bạn có thể tiếp tục chơi để tạo 4096, 8192 và cao hơn nữa!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="guide-section cta-section">
+      <h2>🎮 Sẵn Sàng Chơi Game 2048?</h2>
+      <p>Áp dụng ngay những kiến thức vừa học và thử thách bản thân!</p>
+      <div class="cta-buttons">
+        <a href="{{ url_for('game') }}" class="btn btn-primary btn-large">🎯 Chơi Ngay</a>
+        <a href="{{ url_for('strategy') }}" class="btn btn-secondary btn-large">📚 Xem Chiến Thuật</a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+.content-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+
+.content-body {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.guide-section {
+  margin-bottom: 40px;
+}
+
+.guide-section h2 {
+  color: #667eea;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 10px;
+}
+
+.guide-section h3 {
+  color: #764ba2;
+  font-size: 1.4rem;
+  margin: 25px 0 15px;
+}
+
+.guide-section h4 {
+  color: #333;
+  font-size: 1.2rem;
+  margin: 15px 0 10px;
+}
+
+.guide-list {
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.guide-list li {
+  margin-bottom: 15px;
+}
+
+.guide-list ul {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.highlight-box {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.warning-box {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.control-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.control-item kbd {
+  background: #333;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.tips-list, .features-grid, .faq-list {
+  margin: 20px 0;
+}
+
+.tip-item, .feature-item, .faq-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid #667eea;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.cta-section {
+  text-align: center;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+.cta-section h2 {
+  color: white;
+  border: none;
+}
+
+.cta-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-large {
+  padding: 15px 40px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.btn-large:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .content-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .content-body {
+    padding: 20px;
+  }
+  
+  .control-grid, .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-large {
+    width: 100%;
+  }
+}
+</style>
+{% endblock %}

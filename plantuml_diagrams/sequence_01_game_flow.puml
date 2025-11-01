@@ -1,0 +1,156 @@
+@startuml Game 2048 - Basic Sequence
+title Sequence Diagram: Basic Game Flow (Chơi game cơ bản)
+
+actor User
+participant Browser
+participant game.js as "Frontend\n(game.js)"
+participant Flask as "Flask App\n(app.py)"
+participant routes.game as "Game Route\n(game.py)"
+participant routes.api as "API Route\n(api.py)"
+participant Game2048 as "Game Logic\n(game_logic.py)"
+participant Session as "Flask Session"
+participant Database as "SQLite DB"
+
+== Initialization ==
+User -> Browser: Truy cập /game
+Browser -> Flask: GET /game
+activate Flask
+Flask -> routes.game: @login_required
+activate routes.game
+
+routes.game -> Database: Query current_user
+activate Database
+Database --> routes.game: User data
+deactivate Database
+
+routes.game -> Session: Check game_state
+activate Session
+Session --> routes.game: No game_state
+deactivate Session
+
+routes.game -> Game2048: Game2048.__init__()
+activate Game2048
+Game2048 --> routes.game: Instance created
+deactivate Game2048
+
+routes.game -> Game2048: setup()
+activate Game2048
+Game2048 -> Game2048: empty_grid()
+Game2048 -> Game2048: add_random_tile() x2
+Game2048 --> routes.game: {grid, score, moves, new_tiles}
+deactivate Game2048
+
+routes.game -> Session: save_game(game)
+activate Session
+Session --> routes.game: Saved
+deactivate Session
+
+routes.game --> Flask: Render game.html
+deactivate routes.game
+Flask --> Browser: HTML + CSS + JS
+deactivate Flask
+
+== Game Loop ==
+Browser -> game.js: Load page
+activate game.js
+game.js -> game.js: Initialize event listeners
+game.js -> game.js: Render board
+
+loop Game Loop
+  User -> Browser: Press arrow key / swipe
+  Browser -> game.js: Keydown/Click event
+  game.js -> game.js: Check inputLocked
+  
+  alt Input not locked
+    game.js -> game.js: Lock input
+    
+    game.js -> routes.api: POST /api/move\n{direction: "up"}
+    activate routes.api
+    routes.api -> routes.api: @login_required
+    
+    routes.api -> Session: load_game()
+    activate Session
+    Session --> routes.api: Game2048 instance
+    deactivate Session
+    
+    routes.api -> Game2048: move(direction)
+    activate Game2048
+    
+    Game2048 -> Game2048: Save last_state
+    Game2048 -> Game2048: Copy grid to temp
+    
+    alt Direction up/down
+      Game2048 -> Game2048: transpose(temp_grid)
+    end
+    
+    alt Direction right/down
+      Game2048 -> Game2048: reverse_rows(temp_grid)
+    end
+    
+    loop For each row
+      Game2048 -> Game2048: compress(row)
+      Game2048 -> Game2048: merge(row)
+      Game2048 -> Game2048: compress(result)
+      Game2048 -> Game2048: Update temp_grid
+    end
+    
+    alt Grid changed
+      Game2048 -> Game2048: add_random_tile()
+      Game2048 --> routes.api: {grid, score, moves, changed=True, new_tile, merged_cells}
+    else Grid not changed
+      Game2048 --> routes.api: {grid, score, changed=False}
+    end
+    deactivate Game2048
+    
+    routes.api -> Session: save_game(game)
+    activate Session
+    Session --> routes.api: Saved
+    deactivate Session
+    
+    routes.api -> Game2048: check_game_over()
+    activate Game2048
+    Game2048 -> Game2048: any_moves_left()
+    alt No moves left
+      Game2048 -> Database: INSERT Score
+      activate Database
+      Database --> Game2048: Score saved
+      deactivate Database
+      Game2048 --> routes.api: {game_over: {score, max_tile, moves}}
+    else Moves available
+      Game2048 --> routes.api: None
+    end
+    deactivate Game2048
+    
+    routes.api --> game.js: JSON response
+    deactivate routes.api
+    
+    game.js -> game.js: render(data)
+    game.js -> Browser: Update DOM
+    game.js -> game.js: Update score/moves display
+    game.js -> game.js: Play animations
+    game.js -> game.js: Unlock input
+    
+  else Input locked
+    game.js -> game.js: Ignore input
+  end
+end
+
+opt Game Over
+  game.js -> game.js: showGameOverOverlay()
+  Browser -> User: Display Game Over
+  User -> Browser: Click "Chơi lại"
+  Browser -> game.js: startGame()
+  game.js -> routes.api: POST /api/start_game
+  activate routes.api
+  routes.api -> Game2048: Game2048().__init__()
+  routes.api -> Game2048: setup()
+  routes.api -> Session: save_game(game)
+  routes.api --> game.js: {grid, score, moves, can_undo}
+  deactivate routes.api
+  game.js -> game.js: render(data)
+end
+
+deactivate game.js
+
+@enduml
+

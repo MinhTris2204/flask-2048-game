@@ -40,14 +40,24 @@
             <span>Chơi game</span>
           </a>
           
-          <a href="{{ url_for('game_history') }}" class="sidebar-link">
-            <span class="sidebar-icon">📊</span>
-            <span>Xem lịch sử</span>
+          <a href="{{ url_for('guide') }}" class="sidebar-link">
+            <span class="sidebar-icon">📖</span>
+            <span>Hướng dẫn chơi</span>
+          </a>
+          
+          <a href="{{ url_for('strategy') }}" class="sidebar-link">
+            <span class="sidebar-icon">🎯</span>
+            <span>Chiến thuật</span>
           </a>
           
           <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
             <span class="sidebar-icon">🏆</span>
             <span>Bảng xếp hạng</span>
+          </a>
+          
+          <a href="{{ url_for('game_history') }}" class="sidebar-link">
+            <span class="sidebar-icon">📊</span>
+            <span>Xem lịch sử</span>
           </a>
           
           <div class="sidebar-divider"></div>
@@ -73,9 +83,36 @@
         </nav>
       {% else %}
         <nav class="sidebar-nav">
+          <a href="{{ url_for('game') }}" class="sidebar-link">
+            <span class="sidebar-icon">🔢</span>
+            <span>Chơi game</span>
+          </a>
+          
+          <a href="{{ url_for('guide') }}" class="sidebar-link">
+            <span class="sidebar-icon">📖</span>
+            <span>Hướng dẫn chơi</span>
+          </a>
+          
+          <a href="{{ url_for('strategy') }}" class="sidebar-link">
+            <span class="sidebar-icon">🎯</span>
+            <span>Chiến thuật</span>
+          </a>
+          
           <a href="{{ url_for('leaderboard') }}" class="sidebar-link">
             <span class="sidebar-icon">🏆</span>
             <span>Bảng xếp hạng</span>
+          </a>
+          
+          <div class="sidebar-divider"></div>
+          
+          <a href="{{ url_for('login') }}" class="sidebar-link highlight">
+            <span class="sidebar-icon">🔐</span>
+            <span>Đăng nhập</span>
+          </a>
+          
+          <a href="{{ url_for('register') }}" class="sidebar-link">
+            <span class="sidebar-icon">📝</span>
+            <span>Đăng ký</span>
           </a>
         </nav>
       {% endif %}

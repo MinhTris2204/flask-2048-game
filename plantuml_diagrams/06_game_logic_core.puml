@@ -1,0 +1,144 @@
+@startuml Game Logic Core
+title Game Logic Core - Move Processing Detail
+
+start
+
+partition "Move Processing" {
+  :Input: direction (up/down/left/right);
+  
+  if (Game đã kết thúc?) then (có)
+    :Return changed=False;
+    stop
+  endif
+  
+  :Lưu last_state = {grid, score, moves};
+  
+  :Create temp_grid = copy of current grid;
+  
+  note right
+    **Direction Transformation:**
+    up/down -> Transpose
+    right/down -> Reverse rows
+  end note
+  
+  if (Direction là up hoặc down?) then (có)
+    :Transpose temp_grid;
+  endif
+  
+  if (Direction là right hoặc down?) then (có)
+    :Reverse rows của temp_grid;
+  endif
+  
+  :Initialize changed = False;
+  :Initialize merged_cells = [];
+  
+  repeat
+    :Lấy row từ temp_grid;
+    :Lưu original_row;
+    :Gọi operate(row);
+    
+    partition "Operate(row)" {
+      :Call compress(row);
+      
+      note right
+        **compress() logic:**
+        Remove all 0s, push to one side
+        [2, 0, 4, 0] -> [2, 4, 0, 0]
+      end note
+      
+      :Call merge(compressed);
+      
+      note right
+        **merge() logic:**
+        Merge adjacent equal tiles
+        [2, 2, 4, 0] -> [4, 0, 4, 0]
+        Add merged value to score
+        Track merged indices
+      end note
+      
+      :Call compress(result) again;
+      :Return final row và merged_indices;
+    }
+    
+    :Update row trong temp_grid;
+    
+    if (original_row != result row?) then (có)
+      :Set changed = True;
+    endif
+    
+    :Add merged cells to list;
+    
+  repeat while (Còn row trong temp_grid?)
+  
+  note right
+    **Convert merged positions back:**
+    For up/down: swap row/col
+    For right/down: reverse column index
+  end note
+  
+  :Convert merged_cells to actual positions;
+  
+  if (Direction là right hoặc down?) then (có)
+    :Reverse rows lại của temp_grid;
+  endif
+  
+  if (Direction là up hoặc down?) then (có)
+    :Transpose lại temp_grid;
+  endif
+  
+  if (changed?) then (không)
+    :Clear last_state;
+    :Return changed=False;
+    stop
+  endif
+  
+  :Update grid = temp_grid;
+  :Increment moves++;
+  
+  :Gọi add_random_tile();
+  
+  note right
+    **add_random_tile():**
+    1. Tìm random_empty_cell
+    2. Chọn 2 hoặc 4 (90% chance of 2)
+    3. Đặt vào cell đó
+    4. Return {r, c}
+  end note
+  
+  :Return {grid, score, moves, changed=True, new_tile, merged_cells};
+}
+
+partition "Check Game Over" {
+  :Gọi any_moves_left();
+  
+  note right
+    **any_moves_left() checks:**
+    1. Có ô trống (0)?
+    2. Có 2 ô kề nhau cùng giá trị?
+      - Check horizontal pairs
+      - Check vertical pairs
+  end note
+  
+  if (Còn nước đi?) then (có)
+    :Return None;
+  else (không)
+    :Set game_over = True;
+    :Return {score, max_tile, moves};
+  endif
+}
+
+partition "Helper Functions" {
+  note right
+    **Other helpers:**
+    - max_tile(): Tìm giá trị lớn nhất trên grid
+    - empty_grid(): Tạo grid rỗng size x size
+    - random_empty_cell(): Tìm ô trống ngẫu nhiên
+    - transpose(grid): Chuyển đổi ma trận
+    - reverse_rows(grid): Đảo ngược từng hàng
+  end note
+}
+
+stop
+
+@enduml
+

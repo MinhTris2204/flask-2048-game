@@ -21,6 +21,7 @@ import routes.api
 import routes.admin
 import routes.history
 import routes.seo
+import routes.content
 
 # Tạo tables ngay sau khi import models (cho Gunicorn)
 # Chỉ chạy khi không phải local dev server
