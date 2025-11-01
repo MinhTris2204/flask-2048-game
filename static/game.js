@@ -174,11 +174,11 @@ function showGameOverOverlay({ score, max_tile, moves }) {
         </div>
       </div>
       <div class="game-over-buttons">
-        <button id="btn-restart-overlay" class="btn-game-over btn-primary-overlay">
+        <button id="btn-restart-overlay" class="btn-game-over btn-primary-overlay" type="button">
           <span class="btn-icon">🔄</span>
           <span>Chơi lại</span>
         </button>
-        <button id="btn-leaderboard-overlay" class="btn-game-over btn-secondary-overlay">
+        <button id="btn-leaderboard-overlay" class="btn-game-over btn-secondary-overlay" type="button">
           <span class="btn-icon">🏆</span>
           <span>Bảng xếp hạng</span>
         </button>
@@ -186,23 +186,41 @@ function showGameOverOverlay({ score, max_tile, moves }) {
     </div>
   `;
   boardEl.appendChild(overlay);
-  requestAnimationFrame(() => overlay.classList.add("show"));
   
-  const restartBtn = document.getElementById("btn-restart-overlay");
-  const leaderboardBtn = document.getElementById("btn-leaderboard-overlay");
-  
-  if (restartBtn) {
-    restartBtn.addEventListener("click", () => {
-      removeGameOverOverlay();
-      startGame();
-    });
-  }
-  
-  if (leaderboardBtn) {
-    leaderboardBtn.addEventListener("click", () => {
-      window.location.href = "/leaderboard";
-    });
-  }
+  // Đợi DOM được append xong rồi mới gắn events
+  setTimeout(() => {
+    const restartBtn = document.getElementById("btn-restart-overlay");
+    const leaderboardBtn = document.getElementById("btn-leaderboard-overlay");
+    
+    if (restartBtn) {
+      // Gắn cả click và touchend cho mobile
+      const handleRestart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Restart clicked");
+        removeGameOverOverlay();
+        startGame();
+      };
+      
+      restartBtn.addEventListener("click", handleRestart, { passive: false });
+      restartBtn.addEventListener("touchend", handleRestart, { passive: false });
+    }
+    
+    if (leaderboardBtn) {
+      const handleLeaderboard = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Leaderboard clicked");
+        window.location.href = "/leaderboard";
+      };
+      
+      leaderboardBtn.addEventListener("click", handleLeaderboard, { passive: false });
+      leaderboardBtn.addEventListener("touchend", handleLeaderboard, { passive: false });
+    }
+    
+    // Show overlay sau khi gắn events
+    requestAnimationFrame(() => overlay.classList.add("show"));
+  }, 50);
 }
 
 function removeGameOverOverlay() {
