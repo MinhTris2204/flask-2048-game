@@ -26,11 +26,16 @@ def sitemap_xml():
     # Các trang chính của website
     pages = [
         {'loc': '/', 'priority': '1.0', 'changefreq': 'daily'},
+        {'loc': '/game', 'priority': '1.0', 'changefreq': 'daily'},
         {'loc': '/login', 'priority': '0.8', 'changefreq': 'monthly'},
         {'loc': '/register', 'priority': '0.8', 'changefreq': 'monthly'},
         {'loc': '/leaderboard', 'priority': '0.9', 'changefreq': 'daily'},
+        {'loc': '/game-history', 'priority': '0.7', 'changefreq': 'weekly'},
         {'loc': '/premium/manage', 'priority': '0.7', 'changefreq': 'monthly'},
     ]
+    
+    # Force HTTPS cho production
+    base_url = request.url_root.replace('http://', 'https://').rstrip('/')
     
     # Tạo sitemap XML
     xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -38,7 +43,7 @@ def sitemap_xml():
     
     for page in pages:
         xml_content += '  <url>\n'
-        xml_content += f'    <loc>{request.url_root.rstrip("/")}{page["loc"]}</loc>\n'
+        xml_content += f'    <loc>{base_url}{page["loc"]}</loc>\n'
         xml_content += f'    <lastmod>{datetime.now().strftime("%Y-%m-%d")}</lastmod>\n'
         xml_content += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
         xml_content += f'    <priority>{page["priority"]}</priority>\n'
