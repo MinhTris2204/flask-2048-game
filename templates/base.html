@@ -502,12 +502,32 @@
       
       // Theme picker toggle
       const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+      const mobileThemeToggle2 = document.getElementById('mobileThemeToggle2');
       const themePickerOverlay = document.getElementById('themePickerOverlay');
       const themePickerClose = document.getElementById('themePickerClose');
       
-      themeToggleBtn.addEventListener('click', function() {
+      function openThemePicker() {
         themePickerOverlay.classList.add('active');
-      });
+        // Close mobile sidebar if open
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        if (mobileSidebar && mobileSidebar.classList.contains('active')) {
+          mobileSidebar.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+      
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', openThemePicker);
+      }
+      
+      if (mobileThemeToggle) {
+        mobileThemeToggle.addEventListener('click', openThemePicker);
+      }
+      
+      if (mobileThemeToggle2) {
+        mobileThemeToggle2.addEventListener('click', openThemePicker);
+      }
       
       themePickerClose.addEventListener('click', function() {
         themePickerOverlay.classList.remove('active');

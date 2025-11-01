@@ -62,6 +62,13 @@
           
           <div class="sidebar-divider"></div>
           
+          <button class="sidebar-link theme-picker-link" id="mobileThemeToggle">
+            <span class="sidebar-icon">🎨</span>
+            <span>Chọn màu giao diện</span>
+          </button>
+          
+          <div class="sidebar-divider"></div>
+          
           {% if current_user.is_premium %}
             <a href="{{ url_for('premium_manage') }}" class="sidebar-link highlight">
               <span class="sidebar-icon">⚙️</span>
@@ -102,6 +109,13 @@
             <span class="sidebar-icon">🎯</span>
             <span>Chiến thuật</span>
           </a>
+          
+          <div class="sidebar-divider"></div>
+          
+          <button class="sidebar-link theme-picker-link" id="mobileThemeToggle2">
+            <span class="sidebar-icon">🎨</span>
+            <span>Chọn màu giao diện</span>
+          </button>
           
           <div class="sidebar-divider"></div>
           
