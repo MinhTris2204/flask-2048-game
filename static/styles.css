@@ -125,28 +125,35 @@ main.container:has(.game-wrap) {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 6px 12px;
   background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(2, 132, 199, 0.05) 100%);
   border-radius: 50px;
   border: 1px solid rgba(14, 165, 233, 0.2);
+  white-space: nowrap;
+  max-width: 200px;
 }
 
 .welcome-icon {
-  font-size: 18px;
+  font-size: 16px;
   filter: none;
+  flex-shrink: 0;
 }
 
 .welcome {
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .welcome b {
@@ -155,7 +162,7 @@ main.container:has(.game-wrap) {
 }
 
 .nav-link {
-  padding: 8px 16px;
+  padding: 8px 12px;
   background: var(--surface);
   color: var(--text);
   text-decoration: none;
@@ -165,6 +172,7 @@ main.container:has(.game-wrap) {
   transition: all 0.2s ease;
   border: 2px solid var(--outline);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-link:hover {
@@ -517,7 +525,39 @@ main.container:has(.game-wrap) {
   .max-tile-col { width: 20%; }
 }
 
-/* Responsive */
+/* Responsive cho laptop nhỏ - tránh navigation xuống dòng */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .container {
+    max-width: 100%;
+    padding: 16px 20px;
+  }
+  
+  .nav-right {
+    gap: 8px;
+  }
+  
+  .nav-link {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+  
+  .user-info {
+    padding: 5px 10px;
+    max-width: 160px;
+  }
+  
+  .welcome {
+    font-size: 13px;
+  }
+  
+  .btn-logout,
+  .btn-login {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Responsive cho tablet và mobile */
 @media (max-width: 768px) {
   .nav-wrapper {
     flex-direction: column;
