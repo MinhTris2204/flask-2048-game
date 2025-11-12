@@ -3102,31 +3102,34 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Keyframe animation for upgrade button */
-@keyframes upgradeGlow {
+/* Keyframe animation for upgrade button - rotating bars */
+@keyframes upgradeRotate1 {
   0% {
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 6px 25px rgba(30, 64, 175, 0.6);
-    transform: scale(1.02);
+    transform: rotate(0deg);
   }
   100% {
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-    transform: scale(1);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes upgradeRotate2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
   }
 }
 
 @keyframes upgradePulse {
   0% {
-    opacity: 1;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
   }
   50% {
-    opacity: 0.8;
+    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.5);
   }
   100% {
-    opacity: 1;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
   }
 }
 
@@ -3143,39 +3146,52 @@ main.container:has(.game-wrap) {
   font-size: 16px;
   box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
   transition: all 0.2s ease;
-  animation: upgradeGlow 2s ease-in-out infinite, upgradePulse 1.5s ease-in-out infinite;
+  animation: upgradePulse 2s ease-in-out infinite;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1;
+}
+
+.btn-upgrade::before,
+.btn-upgrade::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 16px;
+  border: 3px solid transparent;
+  z-index: -1;
 }
 
 .btn-upgrade::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
-  animation: upgradeShine 3s ease-in-out infinite;
+  background: linear-gradient(45deg, #1e40af, transparent, #1e40af, transparent, #1e40af);
+  background-size: 400% 400%;
+  animation: upgradeRotate1 3s linear infinite;
+  border-image: linear-gradient(45deg, #1e40af, transparent, #1e40af) 1;
 }
 
-@keyframes upgradeShine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  50% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
+.btn-upgrade::after {
+  background: linear-gradient(-45deg, #3b82f6, transparent, #3b82f6, transparent, #3b82f6);
+  background-size: 400% 400%;
+  animation: upgradeRotate2 2s linear infinite;
+  border-image: linear-gradient(-45deg, #3b82f6, transparent, #3b82f6) 1;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
 }
 
 .btn-upgrade:hover {
   background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 30px rgba(30, 64, 175, 0.5);
+  animation: none;
+}
+
+.btn-upgrade:hover::before,
+.btn-upgrade:hover::after {
   animation: none;
 }
 
