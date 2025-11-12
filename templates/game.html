@@ -31,7 +31,13 @@
         {% if is_premium %}
           <a href="{{ url_for('premium_manage') }}" class="btn-manage-premium">⚙️ Quản lý Premium</a>
         {% else %}
-          <a href="{{ url_for('premium_manage') }}" class="btn-upgrade">🌟 Nâng cấp Premium</a>
+          <a href="{{ url_for('premium_manage') }}" class="btn-upgrade">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            🌟 Nâng cấp Premium
+          </a>
         {% endif %}
       </div>
     </aside>

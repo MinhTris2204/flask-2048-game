@@ -3102,34 +3102,44 @@ main.container:has(.game-wrap) {
   }
 }
 
-/* Keyframe animation for upgrade button - rotating bars */
-@keyframes upgradeRotate1 {
+/* Keyframe animations for upgrade button - border running effect */
+@keyframes animate1 {
   0% {
-    transform: rotate(0deg);
+    left: -100%;
   }
+  50%,
   100% {
-    transform: rotate(360deg);
+    left: 100%;
   }
 }
 
-@keyframes upgradeRotate2 {
+@keyframes animate2 {
   0% {
-    transform: rotate(0deg);
+    top: -100%;
   }
+  50%,
   100% {
-    transform: rotate(-360deg);
+    top: 100%;
   }
 }
 
-@keyframes upgradePulse {
+@keyframes animate3 {
   0% {
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+    right: -100%;
   }
-  50% {
-    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.5);
-  }
+  50%,
   100% {
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+    right: 100%;
+  }
+}
+
+@keyframes animate4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,
+  100% {
+    bottom: 100%;
   }
 }
 
@@ -3146,41 +3156,58 @@ main.container:has(.game-wrap) {
   font-size: 16px;
   box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
   transition: all 0.2s ease;
-  animation: upgradePulse 2s ease-in-out infinite;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   z-index: 1;
 }
 
-.btn-upgrade::before,
-.btn-upgrade::after {
-  content: '';
+/* Border running effects using span elements */
+.btn-upgrade span {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
-  border-radius: 16px;
-  border: 3px solid transparent;
-  z-index: -1;
+  display: block;
 }
 
-.btn-upgrade::before {
-  background: linear-gradient(45deg, #1e40af, transparent, #1e40af, transparent, #1e40af);
-  background-size: 400% 400%;
-  animation: upgradeRotate1 3s linear infinite;
-  border-image: linear-gradient(45deg, #1e40af, transparent, #1e40af) 1;
+/* Top border */
+.btn-upgrade span:nth-child(1) {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #1e40af);
+  animation: animate1 1s linear infinite;
 }
 
-.btn-upgrade::after {
-  background: linear-gradient(-45deg, #3b82f6, transparent, #3b82f6, transparent, #3b82f6);
-  background-size: 400% 400%;
-  animation: upgradeRotate2 2s linear infinite;
-  border-image: linear-gradient(-45deg, #3b82f6, transparent, #3b82f6) 1;
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
+/* Right border */
+.btn-upgrade span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, #1e40af);
+  animation: animate2 1s linear infinite;
+  animation-delay: 0.25s;
+}
+
+/* Bottom border */
+.btn-upgrade span:nth-child(3) {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, #1e40af);
+  animation: animate3 1s linear infinite;
+  animation-delay: 0.5s;
+}
+
+/* Left border */
+.btn-upgrade span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, #1e40af);
+  animation: animate4 1s linear infinite;
+  animation-delay: 0.75s;
 }
 
 .btn-upgrade:hover {
@@ -3190,8 +3217,7 @@ main.container:has(.game-wrap) {
   animation: none;
 }
 
-.btn-upgrade:hover::before,
-.btn-upgrade:hover::after {
+.btn-upgrade:hover span {
   animation: none;
 }
 
