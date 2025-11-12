@@ -7,6 +7,28 @@ from game_logic import Game2048
 from helpers import load_game, save_game
 
 
+@app.route("/api/load_game", methods=["GET"])
+@login_required
+def load_current_game():
+    """API endpoint to load current game state."""
+    if "game_state" not in session:
+        # Nếu không có game state, tạo game mới
+        g = Game2048()
+        result = g.setup()
+        save_game(g)
+        return jsonify({"ok": True, **result, "can_undo": False})
+    
+    # Load game hiện tại
+    g = load_game()
+    return jsonify({
+        "ok": True,
+        "grid": g.grid,
+        "score": g.score,
+        "moves": g.moves,
+        "can_undo": g.last_state is not None
+    })
+
+
 @app.route("/api/start_game", methods=["POST"])
 @login_required
 def start_game():

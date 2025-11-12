@@ -229,6 +229,25 @@ function removeGameOverOverlay() {
 }
 
 
+async function loadGame() {
+  try {
+    inputLocked = true;
+    const res = await fetch("/api/load_game", { method: "GET" });
+    const data = await res.json();
+    if (!data.ok) {
+      console.error("Load game error:", data.message);
+      return;
+    }
+    render(data);
+    updateUndoButton(data.can_undo ?? false);
+    removeGameOverOverlay();
+  } catch (e) {
+    console.error("loadGame fetch error:", e);
+  } finally {
+    setTimeout(() => (inputLocked = false), ANIM_MS);
+  }
+}
+
 async function startGame() {
   try {
     inputLocked = true;
@@ -751,4 +770,4 @@ async function performSwap(row1, col1, row2, col2) {
 // Không cần setup ở đây nữa
 // ================================
 
-document.addEventListener("DOMContentLoaded", startGame);
+document.addEventListener("DOMContentLoaded", loadGame);
