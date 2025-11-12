@@ -3105,15 +3105,15 @@ main.container:has(.game-wrap) {
 /* Keyframe animation for upgrade button */
 @keyframes upgradeGlow {
   0% {
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 6px 25px rgba(249, 115, 22, 0.6);
+    box-shadow: 0 6px 25px rgba(30, 64, 175, 0.6);
     transform: scale(1.02);
   }
   100% {
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
     transform: scale(1);
   }
 }
@@ -3134,14 +3134,14 @@ main.container:has(.game-wrap) {
   display: block;
   width: 100%;
   padding: 14px 18px;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
   color: white;
   text-decoration: none;
   text-align: center;
   border-radius: 12px;
   font-weight: 700;
   font-size: 16px;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
   transition: all 0.2s ease;
   animation: upgradeGlow 2s ease-in-out infinite, upgradePulse 1.5s ease-in-out infinite;
   position: relative;
@@ -3173,9 +3173,9 @@ main.container:has(.game-wrap) {
 }
 
 .btn-upgrade:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 30px rgba(30, 64, 175, 0.5);
   animation: none;
 }
 
