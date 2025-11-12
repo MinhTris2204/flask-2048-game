@@ -400,17 +400,182 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .history-page {
+    padding: 12px 8px;
+  }
+  
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-card {
+    padding: 16px 12px;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  
+  .stat-icon {
+    font-size: 28px;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+  }
+  
+  .stat-label {
+    font-size: 11px;
+  }
+  
+  .history-table-wrapper {
+    padding: 16px 8px;
+    margin: 0 -8px;
+  }
+  
+  .history-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
   
   .history-table {
     font-size: 12px;
+    min-width: 600px;
+    white-space: nowrap;
   }
   
   .history-table thead th,
   .history-table tbody td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+  
+  .history-table thead th:first-child,
+  .history-table tbody td:first-child {
+    padding-left: 12px;
+  }
+  
+  .history-table thead th:last-child,
+  .history-table tbody td:last-child {
+    padding-right: 12px;
+  }
+  
+  .col-number {
+    min-width: 30px;
+  }
+  
+  .col-date {
+    min-width: 80px;
+  }
+  
+  .col-score {
+    min-width: 70px;
+  }
+  
+  .col-tile {
+    min-width: 60px;
+  }
+  
+  .col-moves {
+    min-width: 60px;
+  }
+  
+  .col-avg {
+    min-width: 70px;
+  }
+  
+  .date-time {
+    gap: 1px;
+  }
+  
+  .date {
+    font-size: 11px;
+  }
+  
+  .time {
+    font-size: 10px;
+  }
+  
+  .score-value {
+    font-size: 12px;
+  }
+  
+  .tile-badge {
+    padding: 2px 6px;
+    font-size: 10px;
+    min-width: 32px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-page {
     padding: 8px 4px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+    flex-direction: row;
+    text-align: left;
+    gap: 12px;
+  }
+  
+  .stat-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  
+  .stat-value {
+    font-size: 16px;
+  }
+  
+  .stat-label {
+    font-size: 10px;
+  }
+  
+  .history-table-wrapper {
+    padding: 12px 4px;
+    margin: 0 -4px;
+  }
+  
+  .history-table {
+    min-width: 500px;
+  }
+  
+  .history-table thead th,
+  .history-table tbody td {
+    padding: 6px 4px;
+    font-size: 10px;
+  }
+  
+  .col-number {
+    min-width: 25px;
+  }
+  
+  .col-date {
+    min-width: 70px;
+  }
+  
+  .col-score {
+    min-width: 60px;
+  }
+  
+  .col-tile {
+    min-width: 50px;
+  }
+  
+  .col-moves {
+    min-width: 50px;
+  }
+  
+  .col-avg {
+    min-width: 60px;
   }
 }
 </style>

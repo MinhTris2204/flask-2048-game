@@ -3260,18 +3260,36 @@ main.container:has(.game-wrap) {
   }
   
   .history-table-wrapper {
-    padding: 16px;
+    padding: 16px 8px;
+    margin: 0 -8px;
+  }
+  
+  .history-table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
   
   .history-table {
-    font-size: 13px;
+    font-size: 12px;
+    min-width: 600px;
+    white-space: nowrap;
   }
   
   .history-table thead th,
   .history-table tbody td {
     padding: 8px 6px;
-    font-size: 12px;
+    font-size: 11px;
+  }
+  
+  .history-table thead th:first-child,
+  .history-table tbody td:first-child {
+    padding-left: 12px;
+  }
+  
+  .history-table thead th:last-child,
+  .history-table tbody td:last-child {
+    padding-right: 12px;
   }
   
   .tile-badge {
