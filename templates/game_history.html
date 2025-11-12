@@ -65,12 +65,12 @@
       <table class="history-table">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Ngày giờ</th>
-            <th>Điểm số</th>
-            <th>Ô lớn nhất</th>
-            <th>Số nước đi</th>
-            <th>Trung bình/nước</th>
+            <th class="col-number">#</th>
+            <th class="col-date">Ngày giờ</th>
+            <th class="col-score">Điểm số</th>
+            <th class="col-tile">Ô lớn nhất</th>
+            <th class="col-moves hide-mobile">Số nước đi</th>
+            <th class="col-avg hide-mobile">Trung bình/nước</th>
           </tr>
         </thead>
         <tbody>
@@ -89,8 +89,8 @@
             <td class="col-tile">
               <span class="tile-badge tile-{{ score.max_tile }}">{{ score.max_tile }}</span>
             </td>
-            <td class="col-moves">{{ "{:,}".format(score.moves) }}</td>
-            <td class="col-avg">
+            <td class="col-moves hide-mobile">{{ "{:,}".format(score.moves) }}</td>
+            <td class="col-avg hide-mobile">
               {% if score.moves > 0 %}
                 {{ "{:,.1f}".format(score.score / score.moves) }}
               {% else %}
@@ -398,137 +398,33 @@
   border-color: var(--accent);
 }
 
+/* Hide columns on mobile */
+.hide-mobile {
+  display: table-cell;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .history-page {
-    padding: 12px 8px;
+    padding: 8px;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
   }
   
   .stat-card {
-    padding: 16px 12px;
+    padding: 12px 8px;
     flex-direction: column;
     text-align: center;
-    gap: 8px;
-  }
-  
-  .stat-icon {
-    font-size: 28px;
-  }
-  
-  .stat-value {
-    font-size: 18px;
-  }
-  
-  .stat-label {
-    font-size: 11px;
-  }
-  
-  .history-table-wrapper {
-    padding: 16px 8px;
-    margin: 0 -8px;
-  }
-  
-  .history-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  
-  .history-table {
-    font-size: 12px;
-    min-width: 600px;
-    white-space: nowrap;
-  }
-  
-  .history-table thead th,
-  .history-table tbody td {
-    padding: 8px 6px;
-    font-size: 11px;
-  }
-  
-  .history-table thead th:first-child,
-  .history-table tbody td:first-child {
-    padding-left: 12px;
-  }
-  
-  .history-table thead th:last-child,
-  .history-table tbody td:last-child {
-    padding-right: 12px;
-  }
-  
-  .col-number {
-    min-width: 30px;
-  }
-  
-  .col-date {
-    min-width: 80px;
-  }
-  
-  .col-score {
-    min-width: 70px;
-  }
-  
-  .col-tile {
-    min-width: 60px;
-  }
-  
-  .col-moves {
-    min-width: 60px;
-  }
-  
-  .col-avg {
-    min-width: 70px;
-  }
-  
-  .date-time {
-    gap: 1px;
-  }
-  
-  .date {
-    font-size: 11px;
-  }
-  
-  .time {
-    font-size: 10px;
-  }
-  
-  .score-value {
-    font-size: 12px;
-  }
-  
-  .tile-badge {
-    padding: 2px 6px;
-    font-size: 10px;
-    min-width: 32px;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .history-page {
-    padding: 8px 4px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  
-  .stat-card {
-    padding: 12px;
-    flex-direction: row;
-    text-align: left;
-    gap: 12px;
+    gap: 6px;
   }
   
   .stat-icon {
     font-size: 24px;
-    flex-shrink: 0;
   }
   
   .stat-value {
@@ -540,42 +436,177 @@
   }
   
   .history-table-wrapper {
-    padding: 12px 4px;
-    margin: 0 -4px;
+    padding: 12px 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+  
+  .history-table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
   
   .history-table {
-    min-width: 500px;
+    width: 100%;
+    min-width: 320px;
+    max-width: 100%;
+    font-size: 11px;
+    table-layout: fixed;
+  }
+  
+  .hide-mobile {
+    display: none !important;
   }
   
   .history-table thead th,
   .history-table tbody td {
     padding: 6px 4px;
     font-size: 10px;
+    word-wrap: break-word;
   }
   
   .col-number {
-    min-width: 25px;
+    width: 15%;
+    min-width: 30px;
   }
   
   .col-date {
+    width: 30%;
     min-width: 70px;
   }
   
   .col-score {
+    width: 30%;
     min-width: 60px;
   }
   
   .col-tile {
+    width: 25%;
     min-width: 50px;
   }
   
-  .col-moves {
-    min-width: 50px;
+  .date-time {
+    gap: 1px;
   }
   
-  .col-avg {
-    min-width: 60px;
+  .date {
+    font-size: 10px;
+    display: block;
+  }
+  
+  .time {
+    font-size: 9px;
+    display: block;
+  }
+  
+  .score-value {
+    font-size: 11px;
+    display: block;
+  }
+  
+  .tile-badge {
+    padding: 2px 4px;
+    font-size: 9px;
+    min-width: 28px;
+    text-align: center;
+    display: inline-block;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-page {
+    padding: 4px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  
+  .stat-card {
+    padding: 10px 8px;
+    flex-direction: row;
+    text-align: left;
+    gap: 10px;
+  }
+  
+  .stat-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  
+  .stat-value {
+    font-size: 14px;
+  }
+  
+  .stat-label {
+    font-size: 9px;
+  }
+  
+  .history-table-wrapper {
+    padding: 8px 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+  
+  .history-table {
+    width: 100%;
+    min-width: 280px;
+    max-width: 100%;
+    font-size: 10px;
+  }
+  
+  .history-table thead th,
+  .history-table tbody td {
+    padding: 4px 2px;
+    font-size: 9px;
+  }
+  
+  .col-number {
+    width: 12%;
+    min-width: 25px;
+  }
+  
+  .col-date {
+    width: 32%;
+    min-width: 65px;
+  }
+  
+  .col-score {
+    width: 32%;
+    min-width: 55px;
+  }
+  
+  .col-tile {
+    width: 24%;
+    min-width: 45px;
+  }
+  
+  .date {
+    font-size: 9px;
+  }
+  
+  .time {
+    font-size: 8px;
+  }
+  
+  .score-value {
+    font-size: 10px;
+  }
+  
+  .tile-badge {
+    padding: 1px 3px;
+    font-size: 8px;
+    min-width: 24px;
   }
 }
 </style>
