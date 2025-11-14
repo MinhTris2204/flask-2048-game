@@ -3146,19 +3146,47 @@ main.container:has(.game-wrap) {
 .btn-upgrade {
   display: block;
   width: 100%;
-  padding: 14px 18px;
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
   text-decoration: none;
   text-align: center;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-  transition: all 0.2s ease;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 17px;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   z-index: 1;
+  animation: pulse-premium 2s ease-in-out infinite;
+}
+
+@keyframes pulse-premium {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(251, 191, 36, 0.3);
+  }
+}
+
+/* Shimmer effect background */
+.btn-upgrade::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer-btn 2s linear infinite;
+  z-index: -1;
+}
+
+@keyframes shimmer-btn {
+  0% { left: -100%; }
+  100% { left: 200%; }
 }
 
 /* Border running effects using span elements */
@@ -3172,20 +3200,20 @@ main.container:has(.game-wrap) {
   top: 0;
   left: 0;
   width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #1e40af);
-  animation: animate1 1s linear infinite;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+  animation: animate1 2s linear infinite;
 }
 
 /* Right border */
 .btn-upgrade span:nth-child(2) {
   top: -100%;
   right: 0;
-  width: 2px;
+  width: 3px;
   height: 100%;
-  background: linear-gradient(180deg, transparent, #1e40af);
-  animation: animate2 1s linear infinite;
-  animation-delay: 0.25s;
+  background: linear-gradient(180deg, transparent, #fbbf24, transparent);
+  animation: animate2 2s linear infinite;
+  animation-delay: 0.5s;
 }
 
 /* Bottom border */
@@ -3193,32 +3221,45 @@ main.container:has(.game-wrap) {
   bottom: 0;
   right: 0;
   width: 100%;
-  height: 2px;
-  background: linear-gradient(270deg, transparent, #1e40af);
-  animation: animate3 1s linear infinite;
-  animation-delay: 0.5s;
+  height: 3px;
+  background: linear-gradient(270deg, transparent, #fbbf24, transparent);
+  animation: animate3 2s linear infinite;
+  animation-delay: 1s;
 }
 
 /* Left border */
 .btn-upgrade span:nth-child(4) {
   bottom: -100%;
   left: 0;
-  width: 2px;
+  width: 3px;
   height: 100%;
-  background: linear-gradient(360deg, transparent, #1e40af);
-  animation: animate4 1s linear infinite;
-  animation-delay: 0.75s;
+  background: linear-gradient(360deg, transparent, #fbbf24, transparent);
+  animation: animate4 2s linear infinite;
+  animation-delay: 1.5s;
 }
 
 .btn-upgrade:hover {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 30px rgba(30, 64, 175, 0.5);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 12px 40px rgba(245, 158, 11, 0.6), 0 0 50px rgba(251, 191, 36, 0.4);
   animation: none;
 }
 
+.btn-upgrade:hover::before {
+  animation: shimmer-btn-fast 1s linear infinite;
+}
+
+@keyframes shimmer-btn-fast {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
 .btn-upgrade:hover span {
-  animation: none;
+  animation-duration: 1s !important;
+}
+
+.btn-upgrade:active {
+  transform: translateY(-1px) scale(1.05);
 }
 
 .btn-manage-premium {
