@@ -79,27 +79,28 @@ body, html {
   background: var(--surface);
   display: flex;
   flex-direction: column;
-  padding: 60px;
-  overflow-y: auto;
+  justify-content: center;
+  padding: 40px;
+  overflow: hidden;
 }
 
 .result-content {
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   width: 100%;
 }
 
 .details-section {
   background: white;
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 30px;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .details-section h3 {
-  margin: 0 0 20px 0;
-  font-size: 20px;
+  margin: 0 0 16px 0;
+  font-size: 18px;
   color: var(--text);
   font-weight: 700;
 }
@@ -107,7 +108,7 @@ body, html {
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--outline);
 }
 
@@ -117,40 +118,40 @@ body, html {
 
 .detail-label {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .detail-value {
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .detail-value-accent {
   color: #10b981;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
 }
 
 .detail-value-monospace {
   font-family: 'Courier New', monospace;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text);
   font-weight: 600;
 }
 
 .features-section {
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 30px;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
   border: 2px solid #86efac;
 }
 
 .features-section h4 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
+  margin: 0 0 12px 0;
+  font-size: 16px;
   color: #065f46;
   font-weight: 700;
 }
@@ -160,14 +161,14 @@ body, html {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .features-list li {
   color: #047857;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: white;
   border-radius: 8px;
   border: 1px solid #86efac;
@@ -175,15 +176,15 @@ body, html {
 
 .action-buttons {
   display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .btn-action {
   flex: 1;
-  padding: 16px 24px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   text-align: center;
@@ -217,9 +218,13 @@ body, html {
 .footer-note {
   text-align: center;
   color: var(--muted);
-  font-size: 13px;
-  padding-top: 20px;
+  font-size: 12px;
+  padding-top: 16px;
   border-top: 1px solid var(--outline);
+}
+
+.footer-note p {
+  margin: 4px 0;
 }
 
 /* Responsive */
