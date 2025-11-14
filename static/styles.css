@@ -3147,14 +3147,14 @@ main.container:has(.game-wrap) {
   display: block;
   width: 100%;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
   color: white;
   text-decoration: none;
   text-align: center;
   border-radius: 14px;
   font-weight: 800;
   font-size: 17px;
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -3164,10 +3164,10 @@ main.container:has(.game-wrap) {
 
 @keyframes pulse-premium {
   0%, 100% {
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
   }
   50% {
-    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(251, 191, 36, 0.3);
+    box-shadow: 0 8px 30px rgba(30, 64, 175, 0.6), 0 0 40px rgba(59, 130, 246, 0.3);
   }
 }
 
@@ -3239,9 +3239,9 @@ main.container:has(.game-wrap) {
 }
 
 .btn-upgrade:hover {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
   transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 12px 40px rgba(245, 158, 11, 0.6), 0 0 50px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 12px 40px rgba(30, 64, 175, 0.6), 0 0 50px rgba(59, 130, 246, 0.4);
   animation: none;
 }
 
