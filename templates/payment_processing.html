@@ -5,53 +5,12 @@
 <link href="{{ url_for('static', filename='payos-payment.css') }}" rel="stylesheet">
 
 <div class="payment-split-layout">
-  <!-- Left panel - Thông tin thanh toán -->
-  <div class="payment-info-panel">
-    <div class="info-panel-content">
-      <div>
-        <!-- Timer -->
-        <div class="timer-section">
-          <div class="timer-icon-large">⏱️</div>
-          <div class="timer-text">
-            <p class="timer-label">Thời gian còn lại</p>
-            <div class="timer-display-large" id="countdown">15:00</div>
-          </div>
-        </div>
-
-        <!-- Payment details -->
-        <div class="payment-details-section">
-          <h2 class="payment-title">Quét mã QR để thanh toán</h2>
-          
-          <div class="payment-amount-box">
-            <p class="amount-label">Số tiền thanh toán</p>
-            <p class="amount-value">{{ "{:,.0f}".format(amount) }} VND</p>
-          </div>
-
-          <div class="payment-plan-info">
-            <div class="plan-icon">💎</div>
-            <div class="plan-details">
-              <p class="plan-name">{{ description }}</p>
-              <p class="plan-benefit">Truy cập đầy đủ tính năng Premium</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Instructions -->
-        <div class="payment-instructions">
-          <h3 class="instructions-title">📱 Hướng dẫn thanh toán</h3>
-          <ol class="instructions-list">
-            <li>Mở app ngân hàng</li>
-            <li>Quét mã QR bên phải</li>
-            <li>Xác nhận thanh toán</li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Security badge -->
-      <div class="security-badge">
-        <span class="badge-icon">🔒</span>
-        <span class="badge-text">Bảo mật bởi PayOS</span>
-      </div>
+  <!-- Top bar - Timer only -->
+  <div class="payment-timer-bar">
+    <div class="timer-compact">
+      <span class="timer-icon">⏱️</span>
+      <span class="timer-label">Thời gian còn lại:</span>
+      <span class="timer-display" id="countdown">15:00</span>
     </div>
   </div>
 
@@ -76,216 +35,68 @@ body, html {
   overflow: hidden;
 }
 
-/* Split layout - 2 cột */
+/* Layout - Timer bar on top, iframe below */
 .payment-split-layout {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   width: 100%;
 }
 
-/* Left panel - Thông tin */
-.payment-info-panel {
-  width: 320px;
+/* Timer bar */
+.payment-timer-bar {
   background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
-  color: white;
-  overflow-y: auto;
+  padding: 16px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  /* Improve text readability */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
 }
 
-.info-panel-content {
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
-  justify-content: space-between;
-}
-
-/* Timer section */
-.timer-section {
+.timer-compact {
   display: flex;
   align-items: center;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 16px;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
+  justify-content: center;
+  gap: 12px;
+  color: white;
 }
 
-.timer-icon-large {
-  font-size: 40px;
+.timer-icon {
+  font-size: 28px;
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-}
-
-.timer-text {
-  flex: 1;
+  50% { transform: scale(1.1); }
 }
 
 .timer-label {
-  font-size: 12px;
-  opacity: 1;
-  margin: 0 0 6px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 16px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.5px;
 }
 
-.timer-display-large {
-  font-size: 32px;
+.timer-display {
+  font-size: 28px;
   font-weight: 800;
   font-family: 'Courier New', monospace;
   letter-spacing: 2px;
-  line-height: 1;
-}
-
-/* Payment details */
-.payment-details-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.payment-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.3;
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.payment-amount-box {
   background: rgba(255, 255, 255, 0.2);
-  padding: 16px;
-  border-radius: 12px;
+  padding: 8px 20px;
+  border-radius: 8px;
   backdrop-filter: blur(10px);
 }
 
-.amount-label {
-  font-size: 12px;
-  opacity: 1;
-  margin: 0 0 6px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.amount-value {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.payment-plan-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 14px;
-  border-radius: 12px;
-}
-
-.plan-icon {
-  font-size: 28px;
-}
-
-.plan-details {
-  flex: 1;
-}
-
-.plan-name {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  color: #ffffff;
-}
-
-.plan-benefit {
-  font-size: 13px;
-  opacity: 1;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* Instructions */
-.payment-instructions {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 16px;
-  border-radius: 12px;
-}
-
-.instructions-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  color: #ffffff;
-}
-
-.instructions-list {
-  margin: 0;
-  padding-left: 20px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.instructions-list li {
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.instructions-list li:last-child {
-  margin-bottom: 0;
-}
-
-/* Security badge */
-.security-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.badge-icon {
-  font-size: 16px;
-}
-
-/* Right panel - PayOS iframe */
+/* PayOS iframe - Full width */
 .payos-panel {
   flex: 1;
   background: #f5f5f5;
   position: relative;
-  overflow: auto;
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  overflow: hidden;
 }
 
 #payos-iframe {
   width: 100%;
-  max-width: 800px;
   height: 100%;
-  min-height: 100vh;
   border: none;
   display: block;
   background: white;
@@ -307,69 +118,26 @@ body, html {
 }
 
 /* Responsive - Mobile */
-@media (max-width: 1024px) {
-  .payment-split-layout {
-    flex-direction: column;
-  }
-  
-  .payment-info-panel {
-    width: 100%;
-    height: auto;
-    max-height: 40vh;
-  }
-  
-  .info-panel-content {
-    padding: 20px;
-    gap: 20px;
-  }
-  
-  .timer-section {
-    padding: 15px;
-  }
-  
-  .timer-icon-large {
-    font-size: 36px;
-  }
-  
-  .timer-display-large {
-    font-size: 32px;
-  }
-  
-  .payment-title {
-    font-size: 20px;
-  }
-  
-  .amount-value {
-    font-size: 28px;
-  }
-  
-  .payment-instructions {
-    display: none;
-  }
-  
-  .payos-panel {
-    flex: 1;
-  }
-}
-
 @media (max-width: 768px) {
-  .info-panel-content {
-    padding: 15px;
-    gap: 15px;
+  .payment-timer-bar {
+    padding: 12px 16px;
   }
   
-  .timer-section {
-    flex-direction: column;
-    text-align: center;
-    padding: 15px;
+  .timer-compact {
+    gap: 8px;
   }
   
-  .payment-amount-box {
-    padding: 15px;
-  }
-  
-  .amount-value {
+  .timer-icon {
     font-size: 24px;
+  }
+  
+  .timer-label {
+    font-size: 14px;
+  }
+  
+  .timer-display {
+    font-size: 22px;
+    padding: 6px 16px;
   }
 }
 </style>
@@ -378,7 +146,7 @@ body, html {
 // Countdown timer cho thanh toán (15 phút)
 let timeLeft = 15 * 60; // 15 minutes in seconds
 const countdownEl = document.getElementById('countdown');
-const timerDisplay = document.querySelector('.timer-display-large');
+const timerDisplay = document.querySelector('.timer-display');
 
 function updateCountdown() {
   const minutes = Math.floor(timeLeft / 60);
