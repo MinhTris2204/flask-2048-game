@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Thanh toán thất bại - 2048{% endblock %}
 {% block content %}
+{% if break_iframe %}
+<script>
+// Thoát khỏi iframe nếu đang trong iframe
+if (window.self !== window.top) {
+  window.top.location.href = window.location.href;
+}
+</script>
+{% endif %}
 <div class="card error-card">
   <div class="error-header">
     <div class="error-icon-circle">

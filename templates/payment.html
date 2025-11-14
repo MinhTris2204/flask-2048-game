@@ -3,86 +3,268 @@
 
 {% block content %}
 <link href="{{ url_for('static', filename='payos-payment.css') }}" rel="stylesheet">
-<div class="card payment-card">
-  <h2>Thanh toán Premium</h2>
+
+<style>
+/* Bố cục 2 cột cho trang payment */
+.payment-horizontal-layout {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.payment-left-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-right-col {
+  width: 400px;
+  flex-shrink: 0;
+}
+
+.payment-card-compact {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.payment-card-compact h2 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  color: var(--text);
+}
+
+/* Plan box compact */
+.payment-plan-box-compact {
+  background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.payment-plan-box-compact h3 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.payment-plan-box-compact p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.payment-plan-box-compact .price {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Features grid */
+.payos-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.feature-item-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--outline);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.feature-item-compact .icon {
+  font-size: 20px;
+}
+
+/* Payment summary */
+.payment-summary-box {
+  background: var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.payment-summary-box h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.payment-summary-row:last-child {
+  margin-bottom: 0;
+  padding-top: 12px;
+  border-top: 2px dashed var(--outline);
+}
+
+.payment-summary-row .label {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.payment-summary-row .value {
+  color: #0088FF;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+/* Security compact */
+.security-info-compact {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 20px;
+  border: 1px solid #bae6fd;
+}
+
+.security-info-compact .badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0369a1;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.security-info-compact .features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.security-info-compact .features span {
+  color: #0284c7;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+}
+
+@media (max-width: 1024px) {
+  .payment-horizontal-layout {
+    flex-direction: column;
+  }
   
-  <div class="payment-plan-box">
-    <h3 class="payment-plan-title">{{ plan.name }}</h3>
-    <p class="payment-plan-desc">{{ plan.description if plan.description else 'Hưởng trọn vẹn tính năng Premium' }}</p>
-    <div class="payment-plan-price">
-      {{ "{:,.0f}".format(plan_price) }} VND
+  .payment-right-col {
+    width: 100%;
+  }
+  
+  .payos-features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="payment-horizontal-layout">
+  <!-- Left column - Features -->
+  <div class="payment-left-col">
+    <div class="payment-card-compact">
+      <h2>💳 Thanh toán qua PayOS</h2>
+      
+      <div class="payos-logo" style="text-align: center; margin: 20px 0;">
+        <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#0088FF"/>
+          <path d="M24 12C17.373 12 12 17.373 12 24C12 30.627 17.373 36 24 36C30.627 36 36 30.627 36 24C36 17.373 30.627 12 24 12ZM28 26H20V22H28V26Z" fill="white"/>
+        </svg>
+      </div>
+      
+      <p style="text-align: center; color: var(--muted); margin-bottom: 24px; font-size: 15px;">
+        Quét QR hoặc chuyển khoản ngân hàng
+      </p>
+      
+      <div class="payos-features-grid">
+        <div class="feature-item-compact">
+          <span class="icon">📱</span>
+          <span>Quét mã QR</span>
+        </div>
+        <div class="feature-item-compact">
+          <span class="icon">🏦</span>
+          <span>Internet Banking</span>
+        </div>
+        <div class="feature-item-compact">
+          <span class="icon">💳</span>
+          <span>Ví điện tử</span>
+        </div>
+        <div class="feature-item-compact">
+          <span class="icon">⚡</span>
+          <span>Thanh toán tức thì</span>
+        </div>
+      </div>
+      
+      <div class="security-info-compact">
+        <div class="badge">
+          <span>🔒</span>
+          <span>Thanh toán bảo mật bởi PayOS</span>
+        </div>
+        <div class="features">
+          <span>✓ Mã hóa SSL 256-bit</span>
+          <span>✓ Tuân thủ chuẩn PCI DSS</span>
+          <span>✓ Hỗ trợ 24/7</span>
+        </div>
+      </div>
     </div>
   </div>
-
-  <form method="post">
-    <div class="payment-method-section">
-      <div class="payos-header">
-        <div class="payos-logo">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect width="48" height="48" rx="12" fill="#0088FF"/>
-            <path d="M24 12C17.373 12 12 17.373 12 24C12 30.627 17.373 36 24 36C30.627 36 36 30.627 36 24C36 17.373 30.627 12 24 12ZM28 26H20V22H28V26Z" fill="white"/>
-          </svg>
-        </div>
-        <h3 class="payos-title">Thanh toán qua PayOS</h3>
-        <p class="payos-subtitle">Quét QR hoặc chuyển khoản ngân hàng</p>
+  
+  <!-- Right column - Payment form -->
+  <div class="payment-right-col">
+    <div class="payment-card-compact">
+      <div class="payment-plan-box-compact">
+        <h3>{{ plan.name }}</h3>
+        <p>{{ plan.description if plan.description else 'Hưởng trọn vẹn tính năng Premium' }}</p>
+        <div class="price">{{ "{:,.0f}".format(plan_price) }} VND</div>
       </div>
       
-      <input type="hidden" name="payment_method" value="payos">
-      
-      <div class="payos-features">
-        <div class="feature-item">
-          <span class="feature-icon">📱</span>
-          <span>Quét mã QR bằng app ngân hàng</span>
+      <form method="post">
+        <input type="hidden" name="payment_method" value="payos">
+        
+        <div class="payment-summary-box">
+          <h4>Tổng thanh toán</h4>
+          <div class="payment-summary-row">
+            <span class="label">Gói Premium:</span>
+            <span class="label">{{ plan.name }}</span>
+          </div>
+          <div class="payment-summary-row">
+            <span class="label">Số tiền:</span>
+            <span class="value">{{ "{:,.0f}".format(plan_price) }} VND</span>
+          </div>
         </div>
-        <div class="feature-item">
-          <span class="feature-icon">🏦</span>
-          <span>Internet Banking / Mobile Banking</span>
+        
+        <button type="submit" class="btn-payos">
+          <span class="btn-icon">💳</span>
+          <span>Thanh toán ngay</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        
+        <div class="payment-back-link">
+          <a href="{{ url_for('premium_manage') }}" class="link-muted">
+            ← Quay lại chọn gói khác
+          </a>
         </div>
-        <div class="feature-item">
-          <span class="feature-icon">💳</span>
-          <span>Ví điện tử: Momo, ZaloPay, ViettelPay</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">⚡</span>
-          <span>Thanh toán nhanh chóng, tức thì</span>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">🔒</span>
-          <span>Bảo mật cao, an toàn 100%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="payment-total">
-      <h4 class="payment-total-title">Tổng thanh toán:</h4>
-      <div class="payment-total-amount">
-        <span class="amount-label">Số tiền:</span>
-        <span class="amount-value">{{ "{:,.0f}".format(plan_price) }} VND</span>
-      </div>
-    </div>
-
-    <button type="submit" class="btn-payos">
-      <span class="btn-icon">💳</span>
-      <span>Thanh toán ngay</span>
-      <span class="btn-arrow">→</span>
-    </button>
-
-    <div class="payment-back-link">
-      <a href="{{ url_for('premium_manage') }}" class="link-muted">
-        ← Quay lại chọn gói khác
-      </a>
-    </div>
-  </form>
-
-  <div class="payment-security-info">
-    <p class="security-badge">
-      <span class="badge-icon">🔒</span>
-      <span class="badge-text">Thanh toán được bảo mật bởi PayOS</span>
-    </p>
-    <div class="security-features">
-      <span class="security-item">✓ Mã hóa SSL 256-bit</span>
-      <span class="security-item">✓ Tuân thủ chuẩn PCI DSS</span>
-      <span class="security-item">✓ Hỗ trợ 24/7</span>
+      </form>
     </div>
   </div>
 </div>

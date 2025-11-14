@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Kết quả thanh toán - 2048{% endblock %}
 {% block content %}
+{% if break_iframe %}
+<script>
+// Thoát khỏi iframe nếu đang trong iframe
+if (window.self !== window.top) {
+  window.top.location.href = window.location.href;
+}
+</script>
+{% endif %}
 <div class="card success-card">
   <div class="success-header">
     <div class="success-icon-circle">

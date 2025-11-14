@@ -22,10 +22,11 @@ def payos_cancel():
             order.status = 'cancelled'
             db.session.commit()
             
-            # Render payment error page thay vì redirect
+            # Render payment error page với script thoát iframe
             return render_template("payment_error.html",
                                  error_message="Bạn đã hủy thanh toán",
-                                 error_code="CANCELLED")
+                                 error_code="CANCELLED",
+                                 break_iframe=True)
     
     # Nếu không có order_code hoặc order không tìm thấy
     flash("Không tìm thấy thông tin đơn hàng!", "warning")
@@ -236,7 +237,8 @@ def payos_return():
                                  plan_name=plan.name,
                                  duration=duration_text,
                                  amount=float(order.amount),
-                                 transaction_no=order.transaction_id)
+                                 transaction_no=order.transaction_id,
+                                 break_iframe=True)
         else:
             flash("Đơn hàng không hợp lệ hoặc đã được xử lý!", "warning")
             return redirect(url_for("game"))
@@ -273,7 +275,8 @@ def payos_return():
         
         return render_template("payment_error.html", 
                              error_message=error_message,
-                             error_code=code or status)
+                             error_code=code or status,
+                             break_iframe=True)
 
 
 @app.route("/payos/webhook", methods=["POST"])
