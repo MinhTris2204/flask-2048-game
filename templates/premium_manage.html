@@ -294,34 +294,305 @@
   50% { opacity: 0.8; }
 }
 
+/* Inactive Premium Styles */
+.inactive-header {
+  position: relative;
+}
+
+.lock-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulse-glow-lock 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow-lock {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.status-icon.inactive {
+  opacity: 1;
+  filter: none;
+  animation: shake-lock 3s ease-in-out infinite;
+}
+
+@keyframes shake-lock {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
+  20%, 40%, 60%, 80% { transform: rotate(5deg); }
+}
+
+.inactive-title {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.inactive-description {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.highlight-text {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: 20px;
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+@keyframes text-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 /* Feature List */
 .feature-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 32px;
+}
+
+.inactive-features {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.3) 0%, rgba(253, 230, 138, 0.2) 100%);
+  border-radius: 16px;
+  padding: 24px;
+  border: 2px dashed rgba(245, 158, 11, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.inactive-features::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(245, 158, 11, 0.1) 50%, transparent 70%);
+  animation: shine 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  border-radius: 16px;
   font-weight: 600;
   font-size: 15px;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(203, 213, 225, 0.5);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.feature-animated {
+  animation: slideInUp 0.6s ease forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.feature-item:hover::before {
+  left: 100%;
 }
 
 .feature-item:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateX(4px);
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, rgba(253, 230, 138, 0.4) 100%);
+  transform: translateX(8px) scale(1.02);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
 }
 
 .feature-icon {
-  font-size: 24px;
+  font-size: 32px;
   flex-shrink: 0;
+  animation: bounce-icon 2s ease-in-out infinite;
+}
+
+@keyframes bounce-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.feature-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.feature-desc {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.feature-badge {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  animation: pulse-badge 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
+  }
+}
+
+/* Upgrade CTA */
+.upgrade-cta {
+  margin-top: 32px;
+  text-align: center;
+  animation: fadeInUp 0.6s ease 0.5s both;
+}
+
+.btn-upgrade-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 36px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-upgrade-now::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-upgrade-now:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-upgrade-now:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(245, 158, 11, 0.6);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.btn-upgrade-now:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-icon {
+  font-size: 24px;
+  animation: rotate-star 3s linear infinite;
+}
+
+@keyframes rotate-star {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-15deg) scale(1.2); }
+  50% { transform: rotate(0deg) scale(1); }
+  75% { transform: rotate(15deg) scale(1.2); }
+}
+
+.btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.btn-upgrade-now:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
+.cta-subtext {
+  margin-top: 16px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.cta-subtext strong {
+  color: #f59e0b;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 /* Status Actions */
@@ -954,37 +1225,61 @@
         </div>
       {% else %}
         <!-- Inactive Premium -->
-        <div class="status-header">
+        <div class="status-header inactive-header">
           <div class="status-icon-wrapper">
             <span class="status-icon inactive">🔒</span>
+            <div class="lock-glow"></div>
           </div>
         </div>
         
         <div class="status-content">
-          <h3 class="status-title">Chưa có Premium</h3>
-          <p class="status-description">Nâng cấp để mở khóa tất cả tính năng độc quyền!</p>
+          <h3 class="status-title inactive-title">Chưa có Premium</h3>
+          <p class="status-description inactive-description">
+            <span class="highlight-text">Nâng cấp ngay</span> để mở khóa tất cả tính năng độc quyền!
+          </p>
         </div>
         
-        <div class="feature-list">
-          <div class="feature-item">
+        <div class="feature-list inactive-features">
+          <div class="feature-item feature-animated" style="animation-delay: 0.1s">
             <span class="feature-icon">💡</span>
-            <span>Gợi ý nước đi thông minh</span>
+            <div class="feature-text">
+              <span class="feature-name">Gợi ý nước đi thông minh</span>
+              <span class="feature-desc">AI phân tích và đề xuất nước đi tốt nhất</span>
+            </div>
+            <span class="feature-badge">Premium</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item feature-animated" style="animation-delay: 0.2s">
             <span class="feature-icon">🔀</span>
-            <span>Xáo trộn bàn cờ</span>
+            <div class="feature-text">
+              <span class="feature-name">Xáo trộn bàn cờ</span>
+              <span class="feature-desc">Đảo lộn vị trí các ô khi bế tắc</span>
+            </div>
+            <span class="feature-badge">Premium</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item feature-animated" style="animation-delay: 0.3s">
             <span class="feature-icon">🔄</span>
-            <span>Đổi chỗ 2 ô bất kỳ</span>
+            <div class="feature-text">
+              <span class="feature-name">Đổi chỗ 2 ô bất kỳ</span>
+              <span class="feature-desc">Tự do hoán đổi vị trí 2 ô trên bàn</span>
+            </div>
+            <span class="feature-badge">Premium</span>
           </div>
+        </div>
+        
+        <div class="upgrade-cta">
+          <a href="#premium-plans" class="btn-upgrade-now">
+            <span class="btn-icon">⭐</span>
+            <span class="btn-text">Nâng cấp Premium ngay</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <p class="cta-subtext">Chỉ từ <strong>10.000đ</strong> - Trải nghiệm đầy đủ tính năng!</p>
         </div>
       {% endif %}
     </div>
   </div>
 
   <!-- Premium Plans -->
-  <div class="premium-plans-wrapper">
+  <div class="premium-plans-wrapper" id="premium-plans"></div>
     <h2 class="section-title">📦 Gói Premium</h2>
     <div class="plans-grid">
       {% for plan in plans %}
@@ -1139,6 +1434,46 @@ async function cancelPremium() {
     showToast("Có lỗi xảy ra khi hủy Premium", 'error');
   }
 }
+
+// Smooth scroll to premium plans
+document.addEventListener('DOMContentLoaded', function() {
+  const upgradeBtn = document.querySelector('.btn-upgrade-now');
+  if (upgradeBtn) {
+    upgradeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector('#premium-plans');
+      if (target) {
+        target.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+        
+        // Add highlight effect
+        target.style.animation = 'none';
+        setTimeout(() => {
+          target.style.animation = 'highlight-section 1s ease';
+        }, 10);
+      }
+    });
+  }
+});
+
+// Add highlight animation
+const style = document.createElement('style');
+style.textContent += `
+  @keyframes highlight-section {
+    0% {
+      background: transparent;
+    }
+    50% {
+      background: rgba(245, 158, 11, 0.1);
+    }
+    100% {
+      background: transparent;
+    }
+  }
+`;
+document.head.appendChild(style);
 
 // Calculate and update progress bar with dynamic effects
 {% if premium_expires_at %}
