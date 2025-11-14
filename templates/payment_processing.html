@@ -5,11 +5,11 @@
 <link href="{{ url_for('static', filename='payos-payment.css') }}" rel="stylesheet">
 
 <div class="payment-split-layout">
-  <!-- Top bar - Timer only -->
+  <!-- Left sidebar - Timer only -->
   <div class="payment-timer-bar">
     <div class="timer-compact">
       <span class="timer-icon">⏱️</span>
-      <span class="timer-label">Thời gian còn lại:</span>
+      <span class="timer-label">Thời gian còn lại</span>
       <span class="timer-display" id="countdown">15:00</span>
     </div>
   </div>
@@ -35,63 +35,73 @@ body, html {
   overflow: hidden;
 }
 
-/* Layout - Timer bar on top, iframe below */
+/* Layout - Timer left, iframe right */
 .payment-split-layout {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100vh;
   width: 100%;
 }
 
-/* Timer bar */
+/* Timer sidebar */
 .payment-timer-bar {
+  width: 280px;
   background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
-  padding: 16px 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px 24px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .timer-compact {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  gap: 20px;
   color: white;
+  text-align: center;
 }
 
 .timer-icon {
-  font-size: 28px;
+  font-size: 64px;
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.15); }
 }
 
 .timer-label {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.5px;
+  opacity: 0.95;
 }
 
 .timer-display {
-  font-size: 28px;
+  font-size: 48px;
   font-weight: 800;
   font-family: 'Courier New', monospace;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   background: rgba(255, 255, 255, 0.2);
-  padding: 8px 20px;
-  border-radius: 8px;
+  padding: 16px 32px;
+  border-radius: 12px;
   backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* PayOS iframe - Full width */
+/* PayOS iframe - Full width and height */
 .payos-panel {
   flex: 1;
   background: #f5f5f5;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #payos-iframe {
@@ -119,16 +129,22 @@ body, html {
 
 /* Responsive - Mobile */
 @media (max-width: 768px) {
+  .payment-split-layout {
+    flex-direction: column;
+  }
+  
   .payment-timer-bar {
-    padding: 12px 16px;
+    width: 100%;
+    padding: 20px;
   }
   
   .timer-compact {
-    gap: 8px;
+    flex-direction: row;
+    gap: 12px;
   }
   
   .timer-icon {
-    font-size: 24px;
+    font-size: 32px;
   }
   
   .timer-label {
@@ -136,8 +152,8 @@ body, html {
   }
   
   .timer-display {
-    font-size: 22px;
-    padding: 6px 16px;
+    font-size: 28px;
+    padding: 10px 20px;
   }
 }
 </style>
