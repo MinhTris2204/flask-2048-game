@@ -9,10 +9,252 @@ if (window.self !== window.top) {
 }
 </script>
 {% endif %}
-<div class="card success-card">
-  <div class="success-header">
-    <div class="success-icon-circle">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.payment-result-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Left panel - Icon & Message */
+.result-left-panel {
+  width: 45%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 40px;
+  text-align: center;
+}
+
+.result-icon-large {
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.result-icon-large svg {
+  width: 60px;
+  height: 60px;
+}
+
+.result-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.result-subtitle {
+  font-size: 18px;
+  opacity: 0.95;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Right panel - Details & Actions */
+.result-right-panel {
+  flex: 1;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  padding: 60px;
+  overflow-y: auto;
+}
+
+.result-content {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.details-section {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--outline);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.detail-value-accent {
+  color: #10b981;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.detail-value-monospace {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.features-section {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  border: 2px solid #86efac;
+}
+
+.features-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: #065f46;
+  font-weight: 700;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.features-list li {
+  color: #047857;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #86efac;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-action-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-action-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-action-secondary {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--outline);
+}
+
+.btn-action-secondary:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.footer-note {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding-top: 20px;
+  border-top: 1px solid var(--outline);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .payment-result-layout {
+    flex-direction: column;
+  }
+  
+  .result-left-panel {
+    width: 100%;
+    padding: 40px 20px;
+    min-height: 300px;
+  }
+  
+  .result-right-panel {
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  
+  .result-icon-large {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .result-title {
+    font-size: 28px;
+  }
+}
+</style>
+
+<div class="payment-result-layout">
+  <!-- Left panel - Success icon & message -->
+  <div class="result-left-panel">
+    <div class="result-icon-large">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
               stroke="white" 
               stroke-width="2" 
@@ -20,64 +262,59 @@ if (window.self !== window.top) {
               stroke-linejoin="round"/>
       </svg>
     </div>
-    
-    <h2 class="success-title">✅ Thanh toán thành công!</h2>
-    <p class="success-message">
-      Premium đã được kích hoạt thành công
-    </p>
+    <h1 class="result-title">Thanh toán thành công!</h1>
+    <p class="result-subtitle">Premium đã được kích hoạt</p>
   </div>
 
-  <div class="success-details-box">
-    <h3 class="success-details-title">Chi tiết giao dịch</h3>
-    
-    <div class="success-details-grid">
-      <div class="success-detail-row">
-        <span class="detail-label">Gói Premium:</span>
-        <span class="detail-value">{{ plan_name }}</span>
+  <!-- Right panel - Details & actions -->
+  <div class="result-right-panel">
+    <div class="result-content">
+      <!-- Transaction details -->
+      <div class="details-section">
+        <h3>📋 Chi tiết giao dịch</h3>
+        <div class="detail-row">
+          <span class="detail-label">Gói Premium:</span>
+          <span class="detail-value">{{ plan_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Thời hạn:</span>
+          <span class="detail-value">{{ duration }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Số tiền:</span>
+          <span class="detail-value-accent">{{ "{:,.0f}".format(amount) }} VND</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Mã giao dịch:</span>
+          <span class="detail-value-monospace">{{ transaction_no }}</span>
+        </div>
       </div>
-      
-      <div class="success-detail-row">
-        <span class="detail-label">Thời hạn:</span>
-        <span class="detail-value">{{ duration }}</span>
+
+      <!-- Premium features -->
+      <div class="features-section">
+        <h4>🎉 Tính năng Premium đã mở khóa</h4>
+        <ul class="features-list">
+          <li>💡 Gợi ý nước đi tốt nhất (Hint)</li>
+          <li>🔀 Xáo trộn bàn cờ (Shuffle)</li>
+          <li>🔄 Đổi chỗ 2 ô bất kỳ (Swap)</li>
+        </ul>
       </div>
-      
-      <div class="success-detail-row">
-        <span class="detail-label">Số tiền:</span>
-        <span class="detail-value-accent">{{ "{:,.0f}".format(amount) }} VND</span>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <a href="{{ url_for('game') }}" class="btn-action btn-action-primary">
+          🎮 Chơi ngay
+        </a>
+        <a href="{{ url_for('premium_packages') }}" class="btn-action btn-action-secondary">
+          ⭐ Xem gói khác
+        </a>
       </div>
-      
-      <div class="success-detail-row">
-        <span class="detail-label">Mã giao dịch:</span>
-        <span class="detail-value-monospace">{{ transaction_no }}</span>
+
+      <!-- Footer note -->
+      <div class="footer-note">
+        <p>🛡️ Giao dịch được bảo vệ bởi PayOS</p>
       </div>
     </div>
-  </div>
-
-  <div class="success-congrats-box">
-    <h4 class="congrats-title">🎉 Chúc mừng!</h4>
-    <p class="congrats-message">
-      Bạn đã có thể sử dụng đầy đủ tính năng Premium:
-    </p>
-    <ul class="congrats-list">
-      <li>💡 Gợi ý nước đi tốt nhất (Hint)</li>
-      <li>🔀 Xáo trộn bàn cờ (Shuffle)</li>
-      <li>🔄 Đổi chỗ 2 ô bất kỳ (Swap)</li>
-    </ul>
-  </div>
-
-  <div class="success-actions">
-    <a href="{{ url_for('game') }}" class="btn-primary">
-      🎮 Chơi ngay
-    </a>
-    
-    <a href="{{ url_for('premium_packages') }}" class="btn-secondary">
-      ⭐ Xem gói khác
-    </a>
-  </div>
-
-  <div class="payment-footer-info">
-    <p class="footer-text">📧 Email xác nhận đã được gửi đến hộp thư của bạn</p>
-    <p class="footer-text">🛡️ Giao dịch được bảo vệ bởi PayOS</p>
   </div>
 </div>
 {% endblock %}
