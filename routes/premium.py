@@ -135,7 +135,7 @@ def payment(plan_id):
                     return redirect(url_for("premium_manage"))
                 
                 print(f">>> Redirecting to PayOS checkout URL: {payment_url}")
-                # Hiển thị trang trung gian với countdown timer và tự động redirect
+                # Hiển thị trang trung gian với countdown timer và iframe PayOS
                 return render_template("payment_processing.html",
                                      checkout_url=payment_url,
                                      amount=plan.price,

@@ -4,26 +4,58 @@
 {% block content %}
 <link href="{{ url_for('static', filename='payos-payment.css') }}" rel="stylesheet">
 
-<div class="payment-processing-container">
-  <!-- Header với countdown -->
-  <div class="payment-header">
-    <div class="payment-timer-box">
-      <div class="timer-icon">⏱️</div>
-      <div class="timer-info">
-        <p class="timer-label">Thời gian còn lại</p>
-        <div class="timer-display" id="countdown">15:00</div>
+<div class="payment-split-layout">
+  <!-- Left panel - Thông tin thanh toán -->
+  <div class="payment-info-panel">
+    <div class="info-panel-content">
+      <!-- Timer -->
+      <div class="timer-section">
+        <div class="timer-icon-large">⏱️</div>
+        <div class="timer-text">
+          <p class="timer-label">Thời gian còn lại</p>
+          <div class="timer-display-large" id="countdown">15:00</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="payment-info">
-      <h2>Quét mã QR để thanh toán</h2>
-      <p class="payment-amount">{{ "{:,.0f}".format(amount) }} VND</p>
-      <p class="payment-desc">{{ description }}</p>
+
+      <!-- Payment details -->
+      <div class="payment-details-section">
+        <h2 class="payment-title">Quét mã QR để thanh toán</h2>
+        
+        <div class="payment-amount-box">
+          <p class="amount-label">Số tiền thanh toán</p>
+          <p class="amount-value">{{ "{:,.0f}".format(amount) }} VND</p>
+        </div>
+
+        <div class="payment-plan-info">
+          <div class="plan-icon">💎</div>
+          <div class="plan-details">
+            <p class="plan-name">{{ description }}</p>
+            <p class="plan-benefit">Truy cập đầy đủ tính năng Premium</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="payment-instructions">
+        <h3 class="instructions-title">📱 Hướng dẫn thanh toán</h3>
+        <ol class="instructions-list">
+          <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+          <li>Chọn chức năng quét mã QR</li>
+          <li>Quét mã QR bên phải</li>
+          <li>Xác nhận thông tin và hoàn tất thanh toán</li>
+        </ol>
+      </div>
+
+      <!-- Security badge -->
+      <div class="security-badge">
+        <span class="badge-icon">🔒</span>
+        <span class="badge-text">Thanh toán bảo mật bởi PayOS</span>
+      </div>
     </div>
   </div>
 
-  <!-- PayOS iframe -->
-  <div class="payos-iframe-container">
+  <!-- Right panel - PayOS iframe -->
+  <div class="payos-panel">
     <iframe 
       id="payos-iframe"
       src="{{ checkout_url }}"
@@ -32,187 +64,206 @@
       allowfullscreen>
     </iframe>
   </div>
-
-  <!-- Footer actions -->
-  <div class="payment-footer-actions">
-    <button onclick="cancelPayment()" class="btn-cancel">
-      ❌ Hủy thanh toán
-    </button>
-    
-    <div class="payment-help">
-      <p>💡 <strong>Hướng dẫn:</strong> Mở app ngân hàng → Quét QR → Xác nhận</p>
-    </div>
-  </div>
 </div>
 
 <style>
-.payment-processing-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
+/* Reset body và html để fullscreen */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-.payment-header {
+/* Split layout - 2 cột */
+.payment-split-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Left panel - Thông tin */
+.payment-info-panel {
+  width: 400px;
   background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
   color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.payment-timer-box {
+.info-panel-content {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Timer section */
+.timer-section {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   background: rgba(255, 255, 255, 0.15);
-  padding: 16px 24px;
-  border-radius: 12px;
+  padding: 20px;
+  border-radius: 16px;
   backdrop-filter: blur(10px);
 }
 
-.timer-icon {
-  font-size: 40px;
+.timer-icon-large {
+  font-size: 48px;
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.15); }
 }
 
-.timer-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.timer-text {
+  flex: 1;
 }
 
 .timer-label {
   font-size: 13px;
   opacity: 0.9;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.timer-display-large {
+  font-size: 42px;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+/* Payment details */
+.payment-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.payment-title {
+  font-size: 24px;
+  font-weight: 700;
   margin: 0;
+  line-height: 1.3;
+}
+
+.payment-amount-box {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.amount-label {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0 0 8px 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.timer-display {
+.amount-value {
   font-size: 36px;
   font-weight: 800;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 2px;
-}
-
-.payment-info {
-  flex: 1;
-  text-align: right;
-  min-width: 250px;
-}
-
-.payment-info h2 {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.payment-amount {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 8px 0;
+  margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.payment-desc {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 4px 0 0 0;
+.payment-plan-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 12px;
 }
 
-.payos-iframe-container {
+.plan-icon {
+  font-size: 32px;
+}
+
+.plan-details {
+  flex: 1;
+}
+
+.plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.plan-benefit {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Instructions */
+.payment-instructions {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.instructions-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+}
+
+.instructions-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.instructions-list li {
+  margin-bottom: 8px;
+}
+
+.instructions-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Security badge */
+.security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badge-icon {
+  font-size: 18px;
+}
+
+/* Right panel - PayOS iframe */
+.payos-panel {
+  flex: 1;
+  background: #f5f5f5;
   position: relative;
-  width: 100%;
-  height: 600px;
-  background: white;
-  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 136, 255, 0.15);
-  margin-bottom: 24px;
 }
 
 #payos-iframe {
   width: 100%;
   height: 100%;
   border: none;
-}
-
-.payment-footer-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.btn-cancel {
-  padding: 14px 32px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-
-.btn-cancel:hover {
-  background: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-}
-
-.payment-help {
-  flex: 1;
-  text-align: right;
-}
-
-.payment-help p {
-  margin: 0;
-  color: var(--text);
-  font-size: 14px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .payment-header {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .payment-info {
-    text-align: center;
-  }
-  
-  .payment-timer-box {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .payos-iframe-container {
-    height: 500px;
-  }
-  
-  .payment-footer-actions {
-    flex-direction: column;
-  }
-  
-  .payment-help {
-    text-align: center;
-  }
+  display: block;
 }
 
 /* Timer warning colors */
@@ -229,13 +280,80 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
+
+/* Responsive - Mobile */
+@media (max-width: 1024px) {
+  .payment-split-layout {
+    flex-direction: column;
+  }
+  
+  .payment-info-panel {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+  }
+  
+  .info-panel-content {
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .timer-section {
+    padding: 15px;
+  }
+  
+  .timer-icon-large {
+    font-size: 36px;
+  }
+  
+  .timer-display-large {
+    font-size: 32px;
+  }
+  
+  .payment-title {
+    font-size: 20px;
+  }
+  
+  .amount-value {
+    font-size: 28px;
+  }
+  
+  .payment-instructions {
+    display: none;
+  }
+  
+  .payos-panel {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .info-panel-content {
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .timer-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .payment-amount-box {
+    padding: 15px;
+  }
+  
+  .amount-value {
+    font-size: 24px;
+  }
+}
 </style>
 
 <script>
 // Countdown timer cho thanh toán (15 phút)
 let timeLeft = 15 * 60; // 15 minutes in seconds
 const countdownEl = document.getElementById('countdown');
-const timerDisplay = document.querySelector('.timer-display');
+const timerDisplay = document.querySelector('.timer-display-large');
 
 function updateCountdown() {
   const minutes = Math.floor(timeLeft / 60);
@@ -254,7 +372,7 @@ function updateCountdown() {
     clearInterval(countdownInterval);
     alert('Hết thời gian thanh toán! Đơn hàng đã bị hủy.');
     // Tự động hủy thanh toán khi hết giờ
-    window.location.href = "{{ url_for('payos_cancel') }}?orderCode={{ order_code }}";
+    window.location.href = "/payos/cancel?orderCode={{ order_code }}";
   }
   
   timeLeft--;
@@ -269,18 +387,9 @@ window.addEventListener('message', function(event) {
   // Check if message is from PayOS
   if (event.data && event.data.type === 'PAYMENT_SUCCESS') {
     clearInterval(countdownInterval);
-    window.location.href = "{{ url_for('payos_return') }}?code=00&orderCode={{ order_code }}&status=PAID";
+    window.location.href = "/payos/return?code=00&orderCode={{ order_code }}&status=PAID";
   }
 });
-
-// Cancel payment function
-function cancelPayment() {
-  if (confirm('Bạn có chắc muốn hủy thanh toán?')) {
-    clearInterval(countdownInterval);
-    clearInterval(redirectInterval);
-    window.location.href = "{{ url_for('payos_cancel') }}?orderCode={{ order_code }}";
-  }
-}
 
 // Prevent accidental page close
 window.addEventListener('beforeunload', function(e) {
