@@ -1145,22 +1145,86 @@ async function cancelPremium() {
 (function() {
   const expiry = new Date("{{ premium_expires_at.isoformat() }}");
   const now = new Date();
-  const created = new Date("{{ orders|selectattr('status', 'equalto', 'completed')|map(attribute='created_at')|list|last }}");
+  
+  // Get created date from completed orders - convert to ISO format
+  {% set last_order = orders|selectattr('status', 'equalto', 'completed')|list|last %}
+  {% if last_order and last_order.created_at %}
+  const created = new Date("{{ last_order.created_at.isoformat() }}");
+  {% else %}
+  // Fallback: assume 30 days subscription if no order found
+  const created = new Date(expiry.getTime() - (30 * 24 * 60 * 60 * 1000));
+  {% endif %}
+  
+  // Validate dates
+  if (isNaN(created.getTime()) || isNaN(expiry.getTime())) {
+    console.error('Invalid date values', {
+      created: created,
+      expiry: expiry,
+      createdTime: created.getTime(),
+      expiryTime: expiry.getTime()
+    });
+    return;
+  }
+  
   const total = expiry - created;
   const elapsed = now - created;
-  const progress = Math.max(0, Math.min(100, (total - elapsed) / total * 100));
+  const remaining = expiry - now;
+  
+  // Debug log
+  console.log('Premium Progress:', {
+    created: created.toISOString(),
+    expiry: expiry.toISOString(),
+    now: now.toISOString(),
+    total: total,
+    remaining: remaining,
+    elapsed: elapsed
+  });
+  
+  // Calculate progress (remaining time percentage)
+  let progress = Math.max(0, Math.min(100, (remaining / total) * 100));
+  
+  // Handle edge cases
+  if (isNaN(progress) || !isFinite(progress) || total <= 0) {
+    console.warn('Invalid progress calculation', { progress, total, remaining });
+    progress = 0;
+  }
   
   const progressFill = document.getElementById('premium-progress');
   const progressText = document.getElementById('progress-text');
   
   if (progressFill && progressText) {
+    // Check if expired
+    if (remaining <= 0) {
+      progressFill.style.width = '0%';
+      progressFill.style.background = 'linear-gradient(90deg, #94a3b8 0%, #cbd5e1 100%)';
+      progressText.innerHTML = '⏰ Đã hết hạn';
+      progressText.style.background = 'linear-gradient(135deg, #64748b 0%, #475569 100%)';
+      progressText.style.webkitBackgroundClip = 'text';
+      progressText.style.webkitTextFillColor = 'transparent';
+      progressText.style.backgroundClip = 'text';
+      return;
+    }
+    
     // Animate progress bar width
     setTimeout(() => {
       progressFill.style.width = progress + '%';
     }, 300);
     
+    // Calculate remaining days
+    const daysRemaining = Math.ceil(remaining / (24 * 60 * 60 * 1000));
+    const hoursRemaining = Math.ceil(remaining / (60 * 60 * 1000));
+    
+    let timeText = '';
+    if (daysRemaining > 1) {
+      timeText = ` (còn ${daysRemaining} ngày)`;
+    } else if (hoursRemaining > 1) {
+      timeText = ` (còn ${hoursRemaining} giờ)`;
+    } else {
+      timeText = ' (sắp hết hạn)';
+    }
+    
     // Update text with animation
-    progressText.textContent = Math.round(progress) + '% thời gian còn lại';
+    progressText.textContent = Math.round(progress) + '% thời gian còn lại' + timeText;
     
     // Change color based on remaining time
     if (progress < 20) {
@@ -1173,7 +1237,7 @@ async function cancelPremium() {
       progressText.style.backgroundClip = 'text';
       
       // Add urgent warning icon
-      progressText.innerHTML = '⚠️ ' + Math.round(progress) + '% thời gian còn lại - Sắp hết hạn!';
+      progressText.innerHTML = '⚠️ ' + Math.round(progress) + '% thời gian còn lại' + timeText;
     } else if (progress < 50) {
       // Warning - Orange
       progressFill.style.background = 'linear-gradient(90deg, #f97316 0%, #fb923c 25%, #fdba74 50%, #fb923c 75%, #f97316 100%)';
@@ -1183,10 +1247,10 @@ async function cancelPremium() {
       progressText.style.webkitTextFillColor = 'transparent';
       progressText.style.backgroundClip = 'text';
       
-      progressText.innerHTML = '⏰ ' + Math.round(progress) + '% thời gian còn lại';
+      progressText.innerHTML = '⏰ ' + Math.round(progress) + '% thời gian còn lại' + timeText;
     } else {
       // Good - Gold/Green
-      progressText.innerHTML = '✨ ' + Math.round(progress) + '% thời gian còn lại';
+      progressText.innerHTML = '✨ ' + Math.round(progress) + '% thời gian còn lại' + timeText;
     }
     
     // Add particle effect for high progress
